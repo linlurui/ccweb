@@ -34,7 +34,7 @@
     <repositories>
         <repository>
             <id>entityQueryable</id>
-            <url>https://raw.github.com/linlurui/entityQueryable/release1.0</url>
+            <url>https://raw.github.com/linlurui/entityQueryable/1.0</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -201,7 +201,7 @@
                     <message >Maven artifacts for ${project.version}</message>
                     <noJekyll>true</noJekyll>
                     <outputDirectory>${project.build.directory}/ccweb</outputDirectory><!--本地jar地址-->
-                    <branch>refs/heads/release1.0</branch><!--分支的名称-->
+                    <branch>refs/heads/1.0</branch><!--分支的名称-->
                     <merge>true</merge>
                     <includes>
                         <include>**/*</include>
