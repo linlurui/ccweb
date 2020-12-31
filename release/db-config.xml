@@ -64,7 +64,7 @@
                 <property name="password" value="123456" />
             </dataSource>
         </environment>
-        <environment id="couchebase" classScope="public">
+        <environment id="couchbase" classScope="public">
             <dataSource type="POOLED">
                 <property name="driver" value="n1ql_jdbc" />
                 <property name="url" value="jdbc:couchbase://localhost:8093" />
