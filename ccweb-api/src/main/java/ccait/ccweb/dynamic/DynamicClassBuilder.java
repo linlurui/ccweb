@@ -141,7 +141,7 @@ public class DynamicClassBuilder {
                     col.setDataType(item.getValue().getClass().getTypeName());
                 }
                 if("id".equals(item.getKey().toLowerCase())) {
-                    col.setPrimaryKey(true);
+                    col.setIsPrimaryKey(true);
                 }
 
                 columns.add(col);

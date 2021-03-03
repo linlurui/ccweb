@@ -164,7 +164,7 @@ public class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileMan
                     fldSpec.addJavadoc(col.getColumnComment());
                 }
 
-                if(col.getPrimaryKey() || primaryKey.toLowerCase().equals(col.getColumnName().toLowerCase())) {
+                if(col.getIsPrimaryKey() || primaryKey.toLowerCase().equals(col.getColumnName().toLowerCase())) {
                     AnnotationSpec annPrimaryKey = AnnotationSpec.builder(PrimaryKey.class).build();
                     fldSpec.addAnnotation(annPrimaryKey);
 

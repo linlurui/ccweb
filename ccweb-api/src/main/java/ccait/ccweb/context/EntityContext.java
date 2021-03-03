@@ -104,7 +104,7 @@ public final class EntityContext {
                 col.setType(String.class);
 
                 if("id".equals(item.toLowerCase())) {
-                    col.setPrimaryKey(true);
+                    col.setIsPrimaryKey(true);
                 }
 
                 columns.add(col);
@@ -149,7 +149,7 @@ public final class EntityContext {
         }
 
         Optional<ColumnInfo> optional = tableColumnsMap.get(datasourceId).get(table).stream()
-                .filter(a->a.getPrimaryKey()==true).findAny();
+                .filter(a->a.getIsPrimaryKey()==true).findAny();
 
         if(optional.isPresent()) {
             ColumnInfo info = optional.get();
@@ -192,7 +192,7 @@ public final class EntityContext {
         String fieldname = "id";
         if(tableColumnsMap.containsKey(datasourceId) && tableColumnsMap.get(datasourceId).containsKey(table)) {
             Optional<ColumnInfo> optional = tableColumnsMap.get(datasourceId).get(table).stream()
-                    .filter(a -> a.getPrimaryKey() == true).findAny();
+                    .filter(a -> a.getIsPrimaryKey() == true).findAny();
 
             if(optional.isPresent()) {
                 ColumnInfo column = optional.get();
@@ -313,7 +313,7 @@ public final class EntityContext {
                         String primaryKey = Queryable.getPrimaryKey(ds.getId(), tb);
                         for(ColumnInfo column : columns) {
                             if(column.getColumnName().equals(primaryKey)) {
-                                column.setPrimaryKey(Boolean.TRUE);
+                                column.setIsPrimaryKey(Boolean.TRUE);
                             }
                         }
                         if (!tableColumnsMap.containsKey(ds.getId())) {

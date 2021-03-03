@@ -331,7 +331,7 @@ public class ApplicationContext implements ApplicationContextAware {
 
         col = new ColumnInfo();
         col.setColumnName("userGroupRoleId");
-        col.setPrimaryKey(true);
+        col.setIsPrimaryKey(true);
         col.setCanNotNull(true);
         col.setMaxLength(32);
         col.setType(String.class);
@@ -406,7 +406,7 @@ public class ApplicationContext implements ApplicationContextAware {
 
         col = new ColumnInfo();
         col.setColumnName("privilegeId");
-        col.setPrimaryKey(true);
+        col.setIsPrimaryKey(true);
         col.setCanNotNull(true);
         col.setIsAutoIncrement(true);
         col.setMaxLength(32);
@@ -563,7 +563,7 @@ public class ApplicationContext implements ApplicationContextAware {
 
         col = new ColumnInfo();
         col.setColumnName("aclId");
-        col.setPrimaryKey(true);
+        col.setIsPrimaryKey(true);
         col.setCanNotNull(true);
         col.setMaxLength(32);
         col.setIsAutoIncrement(true);
@@ -629,7 +629,7 @@ public class ApplicationContext implements ApplicationContextAware {
 
         col = new ColumnInfo();
         col.setColumnName(ApplicationConfig.getInstance().get("${entity.table.reservedField.roleId}", roleIdField));
-        col.setPrimaryKey(true);
+        col.setIsPrimaryKey(true);
         col.setCanNotNull(true);
         col.setMaxLength(32);
         col.setType(Integer.class);
@@ -693,7 +693,7 @@ public class ApplicationContext implements ApplicationContextAware {
 
         col = new ColumnInfo();
         col.setColumnName(groupIdField);
-        col.setPrimaryKey(true);
+        col.setIsPrimaryKey(true);
         col.setCanNotNull(true);
         col.setMaxLength(32);
         col.setIsAutoIncrement(true);
@@ -775,7 +775,7 @@ public class ApplicationContext implements ApplicationContextAware {
         col.setCanNotNull(true);
         col.setMaxLength(16);
         col.setType(Integer.class);
-        col.setPrimaryKey(true);
+        col.setIsPrimaryKey(true);
         columns.add(col);
 
         col = new ColumnInfo();
