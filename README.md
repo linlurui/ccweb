@@ -1,4 +1,4 @@
-CCWEB是基于springboot设计的CQRS敏捷web api开发框架，CCWEB提倡动态向前端提供基础数据，由前端根据基础数据组装业务来提高开发效率;内置用户管理、权限设置 等安全模块，启动服务后无需添加任何后端代码前端便可以通过默认接口直接访问到自己在数据库建的表和查询视图；底层orm采用entityQueryable访问数据，支持SpringCloud微服务扩展；支持elasticSerach搜索引擎；在横向扩展方面ccweb兼容了多种数据库系统，包括主流的mysql、sqlserver和大数据存储的hadoop等，有易于数据集成及高度扩展的能力，可以让数据自由地穿梭于各种数据存储系统之间：项目包含ccweb-core，ccweb-api，ccweb-start，ccweb-socket(2.0)，ccweb-admin(2.0)
+CCWEB是基于springboot设计的CQRS敏捷web api开发框架，CCWEB提倡动态向前端提供基础数据，由前端根据基础数据组装业务来提高开发效率;内置用户管理、权限设置 等安全模块，启动服务后无需添加任何后端代码前端便可以通过默认接口直接访问到自己在数据库建的表和查询视图；底层orm采用entityQueryable访问数据，支持SpringCloud微服务扩展；支持elasticSerach搜索引擎；在横向扩展方面ccweb兼容了多种数据库系统，包括主流的mysql、mariadb、sqlserver、oracle、postgresql、derby、sqlite、db2、sybase和大数据存储的hadoop等，有易于数据集成及高度扩展的能力，可以让数据自由地穿梭于各种数据存储系统之间：项目包含ccweb-core，ccweb-api，ccweb-start，ccweb-auth(2.0)，ccweb-config(2.0)，ccweb-office(2.0)，ccweb-gateway(2.0)，ccweb-logs(2.0)，ccweb-iot(2.0)，ccweb-socket(2.0)，ccweb-admin(2.0)
 </p>
     <img align="right" src="https://github.com/linlurui/entityQueryable/raw/master/pay5.jpg" alt="捐赠给作者"  width="200">
     <p align="right">
