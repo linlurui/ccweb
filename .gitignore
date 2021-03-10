@@ -16,3 +16,13 @@ home
 allatori/release
 conf
 /conf
+*/conf
+**/conf
+deploy
+/deploy
+*/deploy
+**/deploy
+release/conf
+/release/conf
+*/release/conf
+**/release/conf
