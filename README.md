@@ -30,15 +30,20 @@ ccweb-start是ccweb-api的启动包，其中包含了springcloud的微服务组�
 ## 运行环境
 * jdk1.8
 
-## 文件结构
+## release文件结构
 * ccweb-start-2.0.0-SNAPSHOT.jar 【ccweb默认服务启动包】
 * application.yml 【应用程序主配置文件】
-* db-config.xml 【数据库连接配置文件，2.0版本开始不建议使用，数据配置可直接配在application.yml中】
-* entity.queryable-2.0-SNAPSHOT.jar【动态查询依赖包】
-* rxjava-2.1.10.jar【查询结果异步IO依赖包】
-* spring-context-5.0.4.RELEASE.jar【动态实体注入依赖包】
-* install.sh【linux系统依赖包安装脚本，需要先安装JDK1.8并且使用JDK自带的JRE，windows下需要安装cygwin来运行该脚本)】
-* log4j2.xml 【可选，log4j2日志配置文件，记录ccweb服务异常信息】
+* Dockerfile 【docker容器部署脚本】
+* install.sh【linux系统依赖包安装脚本，需要先安装JDK1.8并且使用JDK自带的JRE，windows下需要安装cygwin来运行该脚本】
+* kill.sh【jar包启动时的kill掉进程的脚本】
+* run.sh【jar包启动脚本】
+* ccait.db【sqlite默认数据库】
+* lang.yml【语言配置文件，可配置多语言】
+* libs/entity.queryable-2.0-SNAPSHOT.jar【动态查询依赖包 [项目地址](https://github.com/linlurui/entityQueryable)】
+* libs/rxjava-2.1.10.jar【查询结果异步IO依赖包】
+* libs/spring-context-5.2.5.RELEASE.jar【动态实体注入依赖包)】
+* libs/spring-context-support-5.2.5.RELEASE.jar【动态实体注入依赖包)】
+* libs/easyexcel-2.1.3.jar【excel数据导入依赖包】
 
 ## 服务启动命令
 ***java -jar ccweb-start-2.0.0-SNAPSHOT.jar***
