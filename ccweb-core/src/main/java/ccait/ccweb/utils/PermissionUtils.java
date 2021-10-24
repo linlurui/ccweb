@@ -81,31 +81,6 @@ public class PermissionUtils {
         return true;
     }
 
-    public static void checker(Object handler, HttpServletResponse response) throws HttpResponseException {
-
-        String methodPathKey = null;
-        try {
-            methodPathKey = InitLocalMap.md5(handler.toString(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new HttpResponseException(HttpStatus.NOT_FOUND.value(), "Not Found");
-        } catch (NoSuchAlgorithmException e) {
-            throw new HttpResponseException(HttpStatus.NOT_FOUND.value(), "Not Found");
-        }
-
-        if(StringUtils.isEmpty(methodPathKey)) {
-            throw new HttpResponseException(HttpStatus.NOT_FOUND.value(), "Not Found");
-        }
-
-        if(StringUtils.isNotEmpty(ApplicationConfig.getInstance().get("${entity.license}", "")) && StringUtils.isNotEmpty(ApplicationConfig.getInstance().get("${entity.account}", ""))) {
-            String deadline = InitLocalMap.decryptByAES(ApplicationConfig.getInstance().get("${entity.license}"), "ccait account=>"+ApplicationConfig.getInstance().get("${entity.account}")).toLowerCase();
-            if(deadline!=null && Datetime.getTime().compareTo(Datetime.getTime(Long.parseLong(deadline))) < 0) {
-                return;
-            }
-        }
-
-        throw new HttpResponseException(HttpStatus.HTTP_VERSION_NOT_SUPPORTED.value(), "请购买该服务！购买链接：http://ccait.cn/ccweb/3.0/buy");
-    }
-
     public static class InitLocalMap {
         private boolean myResult;
         private HttpServletResponse response;
@@ -258,7 +233,7 @@ public class PermissionUtils {
 
             if(StringUtils.isNotEmpty(datasource)){
                 final String ds = datasource;
-                List<String> datasourceList = StringUtils.splitString2List(ApplicationConfig.getInstance().get("${entity.datasource.activated}", ""), ",");
+                List<String> datasourceList = StringUtils.splitString2List(ApplicationConfig.getInstance().get("${ccweb.datasource.activated}", ""), ",");
                 Optional<String> opt = datasourceList.stream()
                         .filter(a -> a.toLowerCase().equals(ds.toLowerCase())).findAny();
                 if(opt == null || !opt.isPresent()) {
