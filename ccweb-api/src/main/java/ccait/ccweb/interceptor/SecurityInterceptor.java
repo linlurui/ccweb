@@ -14,7 +14,6 @@ public class SecurityInterceptor implements HandlerInterceptor {
         boolean result = isChecked();
         if(!result) {
             setChecked(true);
-            PermissionUtils.checker(handler, response);
         }
 
         return true;
