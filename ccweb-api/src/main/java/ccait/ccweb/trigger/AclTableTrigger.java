@@ -6,8 +6,8 @@ import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.model.DownloadData;
 import ccait.ccweb.model.ResponseData;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,12 +21,12 @@ import java.util.UUID;
 
 @Component
 @Scope("prototype")
-@Trigger(tablename = "${entity.table.acl}")
+@Trigger(tablename = "${ccweb.table.acl}")
 public final class AclTableTrigger implements ITrigger {
 
-    private static final Logger log = LogManager.getLogger( AclTableTrigger.class );
+    private static final Logger log = LoggerFactory.getLogger( AclTableTrigger.class );
 
-    @Value("${entity.table.reservedField.aclId:aclId}")
+    @Value("${ccweb.table.reservedField.aclId:aclId}")
     private String aclIdField;
 
     @Override

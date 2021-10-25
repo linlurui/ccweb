@@ -17,8 +17,8 @@ import entity.query.ColumnInfo;
 import entity.query.core.ApplicationConfig;
 import entity.tool.util.StringUtils;
 import javapoet.JavaFile;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -36,7 +36,7 @@ import static ccait.ccweb.utils.StaticVars.LOG_PRE_SUFFIX;
 
 public class DynamicClassBuilder {
 
-    private static final Logger log = LogManager.getLogger( DynamicClassBuilder.class );
+    private static final Logger log = LoggerFactory.getLogger( DynamicClassBuilder.class );
 
     private static final String DEFAULT_PACKAGE = "ccait.ccweb.entites";
 

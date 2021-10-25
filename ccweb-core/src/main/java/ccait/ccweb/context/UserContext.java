@@ -57,10 +57,10 @@ public class UserContext {
         });
         user.setUserGroupRoleModels(userGroupRoleModelList);
 
-        Boolean jwtEnable = Boolean.valueOf(ApplicationConfig.getInstance().get("${entity.auth.user.jwt.enable}", "false"));
-        Boolean aesEnable = Boolean.valueOf(ApplicationConfig.getInstance().get("${entity.auth.user.aes.enable}", "false"));
-        Long jwtMillis = Long.valueOf(ApplicationConfig.getInstance().get("${entity.auth.user.jwt.millis}", "600000"));
-        String aesPublicKey = ApplicationConfig.getInstance().get("${entity.security.encrypt.AES.publicKey}", "ccait");
+        Boolean jwtEnable = Boolean.valueOf(ApplicationConfig.getInstance().get("${ccweb.auth.user.jwt.enable}", "false"));
+        Boolean aesEnable = Boolean.valueOf(ApplicationConfig.getInstance().get("${ccweb.auth.user.aes.enable}", "false"));
+        Long jwtMillis = Long.valueOf(ApplicationConfig.getInstance().get("${ccweb.auth.user.jwt.millis}", "600000"));
+        String aesPublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.publicKey}", "ccait");
 
         if(jwtEnable) {
             String token = JwtUtils.createJWT(jwtMillis, user);

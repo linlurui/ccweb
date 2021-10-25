@@ -14,8 +14,8 @@ package ccait.ccweb.resolver;
 
 import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.utils.FastJsonUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +35,7 @@ import java.util.Map;
 @Configuration
 public class RequestArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private static final Logger log = LogManager.getLogger( RequestArgumentResolver.class );
+    private static final Logger log = LoggerFactory.getLogger( RequestArgumentResolver.class );
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {

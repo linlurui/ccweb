@@ -7,8 +7,8 @@ import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.model.DownloadData;
 import ccait.ccweb.model.ResponseData;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -22,12 +22,12 @@ import java.util.UUID;
 
 @Component
 @Scope("prototype")
-@Trigger(tablename = "${entity.table.role}")
+@Trigger(tablename = "${ccweb.table.role}")
 public final class RoleTableTrigger implements ITrigger {
 
-    private static final Logger log = LogManager.getLogger( RoleTableTrigger.class );
+    private static final Logger log = LoggerFactory.getLogger( RoleTableTrigger.class );
 
-    @Value("${entity.table.reservedField.roleId:roleId}")
+    @Value("${ccweb.table.reservedField.roleId:roleId}")
     private String roleIdField;
 
     @Override

@@ -10,38 +10,28 @@
 
 package ccait.ccweb;
 
-import entity.query.core.ApplicationConfig;
-import entity.tool.util.StringUtils;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.ConfigurationSource;
-import org.apache.logging.log4j.core.config.Configurator;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.web.reactive.config.EnableWebFlux;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-
 
 //@EnableHystrixDashboard
 //@EnableDiscoveryClient
 //@EnableFeignClients
 //@EnableHystrix
 //@EnableZuulProxy
-@EnableEurekaClient
+//@EnableEurekaClient
 @EnableWebFlux
 @SpringBootApplication( exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class} )
 public class CcwebAppliction {
 
-    private static final Logger log = LogManager.getLogger( CcwebAppliction.class );
+    private static final Logger log = LoggerFactory.getLogger( CcwebAppliction.class );
 
     public static void main(String[] args) throws FileNotFoundException, MalformedURLException {
         run(null, args);
@@ -55,52 +45,6 @@ public class CcwebAppliction {
 
         else {
             app.run(clazz, args);
-        }
-
-        String path = null;
-        File file = null;
-
-        if(file==null || !file.exists()) {
-            if(StringUtils.isNotEmpty(ApplicationConfig.getInstance().get("${log4j.config.path}"))) {
-                String logConfigPath = System.getProperty("user.dir") + "/" +
-                        ApplicationConfig.getInstance().get("${log4j.config.path}");
-
-                file = new File(logConfigPath);
-            }
-        }
-
-        if(!file.exists()) {
-            try {
-                path = Thread.currentThread().getContextClassLoader()
-                        .getResource(ApplicationConfig.getInstance()
-                                .get("${log4j.config.path}")).toURI().getPath();
-
-                file = new File(path);
-            } catch (URISyntaxException e) {
-                System.out.println("URISyntaxException message=======>" + e.getMessage());
-            }
-        }
-
-        if(!file.exists()) {
-            String property = System.getProperty("catalina.home");
-            path =property+ File.separator + "conf" + File.separator + "log4j2.xml";
-            file = new File(path);
-        }
-
-        if(file.exists() && StringUtils.isNotEmpty(path)) {
-
-            PropertyConfigurator.configure(path);
-
-            if(file.exists()) {
-
-                ConfigurationSource source = new ConfigurationSource(new FileInputStream(path), file);
-
-                if (source != null) {
-                    Configurator.initialize(null, source);
-                }
-            }
-
-            System.out.println("Current log4j path: " + path);
         }
 
         log.info( "---------------------------------------------------------------------------------------" );

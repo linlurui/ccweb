@@ -288,15 +288,15 @@ public abstract class AbstractBaseController {
     }
 
     protected String base64Encode(String data) throws Exception {
-        return EncryptionUtil.base64Encode(data, ApplicationConfig.getInstance().get("${entity.encoding}", "UTF-8"));
+        return EncryptionUtil.base64Encode(data, ApplicationConfig.getInstance().get("${ccweb.encoding}", "UTF-8"));
     }
 
     protected String base64EncodeSafe(String data) throws Exception {
-        return EncryptionUtil.base64EncodeSafe(data, ApplicationConfig.getInstance().get("${entity.encoding}", "UTF-8"));
+        return EncryptionUtil.base64EncodeSafe(data, ApplicationConfig.getInstance().get("${ccweb.encoding}", "UTF-8"));
     }
 
     protected String base64Decode(String data) throws Exception {
-        return EncryptionUtil.base64Decode(data, ApplicationConfig.getInstance().get("${entity.encoding}", "UTF-8"));
+        return EncryptionUtil.base64Decode(data, ApplicationConfig.getInstance().get("${ccweb.encoding}", "UTF-8"));
     }
 
     public static boolean hasPrimitive(Object obj) {
@@ -309,8 +309,8 @@ public abstract class AbstractBaseController {
 
     protected String md5(String str) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
-        return EncryptionUtil.md5(str, ApplicationConfig.getInstance().get("${entity.security.encrypt.MD5.publicKey}", "ccait"),
-                ApplicationConfig.getInstance().get("${entity.encoding}", "UTF-8"));
+        return EncryptionUtil.md5(str, ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MD5.publicKey}", "ccait"),
+                ApplicationConfig.getInstance().get("${ccweb.encoding}", "UTF-8"));
     }
 
     public String getRequestPostString() throws IOException {

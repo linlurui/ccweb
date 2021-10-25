@@ -13,6 +13,8 @@
     <modules>
         <module>ccweb-core</module>
         <module>ccweb-api</module>
+        <module>ccweb-office</module>
+        <module>ccweb-repo</module>
         <module>ccweb-start</module>
     </modules>
 
@@ -33,11 +35,29 @@
     </properties>
     <repositories>
         <repository>
-            <id>entityQueryable</id>
-            <url>https://raw.github.com/linlurui/entityQueryable/1.0</url>
-            <snapshots>
-                <enabled>true</enabled>
+            <id>ali</id>
+            <url>https://maven.aliyun.com/repository/central</url>
+            <releases>
                 <updatePolicy>always</updatePolicy>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+                <enabled>true</enabled>
+                <checksumPolicy>ignore</checksumPolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>entityQueryable</id>
+            <url>https://gitee.com/ccait/entityqueryable/raw/1.0</url>
+            <releases>
+                <updatePolicy>always</updatePolicy>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+                <enabled>true</enabled>
+                <checksumPolicy>ignore</checksumPolicy>
             </snapshots>
         </repository>
     </repositories>
@@ -67,12 +87,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-web</artifactId>
-            <version>2.8.2</version>
-            <scope>runtime</scope>
-        </dependency>
 
         <dependency>
             <groupId>com.lmax</groupId>
@@ -108,10 +122,6 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.46</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-test</artifactId>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -145,6 +155,13 @@
         </dependency>
 
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>gitee</id>
+            <url>file:${project.build.directory}/deploy</url>
+        </repository>
+    </distributionManagement>
 
     <dependencyManagement>
         <dependencies>
@@ -186,38 +203,38 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.1</version>
-                <configuration>
-                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/ccweb</altDeploymentRepository>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version >0.12</version>
-                <configuration>
-                    <message >Maven artifacts for ${project.version}</message>
-                    <noJekyll>true</noJekyll>
-                    <outputDirectory>${project.build.directory}/ccweb</outputDirectory><!--本地jar地址-->
-                    <branch>refs/heads/1.0</branch><!--分支的名称-->
-                    <merge>true</merge>
-                    <includes>
-                        <include>**/*</include>
-                    </includes>
-                    <repositoryName>ccweb</repositoryName><!--对应github上创建的仓库名称 name-->
-                    <repositoryOwner>linlurui</repositoryOwner><!--github 仓库所有者即登录用户名-->
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>deploy</phase>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <artifactId>maven-deploy-plugin</artifactId>-->
+<!--                <version>2.8.1</version>-->
+<!--                <configuration>-->
+<!--                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/ccweb</altDeploymentRepository>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>com.github.github</groupId>-->
+<!--                <artifactId>site-maven-plugin</artifactId>-->
+<!--                <version >0.12</version>-->
+<!--                <configuration>-->
+<!--                    <message >Maven artifacts for ${project.version}</message>-->
+<!--                    <noJekyll>true</noJekyll>-->
+<!--                    <outputDirectory>${project.build.directory}/ccweb</outputDirectory>&lt;!&ndash;本地jar地址&ndash;&gt;-->
+<!--                    <branch>refs/heads/1.0</branch>&lt;!&ndash;分支的名称&ndash;&gt;-->
+<!--                    <merge>true</merge>-->
+<!--                    <includes>-->
+<!--                        <include>**/*</include>-->
+<!--                    </includes>-->
+<!--                    <repositoryName>ccweb</repositoryName>&lt;!&ndash;对应github上创建的仓库名称 name&ndash;&gt;-->
+<!--                    <repositoryOwner>linlurui</repositoryOwner>&lt;!&ndash;github 仓库所有者即登录用户名&ndash;&gt;-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>site</goal>-->
+<!--                        </goals>-->
+<!--                        <phase>deploy</phase>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 </project>

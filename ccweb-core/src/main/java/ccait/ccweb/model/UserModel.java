@@ -20,7 +20,7 @@ import java.util.List;
 
 @Component
 @Scope("prototype")
-@Tablename("${entity.table.user}")
+@Tablename("${ccweb.table.user}")
 public class UserModel extends Queryable<UserModel> {
 
 //  @Autowired
@@ -29,7 +29,7 @@ public class UserModel extends Queryable<UserModel> {
 //  protected HttpServletRequest request;
 
   @AutoIncrement
-  @Fieldname("${entity.table.reservedField.userId:userId}")
+  @Fieldname("${ccweb.table.reservedField.userId:userId}")
   private Integer userId;
 
   @PrimaryKey
@@ -39,16 +39,16 @@ public class UserModel extends Queryable<UserModel> {
   @Fieldname("password")
   private String password;
 
-  @Fieldname("${entity.table.reservedField.createOn:createOn}")
+  @Fieldname("${ccweb.table.reservedField.createOn:createOn}")
   private Date createOn;
 
-  @Fieldname("${entity.table.reservedField.createBy:createBy}")
+  @Fieldname("${ccweb.table.reservedField.createBy:createBy}")
   private Integer createBy;
 
-  @Fieldname("${entity.table.reservedField.modifyOn:modifyOn}")
+  @Fieldname("${ccweb.table.reservedField.modifyOn:modifyOn}")
   private Date modifyOn;
 
-  @Fieldname("${entity.table.reservedField.modifyBy:modifyBy}")
+  @Fieldname("${ccweb.table.reservedField.modifyBy:modifyBy}")
   private Integer modifyBy;
 
   @Fieldname("type")

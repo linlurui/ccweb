@@ -42,22 +42,22 @@ import static ccait.ccweb.utils.StaticVars.*;
 
 @Component
 @Scope("prototype")
-@Trigger(tablename = "${entity.table.user}")
+@Trigger(tablename = "${ccweb.table.user}")
 @Order(value = -2147483647)
 public final class UserTableTrigger implements ITrigger {
 
     private static final Logger log = LoggerFactory.getLogger( UserTableTrigger.class );
 
-    @Value("${entity.security.admin.username:admin}")
+    @Value("${ccweb.security.admin.username:admin}")
     private String admin;
 
-    @Value("${entity.table.reservedField.userId:userId}")
+    @Value("${ccweb.table.reservedField.userId:userId}")
     private String userIdField;
 
     @PostConstruct
     private void construct() {
-        admin = ApplicationConfig.getInstance().get("${entity.security.admin.username}", admin);
-        userIdField = ApplicationConfig.getInstance().get("${entity.table.reservedField.userId}", userIdField);
+        admin = ApplicationConfig.getInstance().get("${ccweb.security.admin.username}", admin);
+        userIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userId}", userIdField);
     }
 
     @Override

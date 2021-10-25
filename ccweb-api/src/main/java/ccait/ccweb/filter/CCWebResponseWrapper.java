@@ -15,8 +15,8 @@ package ccait.ccweb.filter;
 import ccait.ccweb.model.ResponseData;
 import ccait.ccweb.utils.FastJsonUtils;
 import entity.tool.util.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
@@ -36,7 +36,7 @@ public class CCWebResponseWrapper extends HttpServletResponseWrapper {
 
     private String body;
 
-    private static final Logger log = LogManager.getLogger( CCWebResponseWrapper.class );
+    private static final Logger log = LoggerFactory.getLogger( CCWebResponseWrapper.class );
 
     public CCWebResponseWrapper(HttpServletResponse response) throws IOException {
         super(response);

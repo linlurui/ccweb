@@ -6,8 +6,8 @@ import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.model.DownloadData;
 import ccait.ccweb.model.ResponseData;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,12 +21,12 @@ import java.util.UUID;
 
 @Component
 @Scope("prototype")
-@Trigger(tablename = "${entity.table.group}")
+@Trigger(tablename = "${ccweb.table.group}")
 public final class GroupTableTrigger implements ITrigger {
 
-    private static final Logger log = LogManager.getLogger( GroupTableTrigger.class );
+    private static final Logger log = LoggerFactory.getLogger( GroupTableTrigger.class );
 
-    @Value("${entity.table.reservedField.groupId:groupId}")
+    @Value("${ccweb.table.reservedField.groupId:groupId}")
     private String groupIdField;
 
     @Override

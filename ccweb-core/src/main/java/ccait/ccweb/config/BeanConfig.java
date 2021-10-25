@@ -12,8 +12,8 @@
 package ccait.ccweb.config;
 
 import ccait.ccweb.annotation.Trigger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -30,7 +30,7 @@ import static ccait.ccweb.utils.StaticVars.LOG_PRE_SUFFIX;
 @Configuration
 public class BeanConfig  implements BeanDefinitionRegistryPostProcessor {
 
-    private static final Logger log = LogManager.getLogger( BeanConfig.class );
+    private static final Logger log = LoggerFactory.getLogger( BeanConfig.class );
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {

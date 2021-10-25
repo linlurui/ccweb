@@ -60,25 +60,25 @@ public final class DefaultTrigger {
 
     private static final Logger log = LoggerFactory.getLogger( DefaultTrigger.class );
 
-    @Value("${entity.table.reservedField.userPath:userPath}")
+    @Value("${ccweb.table.reservedField.userPath:userPath}")
     private String userPathField;
 
-    @Value("${entity.table.reservedField.createOn:createOn}")
+    @Value("${ccweb.table.reservedField.createOn:createOn}")
     private String createOnField;
 
-    @Value("${entity.table.reservedField.modifyOn:modifyOn}")
+    @Value("${ccweb.table.reservedField.modifyOn:modifyOn}")
     private String modifyOnField;
 
-    @Value("${entity.table.reservedField.createBy:createBy}")
+    @Value("${ccweb.table.reservedField.createBy:createBy}")
     private String createByField;
 
-    @Value("${entity.table.reservedField.modifyBy:modifyBy}")
+    @Value("${ccweb.table.reservedField.modifyBy:modifyBy}")
     private String modifyByField;
 
-    @Value("${entity.security.encrypt.AES.publicKey:ccait}")
+    @Value("${ccweb.security.encrypt.AES.publicKey:ccait}")
     private String aesPublicKey;
 
-    @Value("${entity.encoding:UTF-8}")
+    @Value("${ccweb.encoding:UTF-8}")
     private String encoding;
 
     @Autowired
@@ -89,13 +89,13 @@ public final class DefaultTrigger {
     @PostConstruct
     private void construct() {
         datasourceId = (String) ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE);
-        aesPublicKey = ApplicationConfig.getInstance().get("${entity.security.encrypt.AES.publicKey}", aesPublicKey);
-        encoding = ApplicationConfig.getInstance().get("${entity.encoding}", encoding);
-        createOnField = ApplicationConfig.getInstance().get("${entity.table.reservedField.createOn}", createOnField);
-        modifyOnField = ApplicationConfig.getInstance().get("${entity.table.reservedField.modifyOn}", modifyOnField);
-        modifyByField = ApplicationConfig.getInstance().get("${entity.table.reservedField.modifyBy}", modifyByField);
-        userPathField = ApplicationConfig.getInstance().get("${entity.table.reservedField.userPath}", userPathField);
-        createByField = ApplicationConfig.getInstance().get("${entity.table.reservedField.createBy}", createByField);
+        aesPublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.publicKey}", aesPublicKey);
+        encoding = ApplicationConfig.getInstance().get("${ccweb.encoding}", encoding);
+        createOnField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createOn}", createOnField);
+        modifyOnField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.modifyOn}", modifyOnField);
+        modifyByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.modifyBy}", modifyByField);
+        userPathField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userPath}", userPathField);
+        createByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField);
     }
 
     @OnInsert
@@ -335,9 +335,9 @@ public final class DefaultTrigger {
             }
 
 
-            String base64Fields = ApplicationConfig.getInstance().get("${entity.security.encrypt.BASE64.fields}", "");
+            String base64Fields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.BASE64.fields}", "");
             List<String> base64FieldList = StringUtils.splitString2List(base64Fields, ",");
-            String aesFields = ApplicationConfig.getInstance().get("${entity.security.encrypt.AES.fields}", "");
+            String aesFields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.fields}", "");
             List<String> aesFieldList = StringUtils.splitString2List(aesFields, ",");
 
             for(int i=0; i<list.size(); i++) {
@@ -346,7 +346,7 @@ public final class DefaultTrigger {
                 }
                 List<String> keyList = (List<String>) list.get(i).keySet().stream().map(a->a!=null ? a.toString() : "").collect(Collectors.toList());
                 for(Object key : keyList) {
-                    if(ApplicationConfig.getInstance().get(String.format("${entity.table.display.%s.%s}", BaseController.getTablename(), key.toString())).equals("hidden")) {
+                    if(ApplicationConfig.getInstance().get(String.format("${ccweb.table.display.%s.%s}", BaseController.getTablename(), key.toString())).equals("hidden")) {
                         list.get(i).remove(key);
                     }
 

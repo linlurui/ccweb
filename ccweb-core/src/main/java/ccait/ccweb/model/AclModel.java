@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @Component
 @Scope("prototype")
-@Tablename("${entity.table.acl}")
+@Tablename("${ccweb.table.acl}")
 public class AclModel extends Queryable<AclModel> {
   @PrimaryKey
   @Fieldname("aclId")
@@ -67,16 +67,16 @@ public class AclModel extends Queryable<AclModel> {
     this.modifyBy = modifyBy;
   }
 
-  @Fieldname("${entity.table.reservedField.createOn:createOn}")
+  @Fieldname("${ccweb.table.reservedField.createOn:createOn}")
   private Date createOn;
 
-  @Fieldname("${entity.table.reservedField.createBy:createBy}")
+  @Fieldname("${ccweb.table.reservedField.createBy:createBy}")
   private Integer createBy;
 
-  @Fieldname("${entity.table.reservedField.modifyOn:modifyOn}")
+  @Fieldname("${ccweb.table.reservedField.modifyOn:modifyOn}")
   private Date modifyOn;
 
-  @Fieldname("${entity.table.reservedField.modifyBy:modifyBy}")
+  @Fieldname("${ccweb.table.reservedField.modifyBy:modifyBy}")
   private Integer modifyBy;
 
   public Integer getAclId() {

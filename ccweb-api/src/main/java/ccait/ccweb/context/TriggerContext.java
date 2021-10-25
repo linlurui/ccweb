@@ -17,10 +17,10 @@ import ccait.ccweb.enums.EventType;
 import ccait.ccweb.model.EventInfo;
 import ccait.ccweb.trigger.ITrigger;
 import entity.tool.util.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Order;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +37,7 @@ import static ccait.ccweb.utils.StaticVars.LOG_PRE_SUFFIX;
 @Order(-55555)
 public final class TriggerContext {
 
-    private static final Logger log = LogManager.getLogger( TriggerContext.class );
+    private static final Logger log = LoggerFactory.getLogger( TriggerContext.class );
 
     private static final String DEFAULT_ALL_TABLE_EVENT = "CCAIT_WEB_DEFAULT_ALL_TABLE_EVENT";
 
@@ -286,7 +286,7 @@ public final class TriggerContext {
             } catch(Exception e) {
 
                 if(e.getCause() != null) {
-                    log.error(e.getCause());
+                    log.error("TriggerContext has error: " + e.getMessage(), e.getCause());
                     throw new IllegalAccessException(e.getCause().getMessage());
                 }
 

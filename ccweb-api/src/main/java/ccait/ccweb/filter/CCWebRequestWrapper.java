@@ -13,8 +13,8 @@ package ccait.ccweb.filter;
 
 import ccait.ccweb.utils.FastJsonUtils;
 import entity.tool.util.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.MultiValueMap;
@@ -38,7 +38,7 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
     private String postString;
     private HttpServletRequest req;
 
-    private static final Logger log = LogManager.getLogger(CCWebRequestWrapper.class);
+    private static final Logger log = LoggerFactory.getLogger(CCWebRequestWrapper.class);
 
     public CCWebRequestWrapper(HttpServletRequest request, Map newParams)
     {
@@ -105,7 +105,7 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
             }
 
         } catch (Exception e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
         }
     }
 

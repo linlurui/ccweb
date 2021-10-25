@@ -1,0 +1,271 @@
+/**
+ *
+ *  License: http://www.apache.org/licenses/LICENSE-2.0
+ *  Home page: https://github.com/linlurui/ccweb
+ *  Note: to build on java, include the jdk1.8+ compiler symbol (and yes,
+ *  I know the difference between language and runtime versions; this is a compromise).
+ * @author linlurui
+ * @Date Date: 2019-02-10
+ */
+
+package ccait.ccweb.word;
+
+public class DocType {
+    public static final String ENTITY = "<!DOCTYPE 根元素标签名 [\n" +
+            "<!ENTITY nbsp  \" \">\n" +
+            "<!ENTITY iexcl  \"¡\">\n" +
+            "<!ENTITY cent  \"¢\">\n" +
+            "<!ENTITY pound  \"£\">\n" +
+            "<!ENTITY curren  \"¤\">\n" +
+            "<!ENTITY yen  \"¥\">\n" +
+            "<!ENTITY brvbar  \"¦\">\n" +
+            "<!ENTITY sect  \"§\">\n" +
+            "<!ENTITY uml  \"¨\">\n" +
+            "<!ENTITY copy  \"©\">\n" +
+            "<!ENTITY ordf  \"ª\">\n" +
+            "<!ENTITY laquo  \"«\">\n" +
+            "<!ENTITY not  \"¬\">\n" +
+            "<!ENTITY shy  \" \">\n" +
+            "<!ENTITY reg  \"®\">\n" +
+            "<!ENTITY macr  \"¯\">\n" +
+            "<!ENTITY deg  \"°\">\n" +
+            "<!ENTITY plusmn  \"±\">\n" +
+            "<!ENTITY sup2  \"²\">\n" +
+            "<!ENTITY sup3  \"³\">\n" +
+            "<!ENTITY acute  \"´\">\n" +
+            "<!ENTITY micro  \"µ\">\n" +
+            "<!ENTITY para  \"¶\">\n" +
+            "<!ENTITY middot  \"·\">\n" +
+            "<!ENTITY cedil  \"¸\">\n" +
+            "<!ENTITY sup1  \"¹\">\n" +
+            "<!ENTITY ordm  \"º\">\n" +
+            "<!ENTITY raquo  \"»\">\n" +
+            "<!ENTITY frac14  \"¼\">\n" +
+            "<!ENTITY frac12  \"½\">\n" +
+            "<!ENTITY frac34  \"¾\">\n" +
+            "<!ENTITY iquest  \"¿\">\n" +
+            "<!ENTITY Agrave  \"À\">\n" +
+            "<!ENTITY Aacute  \"Á\">\n" +
+            "<!ENTITY Acirc  \"Â\">\n" +
+            "<!ENTITY Atilde  \"Ã\">\n" +
+            "<!ENTITY Auml  \"Ä\">\n" +
+            "<!ENTITY Aring  \"Å\">\n" +
+            "<!ENTITY AElig  \"Æ\">\n" +
+            "<!ENTITY Ccedil  \"Ç\">\n" +
+            "<!ENTITY Egrave  \"È\">\n" +
+            "<!ENTITY Eacute  \"É\">\n" +
+            "<!ENTITY Ecirc  \"Ê\">\n" +
+            "<!ENTITY Euml  \"Ë\">\n" +
+            "<!ENTITY Igrave  \"Ì\">\n" +
+            "<!ENTITY Iacute  \"Í\">\n" +
+            "<!ENTITY Icirc  \"Î\">\n" +
+            "<!ENTITY Iuml  \"Ï\">\n" +
+            "<!ENTITY ETH  \"Ð\">\n" +
+            "<!ENTITY Ntilde  \"Ñ\">\n" +
+            "<!ENTITY Ograve  \"Ò\">\n" +
+            "<!ENTITY Oacute  \"Ó\">\n" +
+            "<!ENTITY Ocirc  \"Ô\">\n" +
+            "<!ENTITY Otilde  \"Õ\">\n" +
+            "<!ENTITY Ouml  \"Ö\">\n" +
+            "<!ENTITY times  \"×\">\n" +
+            "<!ENTITY Oslash  \"Ø\">\n" +
+            "<!ENTITY Ugrave  \"Ù\">\n" +
+            "<!ENTITY Uacute  \"Ú\">\n" +
+            "<!ENTITY Ucirc  \"Û\">\n" +
+            "<!ENTITY Uuml  \"Ü\">\n" +
+            "<!ENTITY Yacute  \"Ý\">\n" +
+            "<!ENTITY THORN  \"Þ\">\n" +
+            "<!ENTITY szlig  \"ß\">\n" +
+            "<!ENTITY agrave  \"à\">\n" +
+            "<!ENTITY aacute  \"á\">\n" +
+            "<!ENTITY acirc  \"â\">\n" +
+            "<!ENTITY atilde  \"ã\">\n" +
+            "<!ENTITY auml  \"ä\">\n" +
+            "<!ENTITY aring  \"å\">\n" +
+            "<!ENTITY aelig  \"æ\">\n" +
+            "<!ENTITY ccedil  \"ç\">\n" +
+            "<!ENTITY egrave  \"è\">\n" +
+            "<!ENTITY eacute  \"é\">\n" +
+            "<!ENTITY ecirc  \"ê\">\n" +
+            "<!ENTITY euml  \"ë\">\n" +
+            "<!ENTITY igrave  \"ì\">\n" +
+            "<!ENTITY iacute  \"í\">\n" +
+            "<!ENTITY icirc  \"î\">\n" +
+            "<!ENTITY iuml  \"ï\">\n" +
+            "<!ENTITY eth  \"ð\">\n" +
+            "<!ENTITY ntilde  \"ñ\">\n" +
+            "<!ENTITY ograve  \"ò\">\n" +
+            "<!ENTITY oacute  \"ó\">\n" +
+            "<!ENTITY ocirc  \"ô\">\n" +
+            "<!ENTITY otilde  \"õ\">\n" +
+            "<!ENTITY ouml  \"ö\">\n" +
+            "<!ENTITY divide  \"÷\">\n" +
+            "<!ENTITY oslash  \"ø\">\n" +
+            "<!ENTITY ugrave  \"ù\">\n" +
+            "<!ENTITY uacute  \"ú\">\n" +
+            "<!ENTITY ucirc  \"û\">\n" +
+            "<!ENTITY uuml  \"ü\">\n" +
+            "<!ENTITY yacute  \"ý\">\n" +
+            "<!ENTITY thorn  \"þ\">\n" +
+            "<!ENTITY yuml  \"ÿ\">\n" +
+            "<!ENTITY fnof  \"ƒ\">\n" +
+            "<!ENTITY larr  \"←\">\n" +
+            "<!ENTITY uarr  \"↑\">\n" +
+            "<!ENTITY rarr  \"→\">\n" +
+            "<!ENTITY darr  \"↓\">\n" +
+            "<!ENTITY harr  \"↔\">\n" +
+            "<!ENTITY crarr  \"↵\">\n" +
+            "<!ENTITY lArr  \"⇐\">\n" +
+            "<!ENTITY uArr  \"⇑\">\n" +
+            "<!ENTITY rArr  \"⇒\">\n" +
+            "<!ENTITY dArr  \"⇓\">\n" +
+            "<!ENTITY hArr  \"⇔\">\n" +
+            "<!ENTITY forall  \"∀\">\n" +
+            "<!ENTITY part  \"∂\">\n" +
+            "<!ENTITY exist  \"∃\">\n" +
+            "<!ENTITY empty  \"∅\">\n" +
+            "<!ENTITY nabla  \"∇\">\n" +
+            "<!ENTITY isin  \"∈\">\n" +
+            "<!ENTITY notin  \"∉\">\n" +
+            "<!ENTITY ni  \"∋\">\n" +
+            "<!ENTITY prod  \"∏\">\n" +
+            "<!ENTITY sum  \"∑\">\n" +
+            "<!ENTITY minus  \"−\">\n" +
+            "<!ENTITY lowast  \"∗\">\n" +
+            "<!ENTITY radic  \"√\">\n" +
+            "<!ENTITY prop  \"∝\">\n" +
+            "<!ENTITY infin  \"∞\">\n" +
+            "<!ENTITY ang  \"∠\">\n" +
+            "<!ENTITY and  \"∧\">\n" +
+            "<!ENTITY or  \"∨\">\n" +
+            "<!ENTITY cap  \"∩\">\n" +
+            "<!ENTITY cup  \"∪\">\n" +
+            "<!ENTITY int  \"∫\">\n" +
+            "<!ENTITY there4  \"∴\">\n" +
+            "<!ENTITY sim  \"∼\">\n" +
+            "<!ENTITY cong  \"≅\">\n" +
+            "<!ENTITY asymp  \"≈\">\n" +
+            "<!ENTITY ne  \"≠\">\n" +
+            "<!ENTITY equiv  \"≡\">\n" +
+            "<!ENTITY le  \"≤\">\n" +
+            "<!ENTITY ge  \"≥\">\n" +
+            "<!ENTITY sub  \"⊂\">\n" +
+            "<!ENTITY sup  \"⊃\">\n" +
+            "<!ENTITY nsub  \"⊄\">\n" +
+            "<!ENTITY sube  \"⊆\">\n" +
+            "<!ENTITY supe  \"⊇\">\n" +
+            "<!ENTITY oplus  \"⊕\">\n" +
+            "<!ENTITY otimes  \"⊗\">\n" +
+            "<!ENTITY perp  \"⊥\">\n" +
+            "<!ENTITY sdot  \"⋅\">\n" +
+            "<!ENTITY bull  \"•\">\n" +
+            "<!ENTITY hellip  \"…\">\n" +
+            "<!ENTITY prime  \"′\">\n" +
+            "<!ENTITY Prime  \"″\">\n" +
+            "<!ENTITY oline  \"‾\">\n" +
+            "<!ENTITY frasl  \"⁄\">\n" +
+            "<!ENTITY lceil  \"⌈\">\n" +
+            "<!ENTITY rceil  \"⌉\">\n" +
+            "<!ENTITY lfloor  \"⌊\">\n" +
+            "<!ENTITY rfloor  \"⌋\">\n" +
+            "<!ENTITY lang  \"?\">\n" +
+            "<!ENTITY rang  \"?\">\n" +
+            "<!ENTITY spades  \"♠\">\n" +
+            "<!ENTITY clubs  \"♣\">\n" +
+            "<!ENTITY hearts  \"♥\">\n" +
+            "<!ENTITY diams  \"♦\">\n" +
+            "<!ENTITY weierp  \"℘\">\n" +
+            "<!ENTITY image  \"ℑ\">\n" +
+            "<!ENTITY real  \"ℜ\">\n" +
+            "<!ENTITY trade  \"™\">\n" +
+            "<!ENTITY alefsym \"ℵ\">\n" +
+            "<!ENTITY Alpha  \"Α\">\n" +
+            "<!ENTITY Beta  \"Β\">\n" +
+            "<!ENTITY Gamma  \"Γ\">\n" +
+            "<!ENTITY Delta  \"Δ\">\n" +
+            "<!ENTITY Epsilon \"Ε\">\n" +
+            "<!ENTITY Zeta  \"Ζ\">\n" +
+            "<!ENTITY Eta  \"Η\">\n" +
+            "<!ENTITY Theta  \"Θ\">\n" +
+            "<!ENTITY Iota  \"Ι\">\n" +
+            "<!ENTITY Kappa  \"Κ\">\n" +
+            "<!ENTITY Lambda  \"Λ\">\n" +
+            "<!ENTITY Mu  \"Μ\">\n" +
+            "<!ENTITY Nu  \"Ν\">\n" +
+            "<!ENTITY Xi  \"Ξ\">\n" +
+            "<!ENTITY Omicron \"Ο\">\n" +
+            "<!ENTITY Pi  \"Π\">\n" +
+            "<!ENTITY Rho  \"Ρ\">\n" +
+            "<!ENTITY Sigma  \"Σ\">\n" +
+            "<!ENTITY Tau  \"Τ\">\n" +
+            "<!ENTITY Upsilon \"Υ\">\n" +
+            "<!ENTITY Phi  \"Φ\">\n" +
+            "<!ENTITY Chi  \"Χ\">\n" +
+            "<!ENTITY Psi  \"Ψ\">\n" +
+            "<!ENTITY Omega  \"Ω\">\n" +
+            "<!ENTITY alpha  \"α\">\n" +
+            "<!ENTITY beta  \"β\">\n" +
+            "<!ENTITY gamma  \"γ\">\n" +
+            "<!ENTITY delta  \"δ\">\n" +
+            "<!ENTITY epsilon \"ε\">\n" +
+            "<!ENTITY zeta  \"ζ\">\n" +
+            "<!ENTITY eta  \"η\">\n" +
+            "<!ENTITY theta  \"θ\">\n" +
+            "<!ENTITY iota  \"ι\">\n" +
+            "<!ENTITY kappa  \"κ\">\n" +
+            "<!ENTITY lambda  \"λ\">\n" +
+            "<!ENTITY mu  \"μ\">\n" +
+            "<!ENTITY nu  \"ν\">\n" +
+            "<!ENTITY xi  \"ξ\">\n" +
+            "<!ENTITY omicron \"ο\">\n" +
+            "<!ENTITY pi  \"π\">\n" +
+            "<!ENTITY rho  \"ρ\">\n" +
+            "<!ENTITY sigmaf  \"ς\">\n" +
+            "<!ENTITY sigma  \"σ\">\n" +
+            "<!ENTITY tau  \"τ\">\n" +
+            "<!ENTITY upsilon \"υ\">\n" +
+            "<!ENTITY phi  \"φ\">\n" +
+            "<!ENTITY chi  \"χ\">\n" +
+            "<!ENTITY psi  \"ψ\">\n" +
+            "<!ENTITY omega  \"ω\">\n" +
+            "<!ENTITY thetasy \"ϑ\">\n" +
+            "<!ENTITY upsih  \"ϒ\">\n" +
+            "<!ENTITY piv  \"ϖ\">\n" +
+            "<!ENTITY amp \" and \">\n" +
+            "<!ENTITY lt  \"<\">\n" +
+            "<!ENTITY gt  \">\">\n" +
+            "<!ENTITY OElig  \"Œ\">\n" +
+            "<!ENTITY oelig  \"œ\">\n" +
+            "<!ENTITY Scaron  \"Š\">\n" +
+            "<!ENTITY scaron  \"š\">\n" +
+            "<!ENTITY Yuml  \"Ÿ\">\n" +
+            "<!ENTITY quot  \"'\">\n" +
+            "<!ENTITY ensp  \" \">\n" +
+            "<!ENTITY emsp  \" \">\n" +
+            "<!ENTITY thinsp \" \">\n" +
+            "<!ENTITY zwnj  \"‌\">\n" +
+            "<!ENTITY zwj  \"‍\">\n" +
+            "<!ENTITY lrm  \"‎\">\n" +
+            "<!ENTITY rlm  \"‏\">\n" +
+            "<!ENTITY ndash  \"–\">\n" +
+            "<!ENTITY mdash  \"—\">\n" +
+            "<!ENTITY lsquo  \"‘\">\n" +
+            "<!ENTITY rsquo  \"’\">\n" +
+            "<!ENTITY sbquo  \"‚\">\n" +
+            "<!ENTITY ldquo  \"“\">\n" +
+            "<!ENTITY rdquo  \"”\">\n" +
+            "<!ENTITY bdquo  \"„\">\n" +
+            "<!ENTITY dagger  \"†\">\n" +
+            "<!ENTITY Dagger  \"‡\">\n" +
+            "<!ENTITY permil  \"‰\">\n" +
+            "<!ENTITY lsaquo  \"‹\">\n" +
+            "<!ENTITY rsaquo  \"›\">\n" +
+            "<!ENTITY euro  \"€\">\n" +
+            "]>";
+}
+
+
+
+
+
+

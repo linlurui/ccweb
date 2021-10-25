@@ -55,15 +55,15 @@ public class ExcelListener extends AnalysisEventListener<Object> {
         this.entity = entity;
         this.headerList = headerList;
         this.tablename = tablename;
-        md5Fields = ApplicationConfig.getInstance().get("${entity.security.encrypt.MD5.fields}");
-        md5PublicKey = ApplicationConfig.getInstance().get("${entity.security.encrypt.MD5.publicKey}");
-        base64Fields = ApplicationConfig.getInstance().get("${entity.security.encrypt.BASE64.fields}");
-        macFields = ApplicationConfig.getInstance().get("${entity.security.encrypt.MAC.fields}");
-        shaFields = ApplicationConfig.getInstance().get("${entity.security.encrypt.SHA.fields}");
-        macPublicKey = ApplicationConfig.getInstance().get("${entity.security.encrypt.MAC.publicKey}");
-        aesFields = ApplicationConfig.getInstance().get("${entity.security.encrypt.AES.fields}");
-        aesPublicKey = ApplicationConfig.getInstance().get("${entity.security.encrypt.AES.publicKey}");
-        encoding = ApplicationConfig.getInstance().get("${entity.encoding}");
+        md5Fields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MD5.fields}");
+        md5PublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MD5.publicKey}");
+        base64Fields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.BASE64.fields}");
+        macFields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MAC.fields}");
+        shaFields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.SHA.fields}");
+        macPublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MAC.publicKey}");
+        aesFields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.fields}");
+        aesPublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.publicKey}");
+        encoding = ApplicationConfig.getInstance().get("${ccweb.encoding}");
     }
 
     /**

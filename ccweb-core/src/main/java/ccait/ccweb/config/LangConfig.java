@@ -2,8 +2,8 @@ package ccait.ccweb.config;
 
 import entity.query.core.ApplicationConfig;
 import entity.tool.util.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class LangConfig {
 
-    private static final Logger log = LogManager.getLogger(LangConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(LangConfig.class);
 
     private final static Map<String, String> configMap = new HashMap<String, String>();
 
@@ -41,7 +41,7 @@ public class LangConfig {
 
     private LangConfig() {
         try {
-            lang = ApplicationConfig.getInstance().get("${entity.lang}");
+            lang = ApplicationConfig.getInstance().get("${ccweb.lang}");
             init();
         } catch (FileNotFoundException e) {
             log.error(e.getMessage(), e);

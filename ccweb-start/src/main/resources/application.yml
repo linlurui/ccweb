@@ -1,13 +1,24 @@
 
-# 1.ccweb配置
-
+# 1.entityqueryable配置
 entity:
-  datasource: mysql #可通过url的{datasource}参数访问到该数据库，没有在此设置的environment不能通过url访问到
-  queryable:
-    configFile: db-config.xml #数据库配置路径
+  datasource:
+    activated: sqlite #可通过url的{datasource}参数访问到该数据库，没有在此设置的environment不能通过url访问到
+    #configFile: db-config.xml #数据库配置路径
+    environments:
+      sqlite:
+        default: true
+        driver: org.sqlite.JDBC
+        url: jdbc:sqlite:ccait.db
+
+
+# 2.ccweb配置
+ccweb:
+  lang: cn
   ignoreTotalCount: true #忽略查询总数
   package: ccait.ccweb.entites #实体类生成包路径
   suffix: Entity #实体类生成类名后辍
+  app-config:
+    table: appConfig #表名
   page: #分页配置选项
     maxSize: 50 #分页最大记录数默认值
   defaultDateByNow: false
@@ -110,18 +121,78 @@ entity:
 #    blackList:  #IP黑名单
 
 
-# 2.SpringCloud配置
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/ #注册中心
-server:
-  port: 8080 #端口号
 
-feign:
-  hystrix:
-    enabled: true
 
+# 3.logging配置
+logging:
+  config: classpath:logback.xml
+  kafka:
+    enabled: false
+    #多个broker用英文逗号分隔
+    broker: 127.0.0.1:9092
+    #创建Kafka的topic时使用
+    env: test
+  level:
+    com:
+      netflix:
+        discovery:
+          DiscoveryClient: OFF
+          InstanceInfoReplicato: OFF
+      alibaba:
+        druid:
+          pool:
+            DruidPooledPreparedStatement: OFF
+      sun:
+        jersey:
+          client: OFF
+    netflix:
+      discovery:
+        shared:
+          transport:
+            jersey:
+              AbstractJerseyEurekaHttpClient: OFF
+
+# log4j配置
+log4j:
+  config:
+    path: log4j2.xml #日志配置路径，可选
+  logger:
+    org:
+      springframework:
+        cloud: OFF
+
+# 4.websocket配置
+websocket:
+  url: ws://127.0.0.1:8777/websocket
+  enable: false
+
+
+# 5.微信授权配置
+weixin:
+  mp:
+    endpoint:
+      # 微信回调地址，默认为 /weixin/callback，如需自定义，请修改以下配置项
+      callback-url: /wechat/callback
+    security:
+      # 微信后台配置的 token
+      token: 1234567890
+      # 微信后台配置的消息加解密 aeskey
+      encodingAesKey: abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG
+      # #############################################################
+      # 微信 access token 过期刷新阈值，计算方法：
+      # 当前时间 - (获得token时间 + token 有效期 + 阈值) < 0 则刷新 token
+      # 默认为 token 失效前 5 分钟刷新
+      # #############################################################
+      refresh-token-threshold: 300
+    auth:
+      # APPID
+      appid: appid
+      # APP secret
+      secret: secret
+
+
+
+# 6.SpringCloud配置
 spring:
   application:
     name: ccait.ccweb #服务名
@@ -156,41 +227,19 @@ spring:
     timeout: 6000000
 
 
-# 3.log4j配置
-log4j:
-  config:
-    path: log4j2.xml #日志配置路径，可选
-  logger:
-    org:
-      springframework:
-        cloud: OFF
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/ #注册中心
 
 
-# 4.websocket配置
-websocket:
-  url: ws://127.0.0.1:8777/websocket
-  enable: false
+
+feign:
+  hystrix:
+    enabled: true
 
 
-# 5.微信授权配置
-weixin:
-  mp:
-    endpoint:
-      # 微信回调地址，默认为 /weixin/callback，如需自定义，请修改以下配置项
-      callback-url: /wechat/callback
-    security:
-      # 微信后台配置的 token
-      token: 1234567890
-      # 微信后台配置的消息加解密 aeskey
-      encodingAesKey: abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG
-      # #############################################################
-      # 微信 access token 过期刷新阈值，计算方法：
-      # 当前时间 - (获得token时间 + token 有效期 + 阈值) < 0 则刷新 token
-      # 默认为 token 失效前 5 分钟刷新
-      # #############################################################
-      refresh-token-threshold: 300
-    auth:
-      # APPID
-      appid: appid
-      # APP secret
-      secret: secret
+# 7.服务器配置
+server:
+  port: 8080 #端口号
+

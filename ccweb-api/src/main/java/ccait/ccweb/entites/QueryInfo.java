@@ -32,8 +32,8 @@ import entity.tool.util.DBUtils;
 import entity.tool.util.ReflectionUtils;
 import entity.tool.util.StringUtils;
 import org.apache.http.HttpException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -59,7 +59,7 @@ import static entity.tool.util.StringUtils.join;
 @Component
 public class QueryInfo implements Serializable {
 
-    private static final Logger log = LogManager.getLogger(QueryInfo.class);
+    private static final Logger log = LoggerFactory.getLogger(QueryInfo.class);
     private static QueryInfo context;
     @PostConstruct
     public void init() {
@@ -67,25 +67,25 @@ public class QueryInfo implements Serializable {
         context.request = this.request;
         // 初使化时将已静态化的request实例化
 
-        aesPublicKey = ApplicationConfig.getInstance().get("${entity.security.encrypt.AES.publicKey}", aesPublicKey);
-        encoding = ApplicationConfig.getInstance().get("${entity.encoding}", encoding);
-        groupIdField = ApplicationConfig.getInstance().get("${entity.table.reservedField.groupId}", groupIdField);
-        createByField = ApplicationConfig.getInstance().get("${entity.table.reservedField.createBy}", createByField);
+        aesPublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.publicKey}", aesPublicKey);
+        encoding = ApplicationConfig.getInstance().get("${ccweb.encoding}", encoding);
+        groupIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.groupId}", groupIdField);
+        createByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField);
     }
 
     @Autowired
     protected HttpServletRequest request;
 
-    @Value("${entity.table.reservedField.createBy:createBy}")
+    @Value("${ccweb.table.reservedField.createBy:createBy}")
     private String createByField;
 
-    @Value("${entity.table.reservedField.groupId:groupId}")
+    @Value("${ccweb.table.reservedField.groupId:groupId}")
     private String groupIdField;
 
-    @Value("${entity.security.encrypt.AES.publicKey:ccait}")
+    @Value("${ccweb.security.encrypt.AES.publicKey:ccait}")
     private String aesPublicKey;
 
-    @Value("${entity.encoding:UTF-8}")
+    @Value("${ccweb.encoding:UTF-8}")
     private String encoding;
 
     public PageInfo getPageInfo() {
@@ -617,9 +617,9 @@ public class QueryInfo implements Serializable {
             return id;
         }
 
-        String base64Fields = ApplicationConfig.getInstance().get("${entity.security.encrypt.BASE64.fields}", "");
+        String base64Fields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.BASE64.fields}", "");
         List<String> base64FieldList = StringUtils.splitString2List(base64Fields, ",");
-        String aesFields = ApplicationConfig.getInstance().get("${entity.security.encrypt.AES.fields}", "");
+        String aesFields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.fields}", "");
         List<String> aesFieldList = StringUtils.splitString2List(aesFields, ",");
 
         if(base64FieldList != null && base64FieldList.size() > 0) {
@@ -657,11 +657,11 @@ public class QueryInfo implements Serializable {
                     break;
             }
         } catch (UnsupportedEncodingException e) {
-            log.error(e, e);
+            log.error(e.getMessage(), e);
         } catch (NoSuchAlgorithmException e) {
-            log.error(e, e);
+            log.error(e.getMessage(), e);
         } catch (Exception e) {
-            log.error(e, e);
+            log.error(e.getMessage(), e);
         }
 
         return value;

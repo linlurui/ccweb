@@ -17,6 +17,13 @@
 
     <packaging>jar</packaging>
 
+    <distributionManagement>
+        <repository>
+            <id>gitee</id>
+            <url>file:${project.build.directory}/deploy</url>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>ccait.cn</groupId>

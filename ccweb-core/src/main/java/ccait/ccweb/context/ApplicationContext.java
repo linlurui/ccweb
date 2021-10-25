@@ -12,16 +12,21 @@
 package ccait.ccweb.context;
 
 
+import ccait.ccweb.config.LangConfig;
+import ccait.ccweb.model.SheetHeaderModel;
 import ccait.ccweb.model.UserGroupRoleModel;
 import ccait.ccweb.model.UserModel;
 import ccait.ccweb.utils.EncryptionUtil;
 import entity.query.ColumnInfo;
 import entity.query.Datetime;
 import entity.query.Queryable;
+import entity.query.annotation.*;
 import entity.query.core.ApplicationConfig;
 import entity.query.core.DataSource;
 import entity.query.core.DataSourceFactory;
+import entity.query.enums.AlterMode;
 import entity.tool.util.JsonUtils;
+import entity.tool.util.ReflectionUtils;
 import entity.tool.util.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -34,6 +39,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,12 +63,12 @@ public class ApplicationContext implements ApplicationContextAware {
 
     private List<String> allTables = new ArrayList<String>();
 
-    public static final String TABLE_USER = "${entity.table.user}";
-    public static final String TABLE_GROUP = "${entity.table.group}";
-    public static final String TABLE_ROLE = "${entity.table.role}";
-    public static final String TABLE_USER_GROUP_ROLE = "${entity.table.userGroupRole}";
-    public static final String TABLE_ACL = "${entity.table.acl}";
-    public static final String TABLE_PRIVILEGE = "${entity.table.privilege}";
+    public static final String TABLE_USER = "${ccweb.table.user}";
+    public static final String TABLE_GROUP = "${ccweb.table.group}";
+    public static final String TABLE_ROLE = "${ccweb.table.role}";
+    public static final String TABLE_USER_GROUP_ROLE = "${ccweb.table.userGroupRole}";
+    public static final String TABLE_ACL = "${ccweb.table.acl}";
+    public static final String TABLE_PRIVILEGE = "${ccweb.table.privilege}";
 
     public static boolean isEnableRedisSession() {
         return enableRedisSession;
@@ -104,72 +112,72 @@ public class ApplicationContext implements ApplicationContextAware {
     @Value(TABLE_PRIVILEGE)
     private String privilegeTablename;
 
-    @Value("${entity.datasource.configFile:db-config.xml}")
+    @Value("${ccweb.datasource.configFile:db-config.xml}")
     private String configFile;
 
-    @Value("${entity.security.encrypt.MD5.fields:}")
+    @Value("${ccweb.security.encrypt.MD5.fields:}")
     private String md5Fields;
 
-    @Value("${entity.security.encrypt.MD5.publicKey:ccait}")
+    @Value("${ccweb.security.encrypt.MD5.publicKey:ccait}")
     private String md5PublicKey;
 
-    @Value("${entity.security.encrypt.BASE64.fields:}")
+    @Value("${ccweb.security.encrypt.BASE64.fields:}")
     private String base64Fields;
 
-    @Value("${entity.security.encrypt.MAC.fields:}")
+    @Value("${ccweb.security.encrypt.MAC.fields:}")
     private String macFields;
 
-    @Value("${entity.security.encrypt.SHA.fields:}")
+    @Value("${ccweb.security.encrypt.SHA.fields:}")
     private String shaFields;
 
-    @Value("${entity.security.encrypt.MAC.publicKey:ccait}")
+    @Value("${ccweb.security.encrypt.MAC.publicKey:ccait}")
     private String macPublicKey;
 
-    @Value("${entity.security.encrypt.AES.fields:}")
+    @Value("${ccweb.security.encrypt.AES.fields:}")
     private String aesFields;
 
-    @Value("${entity.security.encrypt.AES.publicKey:ccait}")
+    @Value("${ccweb.security.encrypt.AES.publicKey:ccait}")
     private String aesPublicKey;
 
-    @Value("${entity.security.admin.username:admin}")
+    @Value("${ccweb.security.admin.username:admin}")
     private String admin;
 
-    @Value("${entity.security.admin.password:}")
+    @Value("${ccweb.security.admin.password:}")
     private String password;
 
-    @Value("${entity.encoding:UTF-8}")
+    @Value("${ccweb.encoding:UTF-8}")
     private String encoding;
 
 
-    @Value("${entity.table.reservedField.createOn:createOn}")
+    @Value("${ccweb.table.reservedField.createOn:createOn}")
     private String createOnField;
 
-    @Value("${entity.table.reservedField.modifyOn:modifyOn}")
+    @Value("${ccweb.table.reservedField.modifyOn:modifyOn}")
     private String modifyOnField;
 
-    @Value("${entity.table.reservedField.modifyBy:modifyBy}")
+    @Value("${ccweb.table.reservedField.modifyBy:modifyBy}")
     private String modifyByField;
 
-    @Value("${entity.table.reservedField.userPath:userPath}")
+    @Value("${ccweb.table.reservedField.userPath:userPath}")
     private String userPathField;
 
-    @Value("${entity.table.reservedField.groupId:groupId}")
+    @Value("${ccweb.table.reservedField.groupId:groupId}")
     private String groupIdField;
 
-    @Value("${entity.table.reservedField.userId:userId}")
+    @Value("${ccweb.table.reservedField.userId:userId}")
     private String userIdField;
 
-    @Value("${entity.table.reservedField.roleId:roleId}")
+    @Value("${ccweb.table.reservedField.roleId:roleId}")
     private String roleIdField;
 
-    @Value("${entity.table.reservedField.createBy:createBy}")
+    @Value("${ccweb.table.reservedField.createBy:createBy}")
     private String createByField;
 
     public static String adminName;
 
     @PostConstruct
     private void init() {
-        admin = ApplicationConfig.getInstance().get("${entity.security.admin.username}", admin);
+        admin = ApplicationConfig.getInstance().get("${ccweb.security.admin.username}", admin);
         adminName = admin;
     }
 
@@ -200,25 +208,25 @@ public class ApplicationContext implements ApplicationContextAware {
     }
 
     private void ensureInjectValues() {
-        configFile = ApplicationConfig.getInstance().get("${entity.datasource.configFile}", configFile);
-        md5Fields = ApplicationConfig.getInstance().get("${entity.security.encrypt.MD5.fields}", md5Fields);
-        md5PublicKey = ApplicationConfig.getInstance().get("${entity.security.encrypt.MD5.publicKey}", md5PublicKey);
-        base64Fields = ApplicationConfig.getInstance().get("${entity.security.encrypt.BASE64.fields}", base64Fields);
-        macFields = ApplicationConfig.getInstance().get("${entity.security.encrypt.MAC.fields}", macFields);
-        shaFields = ApplicationConfig.getInstance().get("${entity.security.encrypt.SHA.fields}", shaFields);
-        macPublicKey = ApplicationConfig.getInstance().get("${entity.security.encrypt.MAC.publicKey}", macPublicKey);
-        aesFields = ApplicationConfig.getInstance().get("${entity.security.encrypt.AES.fields}", aesFields);
-        aesPublicKey = ApplicationConfig.getInstance().get("${entity.security.encrypt.AES.publicKey}", aesPublicKey);
-        admin = ApplicationConfig.getInstance().get("${entity.security.admin.username}", admin);
-        password = ApplicationConfig.getInstance().get("${entity.security.admin.password}", password);
-        encoding = ApplicationConfig.getInstance().get("${entity.encoding}", encoding);
-        createOnField = ApplicationConfig.getInstance().get("${entity.table.reservedField.createOn}", createOnField);
-        modifyOnField = ApplicationConfig.getInstance().get("${entity.table.reservedField.modifyOn}", modifyOnField);
-        modifyByField = ApplicationConfig.getInstance().get("${entity.table.reservedField.modifyBy}", modifyByField);
-        groupIdField = ApplicationConfig.getInstance().get("${entity.table.reservedField.groupId}", groupIdField);
-        userIdField = ApplicationConfig.getInstance().get("${entity.table.reservedField.userId}", userIdField);
-        roleIdField = ApplicationConfig.getInstance().get("${entity.table.reservedField.roleId}", roleIdField);
-        createByField = ApplicationConfig.getInstance().get("${entity.table.reservedField.createBy}", createByField);
+        configFile = ApplicationConfig.getInstance().get("${ccweb.datasource.configFile}", configFile);
+        md5Fields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MD5.fields}", md5Fields);
+        md5PublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MD5.publicKey}", md5PublicKey);
+        base64Fields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.BASE64.fields}", base64Fields);
+        macFields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MAC.fields}", macFields);
+        shaFields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.SHA.fields}", shaFields);
+        macPublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MAC.publicKey}", macPublicKey);
+        aesFields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.fields}", aesFields);
+        aesPublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.publicKey}", aesPublicKey);
+        admin = ApplicationConfig.getInstance().get("${ccweb.security.admin.username}", admin);
+        password = ApplicationConfig.getInstance().get("${ccweb.security.admin.password}", password);
+        encoding = ApplicationConfig.getInstance().get("${ccweb.encoding}", encoding);
+        createOnField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createOn}", createOnField);
+        modifyOnField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.modifyOn}", modifyOnField);
+        modifyByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.modifyBy}", modifyByField);
+        groupIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.groupId}", groupIdField);
+        userIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userId}", userIdField);
+        roleIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.roleId}", roleIdField);
+        createByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField);
     }
 
     /**
@@ -254,7 +262,7 @@ public class ApplicationContext implements ApplicationContextAware {
             DataSource ds = getDefaultDataSource(configFile);
 
             if(StringUtils.isEmpty(userTablename)) {
-                throw new Exception("请设置用户表名称(Setting ${entity.table.user} in application.yml pls)");
+                throw new Exception("请设置用户表名称(Setting ${ccweb.table.user} in application.yml pls)");
             }
 
             if(!"n1ql_jdbc".equals(ds.getDriverClassName())) {
@@ -344,13 +352,13 @@ public class ApplicationContext implements ApplicationContextAware {
         columns.add(col);
 
         col = new ColumnInfo();
-        col.setColumnName(ApplicationConfig.getInstance().get("${entity.table.reservedField.groupId}", groupIdField));
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.groupId}", groupIdField));
         col.setMaxLength(32);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
-        col.setColumnName(ApplicationConfig.getInstance().get("${entity.table.reservedField.roleId}", roleIdField));
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.roleId}", roleIdField));
         col.setMaxLength(32);
         col.setType(Integer.class);
         columns.add(col);
@@ -380,7 +388,7 @@ public class ApplicationContext implements ApplicationContextAware {
         columns.add(col);
 
         col = new ColumnInfo();
-        col.setColumnName(ApplicationConfig.getInstance().get("${entity.table.reservedField.createBy}", createByField));
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField));
         col.setCanNotNull(false);
         col.setType(Integer.class);
         columns.add(col);
@@ -421,7 +429,7 @@ public class ApplicationContext implements ApplicationContextAware {
         columns.add(col);
 
         col = new ColumnInfo();
-        col.setColumnName(ApplicationConfig.getInstance().get("${entity.table.reservedField.roleId}", roleIdField));
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.roleId}", roleIdField));
         col.setCanNotNull(false);
         col.setMaxLength(32);
         col.setType(Integer.class);
@@ -537,7 +545,7 @@ public class ApplicationContext implements ApplicationContextAware {
         columns.add(col);
 
         col = new ColumnInfo();
-        col.setColumnName(ApplicationConfig.getInstance().get("${entity.table.reservedField.createBy}", createByField));
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField));
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
@@ -603,7 +611,7 @@ public class ApplicationContext implements ApplicationContextAware {
         columns.add(col);
 
         col = new ColumnInfo();
-        col.setColumnName(ApplicationConfig.getInstance().get("${entity.table.reservedField.createBy}", createByField));
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField));
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
@@ -628,7 +636,7 @@ public class ApplicationContext implements ApplicationContextAware {
         columns.clear();
 
         col = new ColumnInfo();
-        col.setColumnName(ApplicationConfig.getInstance().get("${entity.table.reservedField.roleId}", roleIdField));
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.roleId}", roleIdField));
         col.setIsPrimaryKey(true);
         col.setCanNotNull(true);
         col.setMaxLength(32);
@@ -667,7 +675,7 @@ public class ApplicationContext implements ApplicationContextAware {
         columns.add(col);
 
         col = new ColumnInfo();
-        col.setColumnName(ApplicationConfig.getInstance().get("${entity.table.reservedField.createBy}", createByField));
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField));
         col.setCanNotNull(false);
         col.setType(Integer.class);
         columns.add(col);
@@ -731,7 +739,7 @@ public class ApplicationContext implements ApplicationContextAware {
         columns.add(col);
 
         col = new ColumnInfo();
-        col.setColumnName(ApplicationConfig.getInstance().get("${entity.table.reservedField.createBy}", createByField));
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField));
         col.setCanNotNull(false);
         col.setType(Integer.class);
         columns.add(col);
@@ -770,7 +778,7 @@ public class ApplicationContext implements ApplicationContextAware {
         columns.clear();
 
         col = new ColumnInfo();
-        col.setColumnName(ApplicationConfig.getInstance().get("${entity.table.reservedField.userId}", userIdField));
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userId}", userIdField));
         col.setIsAutoIncrement(true);
         col.setCanNotNull(true);
         col.setMaxLength(16);
@@ -818,7 +826,7 @@ public class ApplicationContext implements ApplicationContextAware {
         columns.add(col);
 
         col = new ColumnInfo();
-        col.setColumnName(ApplicationConfig.getInstance().get("${entity.table.reservedField.createBy}", createByField));
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField));
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
@@ -1006,5 +1014,120 @@ public class ApplicationContext implements ApplicationContextAware {
         ApplicationContext.setSession(request, CURRENT_USER_ID_GROUPS, useridList);
 
         return useridList;
+    }
+
+    private static String getCurrentDatasourceId() {
+        String currentDatasource = "default";
+        if (ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE) != null) {
+            currentDatasource = ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE).toString();
+        }
+        return currentDatasource;
+    }
+
+    public static List<ColumnInfo> ensureTable(Class<?> type) throws Exception {
+
+        String table = null;
+        Tablename annTb = type.getAnnotation(Tablename.class);
+        if(annTb!=null && StringUtils.isNotEmpty(annTb.value())) {
+            table = annTb.value();
+        }
+
+        return ensureTable(type, table);
+    }
+
+    public static List<ColumnInfo> ensureTable(Class<?> type, String table) throws Exception {
+
+        String datasource = ApplicationContext.getCurrentDatasourceId();
+        entity.query.annotation.DataSource annDs = type.getAnnotation(entity.query.annotation.DataSource.class);
+        if(annDs!=null && StringUtils.isNotEmpty(annDs.value())) {
+            datasource = annDs.value();
+        }
+
+        if(StringUtils.isEmpty(table)) {
+            Tablename annTb = type.getAnnotation(Tablename.class);
+            if(annTb!=null && StringUtils.isNotEmpty(annTb.value())) {
+                table = annTb.value();
+            }
+        }
+
+        if(StringUtils.isEmpty(table)) {
+            for (Annotation item : type.getAnnotations()) {
+                if(StringUtils.isNotEmpty(table)) {
+                    break;
+                }
+                List<Annotation> list = Arrays.stream(item.annotationType().getAnnotations()).collect(Collectors.toList());
+                for(int i=0; i<list.size(); i++) {
+                    if (list.get(i) instanceof Tablename) {
+                        String value = ReflectionUtils.invoke(item.getClass(), item, "table").toString();
+                        String ds = ReflectionUtils.invoke(item.getClass(), item, "dataSource").toString();
+                        if(StringUtils.isNotEmpty(ds)) {
+                            datasource = ds;
+                        }
+                        if(StringUtils.isNotEmpty(value)) {
+                            table = value;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if(StringUtils.isEmpty(table)) {
+            table = type.getName();
+        }
+
+        if(Queryable.exist(datasource, table)) {
+            return Queryable.getColumns(datasource, table);
+        }
+
+        List<ColumnInfo> columns = new ArrayList<>();
+        Field[] flds = type.getDeclaredFields();
+        for(Field fld : flds) {
+
+            if(Modifier.isStatic(fld.getModifiers())) {
+                continue;
+            }
+
+            if(fld.getAnnotation(Exclude.class)!=null) {
+                continue;
+            }
+
+            String name = fld.getName();
+            Fieldname fieldname = fld.getAnnotation(Fieldname.class);
+            if(fieldname!=null && StringUtils.isNotEmpty(fieldname.value())) {
+                name = fieldname.value();
+            }
+            ColumnInfo column = new ColumnInfo();
+            column.setColumnName(name);
+            if(fld.getType().isEnum()) {
+                column.setType(Integer.class);
+            }
+            else {
+                column.setType(fld.getType());
+            }
+            PrimaryKey pk = fld.getAnnotation(PrimaryKey.class);
+            if(pk != null) {
+                column.setIsPrimaryKey(true);
+            }
+
+            AutoIncrement au = fld.getAnnotation(AutoIncrement.class);
+            if(au != null) {
+                column.setIsAutoIncrement(true);
+            }
+
+            columns.add(column);
+        }
+
+        return ensureTable(datasource, table, columns);
+    }
+
+    public static List<ColumnInfo> ensureTable(String datasource, String table, List<ColumnInfo> cloumns) throws Exception {
+
+        if(Queryable.exist(datasource, table)) {
+            return Queryable.getColumns(datasource, table);
+        }
+
+        Queryable.createTable(datasource, table, cloumns);
+        return Queryable.getColumns(datasource, table);
     }
 }

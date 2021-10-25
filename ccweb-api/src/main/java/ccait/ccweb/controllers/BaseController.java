@@ -72,19 +72,19 @@ public abstract class BaseController extends AbstractBaseController {
 
     private static final Logger log = LoggerFactory.getLogger(BaseController.class);
 
-    @Value("${entity.auth.user.jwt.millis:600000}")
+    @Value("${ccweb.auth.user.jwt.millis:600000}")
     private long jwtMillis;
 
-    @Value("${entity.auth.user.jwt.enable:false}")
+    @Value("${ccweb.auth.user.jwt.enable:false}")
     private boolean jwtEnable;
 
-    @Value("${entity.auth.user.aes.enable:false}")
+    @Value("${ccweb.auth.user.aes.enable:false}")
     private boolean aesEnable;
 
-    @Value(value = "${entity.elasticSearch.timeout:10000}")
+    @Value(value = "${ccweb.elasticSearch.timeout:10000}")
     private int esTimeout;
 
-    @Value(value = "${entity.elasticSearch.cluster-name:}")
+    @Value(value = "${ccweb.elasticSearch.cluster-name:}")
     private String esClusterName;
 
     public ResponseData<Object> RMessage;
@@ -98,75 +98,75 @@ public abstract class BaseController extends AbstractBaseController {
     @Autowired
     private QueryInfo queryInfo;
 
-    @Value("${entity.queryable.ignoreTotalCount:true}")
+    @Value("${ccweb.queryable.ignoreTotalCount:true}")
     protected boolean ignoreTotalCount;
 
-    @Value("${entity.table.reservedField.createBy:createBy}")
+    @Value("${ccweb.table.reservedField.createBy:createBy}")
     protected String createByField;
 
-    @Value("${entity.table.reservedField.groupId:groupId}")
+    @Value("${ccweb.table.reservedField.groupId:groupId}")
     protected String groupIdField;
 
 
-    @Value("${entity.page.maxSize}")
+    @Value("${ccweb.page.maxSize}")
     protected Integer maxPageSize;
 
-    @Value("${entity.security.encrypt.MD5.fields:}")
+    @Value("${ccweb.security.encrypt.MD5.fields:}")
     private String md5Fields;
 
-    @Value("${entity.security.encrypt.MD5.publicKey:ccait}")
+    @Value("${ccweb.security.encrypt.MD5.publicKey:ccait}")
     private String md5PublicKey;
 
-    @Value("${entity.security.encrypt.MAC.fields:}")
+    @Value("${ccweb.security.encrypt.MAC.fields:}")
     private String macFields;
 
-    @Value("${entity.security.encrypt.MAC.publicKey:ccait}")
+    @Value("${ccweb.security.encrypt.MAC.publicKey:ccait}")
     private String macPublicKey;
 
-    @Value("${entity.security.encrypt.AES.fields:}")
+    @Value("${ccweb.security.encrypt.AES.fields:}")
     private String aesFields;
 
-    @Value("${entity.security.encrypt.AES.publicKey:ccait}")
+    @Value("${ccweb.security.encrypt.AES.publicKey:ccait}")
     private String aesPublicKey;
 
-    @Value("${entity.security.encrypt.SHA.fields:}")
+    @Value("${ccweb.security.encrypt.SHA.fields:}")
     private String shaFields;
 
-    @Value("${entity.security.encrypt.SHA.publicKey:ccait}")
+    @Value("${ccweb.security.encrypt.SHA.publicKey:ccait}")
     private String shaPublicKey;
 
-    @Value("${entity.encoding:UTF-8}")
+    @Value("${ccweb.encoding:UTF-8}")
     private String encoding;
 
-    @Value("${entity.security.encrypt.BASE64.fields:}")
+    @Value("${ccweb.security.encrypt.BASE64.fields:}")
     private String base64Fields;
 
-    @Value("${entity.defaultDateByNow:false}")
+    @Value("${ccweb.defaultDateByNow:false}")
     private boolean defaultDateByNow;
     private Map<String, Object> data;
 
-    @Value("${entity.security.admin.username:admin}")
+    @Value("${ccweb.security.admin.username:admin}")
     private String admin;
 
-    @Value("${entity.download.thumb.fixedWidth:0}")
+    @Value("${ccweb.download.thumb.fixedWidth:0}")
     private Integer fixedWidth;
 
-    @Value("${entity.download.thumb.scalRatio:0}")
+    @Value("${ccweb.download.thumb.scalRatio:0}")
     private Integer scalRatio;
 
-    @Value("${entity.auth.user.wechat.secret:}")
+    @Value("${ccweb.auth.user.wechat.secret:}")
     private String secret;
 
-    @Value("${entity.auth.user.wechat.appid:}")
+    @Value("${ccweb.auth.user.wechat.appid:}")
     private String appid;
 
-    @Value("${entity.auth.user.wechat.enable:false}")
+    @Value("${ccweb.auth.user.wechat.enable:false}")
     private boolean wechatEnable;
 
     @Autowired
     private NonStaticResourceHttpRequestHandler nonStaticResourceHttpRequestHandler;
 
-    @Value("${entity.upload.watermark:}")
+    @Value("${ccweb.upload.watermark:}")
     private String watermark;
 
     public BaseController() {
@@ -176,28 +176,28 @@ public abstract class BaseController extends AbstractBaseController {
 
     @PostConstruct
     private void construct() {
-        ignoreTotalCount = ApplicationConfig.getInstance().get("${entity.queryable.ignoreTotalCount}", ignoreTotalCount);
-        md5Fields = ApplicationConfig.getInstance().get("${entity.security.encrypt.MD5.fields}", md5Fields);
-        md5PublicKey = ApplicationConfig.getInstance().get("${entity.security.encrypt.MD5.publicKey}", md5PublicKey);
-        base64Fields = ApplicationConfig.getInstance().get("${entity.security.encrypt.BASE64.fields}", base64Fields);
-        macFields = ApplicationConfig.getInstance().get("${entity.security.encrypt.MAC.fields}", macFields);
-        shaFields = ApplicationConfig.getInstance().get("${entity.security.encrypt.SHA.fields}", shaFields);
-        macPublicKey = ApplicationConfig.getInstance().get("${entity.security.encrypt.MAC.publicKey}", macPublicKey);
-        aesFields = ApplicationConfig.getInstance().get("${entity.security.encrypt.AES.fields}", aesFields);
-        aesPublicKey = ApplicationConfig.getInstance().get("${entity.security.encrypt.AES.publicKey}", aesPublicKey);
-        admin = ApplicationConfig.getInstance().get("${entity.security.admin.username}", admin);
-        maxPageSize = ApplicationConfig.getInstance().get("${entity.page.maxSize}", maxPageSize);
-        encoding = ApplicationConfig.getInstance().get("${entity.encoding}", encoding);
-        defaultDateByNow = ApplicationConfig.getInstance().get("${entity.defaultDateByNow}", defaultDateByNow);
-        fixedWidth = ApplicationConfig.getInstance().get("${entity.download.thumb.fixedWidth}", fixedWidth);
-        scalRatio = ApplicationConfig.getInstance().get("${entity.download.thumb.scalRatio}", scalRatio);
-        groupIdField = ApplicationConfig.getInstance().get("${entity.table.reservedField.groupId}", groupIdField);
-        secret = ApplicationConfig.getInstance().get("${entity.auth.user.wechat.secret}", secret);
-        appid = ApplicationConfig.getInstance().get("${entity.auth.user.wechat.appid}", appid);
-        wechatEnable = ApplicationConfig.getInstance().get("${entity.auth.user.wechat.enable}", wechatEnable);
-        createByField = ApplicationConfig.getInstance().get("${entity.table.reservedField.createBy}", createByField);
-        jwtEnable = ApplicationConfig.getInstance().get("${entity.auth.user.jwt.enable}", jwtEnable);
-        jwtMillis = ApplicationConfig.getInstance().get("${entity.auth.user.jwt.millis}", jwtMillis);
+        ignoreTotalCount = ApplicationConfig.getInstance().get("${ccweb.queryable.ignoreTotalCount}", ignoreTotalCount);
+        md5Fields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MD5.fields}", md5Fields);
+        md5PublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MD5.publicKey}", md5PublicKey);
+        base64Fields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.BASE64.fields}", base64Fields);
+        macFields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MAC.fields}", macFields);
+        shaFields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.SHA.fields}", shaFields);
+        macPublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MAC.publicKey}", macPublicKey);
+        aesFields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.fields}", aesFields);
+        aesPublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.publicKey}", aesPublicKey);
+        admin = ApplicationConfig.getInstance().get("${ccweb.security.admin.username}", admin);
+        maxPageSize = ApplicationConfig.getInstance().get("${ccweb.page.maxSize}", maxPageSize);
+        encoding = ApplicationConfig.getInstance().get("${ccweb.encoding}", encoding);
+        defaultDateByNow = ApplicationConfig.getInstance().get("${ccweb.defaultDateByNow}", defaultDateByNow);
+        fixedWidth = ApplicationConfig.getInstance().get("${ccweb.download.thumb.fixedWidth}", fixedWidth);
+        scalRatio = ApplicationConfig.getInstance().get("${ccweb.download.thumb.scalRatio}", scalRatio);
+        groupIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.groupId}", groupIdField);
+        secret = ApplicationConfig.getInstance().get("${ccweb.auth.user.wechat.secret}", secret);
+        appid = ApplicationConfig.getInstance().get("${ccweb.auth.user.wechat.appid}", appid);
+        wechatEnable = ApplicationConfig.getInstance().get("${ccweb.auth.user.wechat.enable}", wechatEnable);
+        createByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField);
+        jwtEnable = ApplicationConfig.getInstance().get("${ccweb.auth.user.jwt.enable}", jwtEnable);
+        jwtMillis = ApplicationConfig.getInstance().get("${ccweb.auth.user.jwt.millis}", jwtMillis);
     }
 
     protected boolean isFinish() {
@@ -1744,6 +1744,7 @@ public abstract class BaseController extends AbstractBaseController {
         UserContext.logout(request);
     }
 
+
     /***
      * user login
      * @param user
@@ -1752,6 +1753,8 @@ public abstract class BaseController extends AbstractBaseController {
      */
     public UserModel login(UserModel user) throws Exception {
 
-        return UserContext.login(request, user);
+        user = UserContext.login(user.getUsername(), md5(user.getPassword()), request, response);
+
+        return user;
     }
 }

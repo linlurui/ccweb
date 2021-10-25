@@ -20,8 +20,8 @@ import entity.query.core.ApplicationConfig;
 import entity.tool.util.JsonUtils;
 import entity.tool.util.StringUtils;
 import org.apache.http.HttpException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -45,7 +45,7 @@ import static ccait.ccweb.utils.StaticVars.LOG_PRE_SUFFIX;
 @javax.servlet.annotation.WebFilter(urlPatterns = "/*")
 public class InitializationFilter implements WebFilter, Filter {
 
-    private static final Logger log = LogManager.getLogger( InitializationFilter.class );
+    private static final Logger log = LoggerFactory.getLogger( InitializationFilter.class );
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -78,8 +78,8 @@ public class InitializationFilter implements WebFilter, Filter {
                 res.setContentType("application/json; charset=utf-8");
                 res.setCharacterEncoding("UTF-8");
 
-                log.info("entity.enableFlux============================================>>>" + ApplicationConfig.getInstance().get("${entity.enableFlux}"));
-                if ("true".equals(ApplicationConfig.getInstance().get("${entity.enableFlux}"))) {
+                log.info("entity.enableFlux============================================>>>" + ApplicationConfig.getInstance().get("${ccweb.enableFlux}"));
+                if ("true".equals(ApplicationConfig.getInstance().get("${ccweb.enableFlux}"))) {
 
                     if (req.getRequestURI().indexOf("/preview/") == -1 &&
                             req.getRequestURI().indexOf("/download/") == -1 &&

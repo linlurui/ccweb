@@ -45,34 +45,34 @@ import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 
 @Component
 @Scope("prototype")
-@Trigger(tablename = "${entity.table.userGroupRole}")
+@Trigger(tablename = "${ccweb.table.userGroupRole}")
 @Order(value = -2147483647)
 public final class UserGroupRoleTableTrigger implements ITrigger {
 
     private static final Logger log = LoggerFactory.getLogger( UserGroupRoleTableTrigger.class );
 
-    @Value("${entity.security.encrypt.AES.publicKey:ccait}")
+    @Value("${ccweb.security.encrypt.AES.publicKey:ccait}")
     private String aesPublicKey;
 
-    @Value("${entity.table.reservedField.userGroupRoleId:userGroupRoleId}")
+    @Value("${ccweb.table.reservedField.userGroupRoleId:userGroupRoleId}")
     private String userGroupRoleIdField;
 
-    @Value("${entity.table.reservedField.groupId:groupId}")
+    @Value("${ccweb.table.reservedField.groupId:groupId}")
     private String groupIdField;
 
-    @Value("${entity.table.reservedField.userPath:userPath}")
+    @Value("${ccweb.table.reservedField.userPath:userPath}")
     private String userPathField;
 
-    @Value("${entity.table.reservedField.userId:userId}")
+    @Value("${ccweb.table.reservedField.userId:userId}")
     private String userIdField;
 
     @PostConstruct
     private void init() {
-        userGroupRoleIdField = ApplicationConfig.getInstance().get("${entity.table.reservedField.userGroupRoleId}", userGroupRoleIdField);
-        aesPublicKey = ApplicationConfig.getInstance().get("${entity.security.encrypt.AES.publicKey}", aesPublicKey);
-        groupIdField = ApplicationConfig.getInstance().get("${entity.table.reservedField.groupId}", groupIdField);
-        userPathField = ApplicationConfig.getInstance().get("${entity.table.reservedField.userPath}", userPathField);
-        userIdField = ApplicationConfig.getInstance().get("${entity.table.reservedField.userId}", userIdField);
+        userGroupRoleIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userGroupRoleId}", userGroupRoleIdField);
+        aesPublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.publicKey}", aesPublicKey);
+        groupIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.groupId}", groupIdField);
+        userPathField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userPath}", userPathField);
+        userIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userId}", userIdField);
 
     }
 

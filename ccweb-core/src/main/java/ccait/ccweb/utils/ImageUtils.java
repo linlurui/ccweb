@@ -2,8 +2,8 @@ package ccait.ccweb.utils;
 
 
 import entity.tool.util.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import sun.misc.BASE64Decoder;
 
 import javax.imageio.IIOImage;
@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 
 public final class ImageUtils {
 
-    private static final Logger log = LogManager.getLogger(ImageUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(ImageUtils.class);
     private static final int THUMBNAIL_DEFAULT_LIMIT = 400;
 
     /**

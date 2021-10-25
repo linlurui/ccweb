@@ -6,8 +6,8 @@ import entity.query.annotation.Exclude;
 import entity.query.annotation.Fieldname;
 import entity.query.annotation.PrimaryKey;
 import entity.query.annotation.Tablename;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +19,10 @@ import static ccait.ccweb.utils.StaticVars.LOG_PRE_SUFFIX;
 
 @Component
 @Scope("prototype")
-@Tablename("${entity.table.userGroupRole}")
+@Tablename("${ccweb.table.userGroupRole}")
 public class UserGroupRoleModel extends Queryable<UserGroupRoleModel> {
 
-    private static final Logger log = LogManager.getLogger( UserGroupRoleModel.class );
+    private static final Logger log = LoggerFactory.getLogger( UserGroupRoleModel.class );
 
     @PrimaryKey
     @Fieldname("userGroupRoleId")
@@ -37,19 +37,19 @@ public class UserGroupRoleModel extends Queryable<UserGroupRoleModel> {
     @Fieldname("roleId")
     private Integer roleId;
 
-    @Fieldname("${entity.table.reservedField.userPath:userPath}")
+    @Fieldname("${ccweb.table.reservedField.userPath:userPath}")
     private String path;
 
-    @Fieldname("${entity.table.reservedField.createOn:createOn}")
+    @Fieldname("${ccweb.table.reservedField.createOn:createOn}")
     private Date createOn;
 
-    @Fieldname("${entity.table.reservedField.createBy:createBy}")
+    @Fieldname("${ccweb.table.reservedField.createBy:createBy}")
     private Integer createBy;
 
-    @Fieldname("${entity.table.reservedField.modifyOn:modifyOn}")
+    @Fieldname("${ccweb.table.reservedField.modifyOn:modifyOn}")
     private Date modifyOn;
 
-    @Fieldname("${entity.table.reservedField.modifyBy:modifyBy}")
+    @Fieldname("${ccweb.table.reservedField.modifyBy:modifyBy}")
     private Integer modifyBy;
 
     public Date getCreateOn() {
