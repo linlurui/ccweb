@@ -35,6 +35,9 @@ public class GroupModel extends Queryable<GroupModel> {
   @Fieldname("description")
   private String description;
 
+  @Fieldname("type")
+  private String type;
+
   public Date getCreateOn() {
     return createOn;
   }
@@ -101,5 +104,13 @@ public class GroupModel extends Queryable<GroupModel> {
 
   public void setCreateBy(Integer createBy) {
     this.createBy = createBy;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
   }
 }
