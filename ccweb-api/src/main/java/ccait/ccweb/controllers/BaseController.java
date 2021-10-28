@@ -673,7 +673,7 @@ public abstract class BaseController extends AbstractBaseController {
         return result;
     }
 
-    private String getCurrentDatasourceId() {
+    protected String getCurrentDatasourceId() {
         String currentDatasource = "default";
         if (ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE) != null) {
             currentDatasource = ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE).toString();
