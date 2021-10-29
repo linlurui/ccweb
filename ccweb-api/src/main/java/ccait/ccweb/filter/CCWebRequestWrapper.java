@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -179,11 +180,13 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
         this.postString = FastJsonUtils.toJson(parameter);
     }
 
-
     @Override
     public HttpMethod getRequestMethod() {
         if(req instanceof MultipartHttpServletRequest) {
             return ((MultipartHttpServletRequest)req).getRequestMethod();
+        }
+        if(req instanceof CCWebRequestWrapper) {
+            return ((CCWebRequestWrapper)req).getRequestMethod();
         }
         switch (req.getMethod()) {
             case "DELETE":
@@ -204,6 +207,9 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
         if(req instanceof MultipartHttpServletRequest) {
             return ((MultipartHttpServletRequest)req).getRequestHeaders();
         }
+        if(req instanceof CCWebRequestWrapper) {
+            return ((CCWebRequestWrapper)req).getRequestHeaders();
+        }
         HttpHeaders headers = new HttpHeaders();
         String name = req.getHeaderNames().nextElement();
         while (!StringUtils.isEmpty(name)) {
@@ -217,8 +223,10 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
         if(req instanceof MultipartHttpServletRequest) {
             return ((MultipartHttpServletRequest)req).getMultipartHeaders(s);
         }
-
-        return null;
+        if(req instanceof CCWebRequestWrapper) {
+            return ((CCWebRequestWrapper)req).getMultipartHeaders(s);
+        }
+        return new HttpHeaders();
     }
 
     @Override
@@ -226,7 +234,9 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
         if(req instanceof MultipartHttpServletRequest) {
             return ((MultipartHttpServletRequest)req).getFileNames();
         }
-
+        if(req instanceof CCWebRequestWrapper) {
+            return ((CCWebRequestWrapper)req).getFileNames();
+        }
         return null;
     }
 
@@ -235,7 +245,9 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
         if(req instanceof MultipartHttpServletRequest) {
             return ((MultipartHttpServletRequest)req).getFile(s);
         }
-
+        if(req instanceof CCWebRequestWrapper) {
+            return ((CCWebRequestWrapper)req).getFile(s);
+        }
         return null;
     }
 
@@ -244,8 +256,10 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
         if(req instanceof MultipartHttpServletRequest) {
             return ((MultipartHttpServletRequest)req).getFiles(s);
         }
-
-        return null;
+        if(req instanceof CCWebRequestWrapper) {
+            return ((CCWebRequestWrapper)req).getFiles(s);
+        }
+        return new ArrayList<>();
     }
 
     @Override
@@ -253,8 +267,10 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
         if(req instanceof MultipartHttpServletRequest) {
             return ((MultipartHttpServletRequest)req).getFileMap();
         }
-
-        return null;
+        if(req instanceof CCWebRequestWrapper) {
+            return ((CCWebRequestWrapper)req).getFileMap();
+        }
+        return new LinkedMultiValueMap();
     }
 
     @Override
@@ -262,8 +278,10 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
         if(req instanceof MultipartHttpServletRequest) {
             return ((MultipartHttpServletRequest)req).getMultiFileMap();
         }
-
-        return null;
+        if(req instanceof CCWebRequestWrapper) {
+            return ((CCWebRequestWrapper)req).getMultiFileMap();
+        }
+        return new LinkedMultiValueMap<>();
     }
 
     @Override
@@ -271,7 +289,9 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
         if(req instanceof MultipartHttpServletRequest) {
             return ((MultipartHttpServletRequest)req).getMultipartContentType(s);
         }
-
+        if(req instanceof CCWebRequestWrapper) {
+            return ((CCWebRequestWrapper)req).getMultipartContentType(s);
+        }
         return null;
     }
 
