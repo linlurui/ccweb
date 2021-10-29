@@ -182,17 +182,43 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
 
     @Override
     public HttpMethod getRequestMethod() {
-        return ((MultipartHttpServletRequest)req).getRequestMethod();
+        if(req instanceof MultipartHttpServletRequest) {
+            return ((MultipartHttpServletRequest)req).getRequestMethod();
+        }
+        switch (req.getMethod()) {
+            case "DELETE":
+                return HttpMethod.DELETE;
+            case "PUT":
+                return HttpMethod.PUT;
+            case "PATCH":
+                return HttpMethod.PATCH;
+            case "OPTIONS":
+                return HttpMethod.OPTIONS;
+            default:
+                return HttpMethod.POST;
+        }
     }
 
     @Override
     public HttpHeaders getRequestHeaders() {
-        return ((MultipartHttpServletRequest)req).getRequestHeaders();
+        if(req instanceof MultipartHttpServletRequest) {
+            return ((MultipartHttpServletRequest)req).getRequestHeaders();
+        }
+        HttpHeaders headers = new HttpHeaders();
+        String name = req.getHeaderNames().nextElement();
+        while (!StringUtils.isEmpty(name)) {
+            headers.add(name, req.getHeader(name));
+        }
+        return headers;
     }
 
     @Override
     public HttpHeaders getMultipartHeaders(String s) {
-        return ((MultipartHttpServletRequest)req).getMultipartHeaders(s);
+        if(req instanceof MultipartHttpServletRequest) {
+            return ((MultipartHttpServletRequest)req).getMultipartHeaders(s);
+        }
+
+        return null;
     }
 
     @Override
