@@ -14,10 +14,8 @@ package ccait.ccweb.utils;
 import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.context.ApplicationContext;
 import ccait.ccweb.enums.PrivilegeScope;
-import entity.query.Datetime;
 import entity.query.core.ApplicationConfig;
 import entity.tool.util.StringUtils;
-import org.apache.http.client.HttpResponseException;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -32,9 +30,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
-import static ccait.ccweb.utils.NetworkUtils.getClientIp;
 import static ccait.ccweb.utils.StaticVars.*;
 
 public class PermissionUtils {
@@ -56,7 +52,7 @@ public class PermissionUtils {
         List<String> whiteList = StringUtils.splitString2List(whiteListText, ",");
         List<String> blackList = StringUtils.splitString2List(blackListText, ",");
 
-        String accessIP = getClientIp(request);
+        String accessIP = NetworkUtils.getClientIp(request);
         log.info("access ip =====>>> " + accessIP);
         if(StringUtils.isEmpty(accessIP)) {
             return false;

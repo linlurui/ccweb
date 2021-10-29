@@ -11,7 +11,7 @@
 
 package ccait.ccweb.filter;
 
-import ccait.ccweb.utils.FastJsonUtils;
+import entity.tool.util.FastJsonUtils;
 import entity.tool.util.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
     {
         super(request);
         this.params = newParams;
-        this.postString = FastJsonUtils.convertObjectToJSON(newParams);
+        this.postString = FastJsonUtils.toJson(newParams);
     }
 
     public CCWebRequestWrapper(HttpServletRequest request) {
@@ -91,16 +91,16 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
             }
 
             if(map.size() > 0) {
-                postString = FastJsonUtils.convertObjectToJSON(map);
+                postString = FastJsonUtils.toJson(map);
                 this.params = map;
             }
             else {
                 postString = new String(requestBody, "UTF-8");
                 if(Pattern.matches("\\s*^\\[[^\\[\\]]+\\]$\\s*", postString)) {
-                    this.params = FastJsonUtils.convertJsonToObject(postString, List.class);
+                    this.params = FastJsonUtils.convert(postString, List.class);
                 }
                 else {
-                    this.params = FastJsonUtils.convertJsonToObject(postString, Map.class);
+                    this.params = FastJsonUtils.convert(postString, Map.class);
                 }
             }
 
@@ -176,7 +176,7 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
 
     public void setPostParameter(Object parameter) {
         this.params = parameter;
-        this.postString = FastJsonUtils.convertObjectToJSON(parameter);
+        this.postString = FastJsonUtils.toJson(parameter);
     }
 
 
@@ -223,32 +223,56 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
 
     @Override
     public Iterator<String> getFileNames() {
-        return ((MultipartHttpServletRequest)req).getFileNames();
+        if(req instanceof MultipartHttpServletRequest) {
+            return ((MultipartHttpServletRequest)req).getFileNames();
+        }
+
+        return null;
     }
 
     @Override
     public MultipartFile getFile(String s) {
-        return ((MultipartHttpServletRequest)req).getFile(s);
+        if(req instanceof MultipartHttpServletRequest) {
+            return ((MultipartHttpServletRequest)req).getFile(s);
+        }
+
+        return null;
     }
 
     @Override
     public List<MultipartFile> getFiles(String s) {
-        return ((MultipartHttpServletRequest)req).getFiles(s);
+        if(req instanceof MultipartHttpServletRequest) {
+            return ((MultipartHttpServletRequest)req).getFiles(s);
+        }
+
+        return null;
     }
 
     @Override
     public Map<String, MultipartFile> getFileMap() {
-        return ((MultipartHttpServletRequest)req).getFileMap();
+        if(req instanceof MultipartHttpServletRequest) {
+            return ((MultipartHttpServletRequest)req).getFileMap();
+        }
+
+        return null;
     }
 
     @Override
     public MultiValueMap<String, MultipartFile> getMultiFileMap() {
-        return ((MultipartHttpServletRequest)req).getMultiFileMap();
+        if(req instanceof MultipartHttpServletRequest) {
+            return ((MultipartHttpServletRequest)req).getMultiFileMap();
+        }
+
+        return null;
     }
 
     @Override
     public String getMultipartContentType(String s) {
-        return ((MultipartHttpServletRequest)req).getMultipartContentType(s);
+        if(req instanceof MultipartHttpServletRequest) {
+            return ((MultipartHttpServletRequest)req).getMultipartContentType(s);
+        }
+
+        return null;
     }
 
     public static byte[] readBody(HttpServletRequest request)
