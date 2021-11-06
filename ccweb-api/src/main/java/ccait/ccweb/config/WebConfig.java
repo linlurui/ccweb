@@ -15,6 +15,7 @@ import ccait.ccweb.context.EntityContext;
 import ccait.ccweb.context.TriggerContext;
 import ccait.ccweb.filter.InitializationFilter;
 import ccait.ccweb.interceptors.AuthInterceptor;
+import ccait.ccweb.interceptors.SecurityInterceptor;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
@@ -71,6 +72,12 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/error")
                 .excludePathPatterns("/template")
                 .addPathPatterns("/**");
+
+        registry.addInterceptor(securityInterceptor())
+                .excludePathPatterns("/static/*")
+                .excludePathPatterns("/error")
+                .excludePathPatterns("/template")
+                .addPathPatterns("/**");
     }
 
     @Bean
@@ -104,6 +111,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public AuthInterceptor authInterceptor() {
         return new AuthInterceptor();
+    }
+
+    @Bean
+    public SecurityInterceptor securityInterceptor() {
+        return new SecurityInterceptor();
     }
 
     @Bean

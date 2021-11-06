@@ -56,7 +56,7 @@ import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 @Component
 @Scope("prototype")
 @Trigger
-@Order(Ordered.HIGHEST_PRECEDENCE+55)
+@Order(Ordered.HIGHEST_PRECEDENCE+555)
 public final class DefaultTrigger {
 
     private static final Logger log = LoggerFactory.getLogger( DefaultTrigger.class );
