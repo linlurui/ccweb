@@ -1,4 +1,4 @@
-package ccait.ccweb.interceptor;
+package ccait.ccweb.interceptors;
 
 import ccait.ccweb.annotation.AccessCtrl;
 import ccait.ccweb.context.ApplicationContext;

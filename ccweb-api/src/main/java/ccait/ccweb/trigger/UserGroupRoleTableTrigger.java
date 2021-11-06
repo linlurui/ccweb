@@ -16,20 +16,23 @@ import ccait.ccweb.annotation.Trigger;
 import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.context.ApplicationContext;
 import ccait.ccweb.context.UserContext;
-import ccait.ccweb.enums.EncryptMode;
+import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.model.DownloadData;
-import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.model.ResponseData;
 import ccait.ccweb.model.UserModel;
 import ccait.ccweb.utils.ClassUtils;
+import entity.query.ColumnInfo;
 import entity.query.core.ApplicationConfig;
-import entity.tool.util.FastJsonUtils;
-import org.slf4j.LoggerFactory;
+import entity.tool.util.JsonUtils;
+import org.apache.http.client.HttpResponseException;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -37,16 +40,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static ccait.ccweb.controllers.BaseController.encrypt;
-import static ccait.ccweb.entites.QueryInfo.decrypt;
 import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 
 @Component
 @Scope("prototype")
 @Trigger(tablename = "${ccweb.table.userGroupRole}")
-@Order(value = -2147483647)
+@Order(Ordered.HIGHEST_PRECEDENCE+666)
 public final class UserGroupRoleTableTrigger implements ITrigger {
 
     private static final Logger log = LoggerFactory.getLogger( UserGroupRoleTableTrigger.class );
@@ -66,6 +66,9 @@ public final class UserGroupRoleTableTrigger implements ITrigger {
     @Value("${ccweb.table.reservedField.userId:userId}")
     private String userIdField;
 
+    @Value("${ccweb.security.admin.username:admin}")
+    protected String admin;
+
     @PostConstruct
     private void init() {
         userGroupRoleIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userGroupRoleId}", userGroupRoleIdField);
@@ -79,9 +82,6 @@ public final class UserGroupRoleTableTrigger implements ITrigger {
     @Override
     public void onInsert(List<Map<String, Object>> list, HttpServletRequest request) throws Exception {
         for(Map<String, Object> data : list) {
-            if(!data.containsKey(groupIdField) || data.get(groupIdField) == null) {
-                continue;
-            }
 
             if(!data.containsKey(userIdField) || data.get(userIdField) == null) {
                 throw new Exception(LangConfig.getInstance().get("set_value_by_userId_please"));
@@ -89,7 +89,19 @@ public final class UserGroupRoleTableTrigger implements ITrigger {
 
             UserModel user = ApplicationContext.getSession(request, LOGIN_KEY, UserModel.class);
             if(user == null) {
-                throw new Exception(LangConfig.getInstance().get("login_please"));
+                throw new HttpResponseException(HttpStatus.UNAUTHORIZED.value(), LangConfig.getInstance().get("login_please"));
+            }
+
+            data.put(userGroupRoleIdField, UUID.randomUUID().toString().replace("-", ""));
+
+            if(admin.equals(user.getUsername())) {
+                String path = String.format("%s/%s", user.getUserId(), data.get(userIdField));
+                data.put(userPathField, path);
+                continue;
+            }
+
+            if(!data.containsKey(groupIdField) || data.get(groupIdField) == null) {
+                continue;
             }
 
             Integer groupId = Integer.parseInt(data.get(groupIdField).toString());
@@ -134,17 +146,6 @@ public final class UserGroupRoleTableTrigger implements ITrigger {
     @Override
     public void onList(QueryInfo queryInfo, HttpServletRequest request) throws IOException {
 
-        if(queryInfo.getConditionList() != null) {
-            queryInfo.getConditionList().forEach(a -> {
-                if (a.getName().toUpperCase().equals("USERID")) {
-                    String id = decrypt(a.getValue().toString(), EncryptMode.AES, aesPublicKey);
-                    a.setValue(id);
-                }
-            });
-
-            CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
-            wrapper.setPostParameter(FastJsonUtils.convert(queryInfo, Map.class));
-        }
     }
 
     @Override
@@ -153,17 +154,6 @@ public final class UserGroupRoleTableTrigger implements ITrigger {
     @Override
     public void onQuery(QueryInfo queryInfo, HttpServletRequest request) throws IOException {
 
-        if(queryInfo.getConditionList() != null) {
-            queryInfo.getConditionList().forEach(a -> {
-                if (a.getName().toUpperCase().equals("USERID")) {
-                    String id = decrypt(a.getValue().toString(), EncryptMode.AES, aesPublicKey);
-                    a.setValue(id);
-                }
-            });
-
-            CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
-            wrapper.setPostParameter(FastJsonUtils.convert(queryInfo, Map.class));
-        }
     }
 
     @Override
@@ -188,29 +178,13 @@ public final class UserGroupRoleTableTrigger implements ITrigger {
 
             boolean isMapResult = true;
             if(responseData.getData() instanceof List) {
-                list = FastJsonUtils.convert(responseData.getData(), List.class);
+                list = JsonUtils.convert(responseData.getData(), List.class);
                 isMapResult = false;
             }
 
             else {
-                Map map = FastJsonUtils.convert(responseData.getData(), Map.class);
+                Map map = JsonUtils.convert(responseData.getData(), Map.class);
                 list.add(map);
-            }
-
-            for(int i=0; i<list.size(); i++) {
-
-                List<String> keyList = (List) list.get(i).keySet().stream()
-                        .filter(a -> a.toString().toUpperCase().equals("USERID"))
-                        .map(b -> b.toString()).collect(Collectors.toList());
-
-                if (keyList == null) {
-                    return;
-                }
-
-                for (String key : keyList) {
-                    String id = encrypt(list.get(i).get(key).toString(), EncryptMode.AES, aesPublicKey);
-                    list.get(i).put(key, id);
-                }
             }
 
             if(isMapResult) {
@@ -243,5 +217,10 @@ public final class UserGroupRoleTableTrigger implements ITrigger {
     @Override
     public void onPlayVideo(DownloadData data, HttpServletRequest request) {
 
+    }
+
+    @Override
+    public void onBuild(List<ColumnInfo> columns, HttpServletRequest request) throws Exception {
+        throw new Exception("can not build userGroupRole table!!!");
     }
 }

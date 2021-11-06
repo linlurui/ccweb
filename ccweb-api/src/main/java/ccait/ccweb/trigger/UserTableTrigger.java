@@ -15,18 +15,21 @@ package ccait.ccweb.trigger;
 import ccait.ccweb.annotation.Trigger;
 import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.context.ApplicationContext;
+import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.model.DownloadData;
-import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.model.ResponseData;
 import ccait.ccweb.model.UserModel;
 import ccait.ccweb.utils.ClassUtils;
+import ccait.ccweb.utils.EncryptionUtil;
+import entity.query.ColumnInfo;
 import entity.query.core.ApplicationConfig;
-import entity.tool.util.FastJsonUtils;
-import org.slf4j.LoggerFactory;
+import entity.tool.util.JsonUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -38,12 +41,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import static ccait.ccweb.utils.StaticVars.*;
+
+import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
+import static ccait.ccweb.utils.StaticVars.VARS_PATH;
 
 @Component
 @Scope("prototype")
 @Trigger(tablename = "${ccweb.table.user}")
-@Order(value = -2147483647)
+@Order(Ordered.HIGHEST_PRECEDENCE+666)
 public final class UserTableTrigger implements ITrigger {
 
     private static final Logger log = LoggerFactory.getLogger( UserTableTrigger.class );
@@ -54,10 +59,14 @@ public final class UserTableTrigger implements ITrigger {
     @Value("${ccweb.table.reservedField.userId:userId}")
     private String userIdField;
 
+    @Value("${ccweb.security.encrypt.MD5.publicKey:ccait}")
+    private String md5PublicKey;
+
     @PostConstruct
     private void construct() {
         admin = ApplicationConfig.getInstance().get("${ccweb.security.admin.username}", admin);
         userIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userId}", userIdField);
+        md5PublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MD5.publicKey}", md5PublicKey);
     }
 
     @Override
@@ -92,6 +101,9 @@ public final class UserTableTrigger implements ITrigger {
             if (!data.containsKey("status")) {
                 data.put("status", 0);
             }
+
+            String key = EncryptionUtil.md5(data.get("username").toString(), md5PublicKey, "UTF-8");
+            data.put("key", key);
         }
 
         CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
@@ -106,7 +118,7 @@ public final class UserTableTrigger implements ITrigger {
         for (String key : keys) {
             String lowerKey = key.toLowerCase();
             if("username".equals(lowerKey)) {
-                throw new Exception(LangConfig.getInstance().get("username_can_not_be_modify"));
+                data.remove(key);
             }
 
             if(userIdField.toLowerCase().equals(lowerKey)) {
@@ -195,12 +207,12 @@ public final class UserTableTrigger implements ITrigger {
 
             boolean isMapResult = true;
             if(responseData.getData() instanceof List) {
-                list = FastJsonUtils.convert(responseData.getData(), List.class);
+                list = JsonUtils.convert(responseData.getData(), List.class);
                 isMapResult = false;
             }
 
             else {
-                Map map = FastJsonUtils.convert(responseData.getData(), Map.class);
+                Map map = JsonUtils.convert(responseData.getData(), Map.class);
                 list.add(map);
             }
 
@@ -255,5 +267,10 @@ public final class UserTableTrigger implements ITrigger {
     @Override
     public void onPlayVideo(DownloadData data, HttpServletRequest request) {
 
+    }
+
+    @Override
+    public void onBuild(List<ColumnInfo> columns, HttpServletRequest request) throws Exception {
+        throw new Exception("can not build user table!!!");
     }
 }

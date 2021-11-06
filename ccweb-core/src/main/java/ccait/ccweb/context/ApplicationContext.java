@@ -109,7 +109,7 @@ public class ApplicationContext implements ApplicationContextAware {
     @Value(TABLE_PRIVILEGE)
     private String privilegeTablename;
 
-    @Value("${ccweb.datasource.configFile:db-config.xml}")
+    @Value("${entity.datasource.configFile:db-config.xml}")
     private String configFile;
 
     @Value("${ccweb.security.encrypt.MD5.fields:}")
@@ -205,7 +205,7 @@ public class ApplicationContext implements ApplicationContextAware {
     }
 
     private void ensureInjectValues() {
-        configFile = ApplicationConfig.getInstance().get("${ccweb.datasource.configFile}", configFile);
+        configFile = ApplicationConfig.getInstance().get("${entity.datasource.configFile}", configFile);
         md5Fields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MD5.fields}", md5Fields);
         md5PublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MD5.publicKey}", md5PublicKey);
         base64Fields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.BASE64.fields}", base64Fields);

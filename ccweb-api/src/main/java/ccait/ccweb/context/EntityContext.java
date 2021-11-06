@@ -14,6 +14,7 @@ package ccait.ccweb.context;
 import ccait.ccweb.dynamic.DynamicClassBuilder;
 import ccait.ccweb.entites.PrimaryKeyInfo;
 import ccait.ccweb.entites.QueryInfo;
+import ccait.ccweb.utils.StaticVars;
 import entity.query.ColumnInfo;
 import entity.query.Queryable;
 import entity.query.annotation.Fieldname;
@@ -49,6 +50,11 @@ public final class EntityContext {
     private static final Map<Class<?>, List<Field>> objectFieldsMap = new HashMap<Class<?>, List<Field>>() ;
 
     private static final Map<String, Map<String, List<ColumnInfo>>> tableColumnsMap = new HashMap<String, Map<String, List<ColumnInfo>>>();
+
+    public static String getCurrentTable() {
+        Map map = ApplicationContext.getThreadLocalMap();
+        return !map.containsKey(StaticVars.CURRENT_TABLE) ? "" : map.get(StaticVars.CURRENT_TABLE).toString();
+    }
 
     @PostConstruct
     private void postConstruct() {

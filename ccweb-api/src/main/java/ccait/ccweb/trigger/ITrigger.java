@@ -16,6 +16,7 @@ import ccait.ccweb.controllers.BaseController;
 import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.model.DownloadData;
 import ccait.ccweb.model.ResponseData;
+import entity.query.ColumnInfo;
 import org.springframework.core.annotation.Order;
 
 import javax.servlet.http.HttpServletRequest;
@@ -154,4 +155,15 @@ public interface ITrigger {
     @OnPlayVideo
     @Order(-55555)
     void onPlayVideo(DownloadData data, HttpServletRequest request) throws Exception;
+
+
+    /***
+     * 建表时触发
+     * @param columns （列）
+     * @param request （当前请求）
+     * @throws Exception
+     */
+    @OnBuildTable
+    @Order(-55555)
+    void onBuild(List<ColumnInfo> columns, HttpServletRequest request) throws Exception;
 }

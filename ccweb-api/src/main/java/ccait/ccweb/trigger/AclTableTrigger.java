@@ -1,27 +1,43 @@
+/**
+ *
+ *  License: http://www.apache.org/licenses/LICENSE-2.0
+ *  Home page: https://github.com/linlurui/ccweb
+ *  Note: to build on java, include the jdk1.8+ compiler symbol (and yes,
+ *  I know the difference between language and runtime versions; this is a compromise).
+ * @author linlurui
+ * @Date Date: 2019-02-10
+ */
+
 package ccait.ccweb.trigger;
 
 
 import ccait.ccweb.annotation.Trigger;
-import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.entites.QueryInfo;
+import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.model.DownloadData;
 import ccait.ccweb.model.ResponseData;
-import org.slf4j.LoggerFactory;
+import entity.query.ColumnInfo;
+import entity.query.core.ApplicationConfig;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+
 
 @Component
 @Scope("prototype")
 @Trigger(tablename = "${ccweb.table.acl}")
+@Order(Ordered.HIGHEST_PRECEDENCE+666)
 public final class AclTableTrigger implements ITrigger {
 
     private static final Logger log = LoggerFactory.getLogger( AclTableTrigger.class );
@@ -29,11 +45,13 @@ public final class AclTableTrigger implements ITrigger {
     @Value("${ccweb.table.reservedField.aclId:aclId}")
     private String aclIdField;
 
+    @PostConstruct
+    private void init() {
+        aclIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.aclId}", aclIdField);
+    }
+
     @Override
     public void onInsert(List<Map<String, Object>> list, HttpServletRequest request) {
-        for(Map<String, Object> data : list) {
-            data.put(aclIdField, UUID.randomUUID().toString().replace("-", ""));
-        }
         CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
         wrapper.setPostParameter(list);
     }
@@ -68,15 +86,15 @@ public final class AclTableTrigger implements ITrigger {
     public void onView(String id, HttpServletRequest request) {}
 
     @Override
-    public void onQuery(QueryInfo queryInfo, HttpServletRequest request) {
+    public void onQuery(QueryInfo queryInfo, HttpServletRequest request) throws IOException {
     }
 
     @Override
-    public void onResponse(HttpServletResponse response, HttpServletRequest request) {
+    public void onResponse(HttpServletResponse response, HttpServletRequest request) throws IOException {
     }
 
     @Override
-    public void onSuccess(ResponseData responseData, HttpServletRequest request) {
+    public void onSuccess(ResponseData responseData, HttpServletRequest request) throws Exception {
     }
 
     @Override
@@ -98,5 +116,10 @@ public final class AclTableTrigger implements ITrigger {
     @Override
     public void onPlayVideo(DownloadData data, HttpServletRequest request) {
 
+    }
+
+    @Override
+    public void onBuild(List<ColumnInfo> columns, HttpServletRequest request) throws Exception {
+        throw new Exception("can not build acl table!!!");
     }
 }

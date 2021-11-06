@@ -229,7 +229,7 @@ public class PermissionUtils {
 
             if(StringUtils.isNotEmpty(datasource)){
                 final String ds = datasource;
-                List<String> datasourceList = StringUtils.splitString2List(ApplicationConfig.getInstance().get("${ccweb.datasource.activated}", ""), ",");
+                List<String> datasourceList = StringUtils.splitString2List(ApplicationConfig.getInstance().get("${entity.datasource.activated}", ""), ",");
                 Optional<String> opt = datasourceList.stream()
                         .filter(a -> a.toLowerCase().equals(ds.toLowerCase())).findAny();
                 if(opt == null || !opt.isPresent()) {

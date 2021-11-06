@@ -1,28 +1,43 @@
+/**
+ *
+ *  License: http://www.apache.org/licenses/LICENSE-2.0
+ *  Home page: https://github.com/linlurui/ccweb
+ *  Note: to build on java, include the jdk1.8+ compiler symbol (and yes,
+ *  I know the difference between language and runtime versions; this is a compromise).
+ * @author linlurui
+ * @Date Date: 2019-02-10
+ */
+
 package ccait.ccweb.trigger;
 
 
 import ccait.ccweb.annotation.Trigger;
-import ccait.ccweb.controllers.BaseController;
-import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.entites.QueryInfo;
+import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.model.DownloadData;
 import ccait.ccweb.model.ResponseData;
-import org.slf4j.LoggerFactory;
+import entity.query.ColumnInfo;
+import entity.query.core.ApplicationConfig;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+
 
 @Component
 @Scope("prototype")
 @Trigger(tablename = "${ccweb.table.privilege}")
+@Order(Ordered.HIGHEST_PRECEDENCE+666)
 public final class PrivilegeTableTrigger implements ITrigger {
 
     private static final Logger log = LoggerFactory.getLogger( PrivilegeTableTrigger.class );
@@ -30,11 +45,13 @@ public final class PrivilegeTableTrigger implements ITrigger {
     @Value("${ccweb.table.reservedField.privilegeId:privilegeId}")
     private String privilegeIdField;
 
+    @PostConstruct
+    private void init() {
+        privilegeIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.privilegeId}", privilegeIdField);
+    }
+
     @Override
     public void onInsert(List<Map<String, Object>> list, HttpServletRequest request) {
-        for(Map<String, Object> data : list) {
-            data.put(privilegeIdField, UUID.randomUUID().toString().replace("-", ""));
-        }
         CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
         wrapper.setPostParameter(list);
     }
@@ -99,5 +116,10 @@ public final class PrivilegeTableTrigger implements ITrigger {
     @Override
     public void onPlayVideo(DownloadData data, HttpServletRequest request) {
 
+    }
+
+    @Override
+    public void onBuild(List<ColumnInfo> columns, HttpServletRequest request) throws Exception {
+        throw new Exception("can not build privilege table!!!");
     }
 }
