@@ -78,6 +78,18 @@ public final class EntityContext {
         log.info(LOG_PRE_SUFFIX + "实体类上下文 ： [EntityContext]", "初始化完成");
     }
 
+    public static String getMethodName(String fieldname, String method) {
+        StringBuffer result = new StringBuffer();
+        String[] arr = fieldname.split("_");
+        result.append(method);
+        for(String item : arr) {
+            result.append( item.substring(0, 1).toUpperCase() );
+            result.append( item.substring(1) );
+        }
+
+        return result.toString();
+    }
+
     public static Object getEntity(String tablename, Map<String, Object> data, String id) {
 
         data.put("id", id);

@@ -290,15 +290,11 @@ public abstract class BaseController extends AbstractBaseController {
                 }
             }
 
-            try {
-                if(value.getClass().equals(String.class) && Pattern.matches("^\\s*\\{.*\\}\\s*$", value.toString()) &&
-                        entity.getClass().getField(fieldName).getClass().equals(Date.class)) {
-                    value = cast(Date.class, FastJsonUtils.parse(value.toString(), Date.class));
-                }
-            } catch (NoSuchFieldException e) {
-
+            if(value.getClass().equals(String.class) &&
+                    Pattern.matches("^\\s*\\{\"date\".+\"hours\".+\"seconds\".+\"month\".+\"timezoneOffset\".+\"year\".+\"minutes\".+\"time\".+\"day\".+\\}\\s*$", value.toString())) {
+                value = cast(Date.class, FastJsonUtils.parse(value.toString(), Date.class));
             }
-            ReflectionUtils.setFieldValue(entity.getClass(), entity, fieldName, value);
+            ReflectionUtils.setFieldValue(entity.getClass(), entity, EntityContext.getMethodName(fieldName, "set"), value);
             postData.put(argname, String.format("#{%s}", fieldName));
         }
     }
