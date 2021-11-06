@@ -15,11 +15,14 @@ package ccait.ccweb.entites;
 import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.context.ApplicationContext;
 import ccait.ccweb.context.EntityContext;
+import ccait.ccweb.context.EntityContext;
+import ccait.ccweb.context.UserContext;
+import ccait.ccweb.dynamic.DynamicClassBuilder;
 import ccait.ccweb.enums.Algorithm;
 import ccait.ccweb.enums.EncryptMode;
 import ccait.ccweb.enums.PrivilegeScope;
-import ccait.ccweb.model.GroupModel;
 import ccait.ccweb.model.PageInfo;
+import ccait.ccweb.model.UserGroupRoleModel;
 import ccait.ccweb.model.UserModel;
 import ccait.ccweb.utils.EncryptionUtil;
 import com.alibaba.fastjson.JSONArray;
@@ -50,8 +53,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static ccait.ccweb.dynamic.DynamicClassBuilder.ensureColumnName;
-import static ccait.ccweb.dynamic.DynamicClassBuilder.smallHump;
+import static ccait.ccweb.context.ApplicationContext.*;
 import static ccait.ccweb.utils.StaticVars.*;
 import static entity.tool.util.StringUtils.cast;
 import static entity.tool.util.StringUtils.join;
@@ -87,6 +89,12 @@ public class QueryInfo implements Serializable {
 
     @Value("${ccweb.encoding:UTF-8}")
     private String encoding;
+
+    @Value(TABLE_USER)
+    private String userTablename;
+
+    @Value("${ccweb.table.reservedField.userId:userId}")
+    private String userIdField;
 
     public PageInfo getPageInfo() {
         return pageInfo;
@@ -239,16 +247,16 @@ public class QueryInfo implements Serializable {
                     list.add(field);
                 }
                 else {
-                    list.add(String.format("%s AS %s", ensureColumnName(field), DBUtils.getSqlInjText(ensureColumnName(info.getAlias()))));
+                    list.add(String.format("%s AS %s", DynamicClassBuilder.ensureColumnName(field), DBUtils.getSqlInjText(DynamicClassBuilder.ensureColumnName(info.getAlias()))));
                 }
             }
 
             else {
                 if(info.getAlias() == null) {
-                    list.add(String.format("%s(%s)", info.getFunction().getValue(), ensureColumnName(field)));
+                    list.add(String.format("%s(%s)", info.getFunction().getValue(), DynamicClassBuilder.ensureColumnName(field)));
                 }
                 else {
-                    list.add(String.format("%s(%s) AS %s", info.getFunction().getValue(), ensureColumnName(field), DBUtils.getSqlInjText(ensureColumnName(info.getAlias()))));
+                    list.add(String.format("%s(%s) AS %s", info.getFunction().getValue(), DynamicClassBuilder.ensureColumnName(field), DBUtils.getSqlInjText(DynamicClassBuilder.ensureColumnName(info.getAlias()))));
                 }
             }
         }
@@ -259,7 +267,7 @@ public class QueryInfo implements Serializable {
 
         groupBy.select().clean();
 
-        return groupBy.select(StringUtils.join(", ", list.toArray()));
+        return (QueryableAction) groupBy.select(StringUtils.join(", ", list.toArray()));
     }
 
     public QueryableAction getSelectQuerable(OrderBy orderBy) {
@@ -293,16 +301,16 @@ public class QueryInfo implements Serializable {
                     list.add(field);
                 }
                 else {
-                    list.add(String.format("%s AS %s", ensureColumnName(field), DBUtils.getSqlInjText(ensureColumnName(info.getAlias()))));
+                    list.add(String.format("%s AS %s", DynamicClassBuilder.ensureColumnName(field), DBUtils.getSqlInjText(DynamicClassBuilder.ensureColumnName(info.getAlias()))));
                 }
             }
 
             else {
                 if(info.getAlias() == null) {
-                    list.add(String.format("%s(%s)", info.getFunction().getValue(), ensureColumnName(field)));
+                    list.add(String.format("%s(%s)", info.getFunction().getValue(), DynamicClassBuilder.ensureColumnName(field)));
                 }
                 else {
-                    list.add(String.format("%s(%s) AS %s", info.getFunction().getValue(), ensureColumnName(field), DBUtils.getSqlInjText(ensureColumnName(info.getAlias()))));
+                    list.add(String.format("%s(%s) AS %s", info.getFunction().getValue(), DynamicClassBuilder.ensureColumnName(field), DBUtils.getSqlInjText(DynamicClassBuilder.ensureColumnName(info.getAlias()))));
                 }
             }
         }
@@ -313,7 +321,7 @@ public class QueryInfo implements Serializable {
 
         orderBy.select().clean();
 
-        return orderBy.select(StringUtils.join(", ", list.toArray()));
+        return (QueryableAction) orderBy.select(StringUtils.join(", ", list.toArray()));
     }
 
     public QueryableAction getSelectQuerable(Where where, boolean isMutilTable) {
@@ -358,16 +366,16 @@ public class QueryInfo implements Serializable {
                     list.add(field);
                 }
                 else {
-                    list.add(String.format("%s AS %s", ensureColumnName(field), DBUtils.getSqlInjText(ensureColumnName(info.getAlias()))));
+                    list.add(String.format("%s AS %s", DynamicClassBuilder.ensureColumnName(field), DBUtils.getSqlInjText(DynamicClassBuilder.ensureColumnName(info.getAlias()))));
                 }
             }
 
             else {
                 if(info.getAlias() == null) {
-                    list.add(String.format("%s(%s)", info.getFunction().getValue(), ensureColumnName(field)));
+                    list.add(String.format("%s(%s)", info.getFunction().getValue(), DynamicClassBuilder.ensureColumnName(field)));
                 }
                 else {
-                    list.add(String.format("%s(%s) AS %s", info.getFunction().getValue(), ensureColumnName(field), DBUtils.getSqlInjText(ensureColumnName(info.getAlias()))));
+                    list.add(String.format("%s(%s) AS %s", info.getFunction().getValue(), DynamicClassBuilder.ensureColumnName(field), DBUtils.getSqlInjText(DynamicClassBuilder.ensureColumnName(info.getAlias()))));
                 }
             }
         }
@@ -378,7 +386,7 @@ public class QueryInfo implements Serializable {
 
         where.select().clean();
 
-        return where.select(StringUtils.join(", ", list.toArray()));
+        return (QueryableAction) where.select(StringUtils.join(", ", list.toArray()));
     }
 
     private String ensureValue(ConditionInfo info, String fieldName, String value) {
@@ -420,7 +428,7 @@ public class QueryInfo implements Serializable {
                                       String tablename, String alias) throws Exception {
         if(this.getConditionList() != null) {
             for(ConditionInfo info : this.getConditionList()) {
-                Optional<Field> opt = fields.stream().filter(a->a.getName().equals(smallHump(ensureColumnName(info.getName())))).findFirst();
+                Optional<Field> opt = fields.stream().filter(a->a.getName().equals(DynamicClassBuilder.smallHump(DynamicClassBuilder.ensureColumnName(info.getName())))).findFirst();
                 if(!opt.isPresent()) {
                     continue;
                 }
@@ -429,22 +437,22 @@ public class QueryInfo implements Serializable {
 
                 if(info.getValue() == null) {
                     if(Algorithm.EQ.equals(info.getAlgorithm())) {
-                        where = where.and(DBUtils.getSqlInjText(ensureColumnName(info.getName())) + " IS NULL ");
+                        where = where.and(DBUtils.getSqlInjText(DynamicClassBuilder.ensureColumnName(info.getName())) + " IS NULL ");
                     }
 
                     else if(Algorithm.NOT.equals(info.getAlgorithm())) {
-                        where = where.and(DBUtils.getSqlInjText(ensureColumnName(info.getName())) + " IS NOT NULL ");
+                        where = where.and(DBUtils.getSqlInjText(DynamicClassBuilder.ensureColumnName(info.getName())) + " IS NOT NULL ");
                     }
                     continue;
                 }
 
                 if(info.getValue().toString().trim().equals("")) {
                     if(Algorithm.EQ.equals(info.getAlgorithm())) {
-                        where = where.and(DBUtils.getSqlInjText(ensureColumnName(info.getName())) + "=''");
+                        where = where.and(DBUtils.getSqlInjText(DynamicClassBuilder.ensureColumnName(info.getName())) + "=''");
                     }
 
                     else if(Algorithm.NOT.equals(info.getAlgorithm())) {
-                        where = where.and(DBUtils.getSqlInjText(ensureColumnName(info.getName())) + "!=''");
+                        where = where.and(DBUtils.getSqlInjText(DynamicClassBuilder.ensureColumnName(info.getName())) + "!=''");
                     }
                     continue;
                 }
@@ -460,7 +468,7 @@ public class QueryInfo implements Serializable {
             StringBuffer sb = new StringBuffer();
             boolean isFirst = true;
             for(FieldInfo info : this.getKeywords()) {
-                Optional<Field> opt = fields.stream().filter(a->a.getName().equals(smallHump(ensureColumnName(info.getName())))).findFirst();
+                Optional<Field> opt = fields.stream().filter(a->a.getName().equals(DynamicClassBuilder.smallHump(DynamicClassBuilder.ensureColumnName(info.getName())))).findFirst();
                 if(!opt.isPresent()) {
                     continue;
                 }
@@ -506,7 +514,10 @@ public class QueryInfo implements Serializable {
             createByField = String.format("[%s].[%s]", alias, context.createByField);
         }
 
-        List<Integer> useridList = (List<Integer>) ApplicationContext.getUserIdByAllGroups(context.request, user);
+        List<Integer> useridList = ApplicationContext
+                .getUserIdByAllGroups(context.request, user)
+                .stream().collect(Collectors.toList());
+
         switch(privilegeScope) {
             case DENIED:
                 if(user == null) {
@@ -514,27 +525,43 @@ public class QueryInfo implements Serializable {
                 }
                 throw new Exception(LangConfig.getInstance().get("data_access_denied"));
             case SELF:
-                if(!EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
+
+                if(context.userTablename.equals(tablename)) {
+                    where = where.and(String.format("%s='%s'", context.userIdField, user.getUserId()));
+                }
+                else if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
                     where = where.and(String.format("%s='%s'", createByField, user.getUserId()));
-                    break;
                 }
 
                 break;
             case CHILD:
-                if(!EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
-                    useridList = (List<Integer>)ApplicationContext.getUserIdBySubGroups(context.request, user);
-                    where = getWhereByPrivilegeScope(where, user, createByField, useridList);
+                if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
+                    useridList.add(user.getUserId());
+                    where = getWhereByPrivilegeScope(where, createByField, useridList);
                 }
                 break;
             case PARENT_AND_CHILD:
-                if(!EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
-                    where = getWhereByPrivilegeScope(where, user, createByField, useridList);
+                if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
+                    for(UserGroupRoleModel item : UserContext.getUserGroupRoleModels(context.request, user.getUserId())) {
+                        if(StringUtils.isEmpty(item.getPath())) {
+                            continue;
+                        }
+
+                        String[] arr = item.getPath().split("/");
+                        if(arr.length < 2) {
+                            continue;
+                        }
+
+                        useridList.add(Integer.parseInt(arr[arr.length - 2]));
+                    }
+                    useridList.add(user.getUserId());
+                    where = getWhereByPrivilegeScope(where, createByField, useridList);
                 }
                 break;
             case GROUP:
-                if(!EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
-                    useridList = (List<Integer>)ApplicationContext.getUserIdByCurrentGroups(context.request, user);
-                    where = getWhereByPrivilegeScope(where, user, createByField, useridList);
+                if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
+                    useridList = ApplicationContext.getUserIdByCurrentGroups(context.request, user).stream().collect(Collectors.toList());
+                    where = getWhereByPrivilegeScope(where, createByField, useridList);
                 }
                 break;
             case NO_GROUP:
@@ -548,10 +575,8 @@ public class QueryInfo implements Serializable {
         return where;
     }
 
-    private Where getWhereByPrivilegeScope(Where where, UserModel user, String createByField, List<Integer> useridList) {
+    private Where getWhereByPrivilegeScope(Where where, String createByField, List<Integer> useridList) {
         where = where.and(String.format("%s IN (%s)", createByField, join(", ", useridList)));
-        where = where.or(String.format("%s=-1", createByField));
-        where = where.or(String.format("%s='%s'", createByField, user.getUserId()));
         return where;
     }
 
@@ -593,7 +618,7 @@ public class QueryInfo implements Serializable {
 
     private String ensureColumn(String name) {
         return DBUtils.getSqlInjText(name).trim().replaceAll("\\s", "")
-                .replaceAll("([_\\w\\d]+)(\\.?)", "[$1]$2");
+                .replaceAll("([_\\w\\d\\u4e00-\\u9fa5]+)(\\.?)", "[$1]$2");
     }
 
     public Where getWhereQueryableById(Object entity, String table, String id) throws Exception {
