@@ -30,6 +30,7 @@ import entity.query.*;
 import entity.query.annotation.PrimaryKey;
 import entity.query.core.ApplicationConfig;
 import entity.tool.util.*;
+import entity.tool.util.FastJsonUtils;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import org.slf4j.LoggerFactory;
@@ -289,6 +290,14 @@ public abstract class BaseController extends AbstractBaseController {
                 }
             }
 
+            try {
+                if(value.getClass().equals(String.class) && Pattern.matches("^\\s*\\{.*\\}\\s*$", value.toString()) &&
+                        entity.getClass().getField(fieldName).getClass().equals(Date.class)) {
+                    value = cast(Date.class, FastJsonUtils.parse(value.toString(), Date.class));
+                }
+            } catch (NoSuchFieldException e) {
+
+            }
             ReflectionUtils.setFieldValue(entity.getClass(), entity, fieldName, value);
             postData.put(argname, String.format("#{%s}", fieldName));
         }
