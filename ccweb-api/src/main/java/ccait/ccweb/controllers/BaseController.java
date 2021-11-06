@@ -294,7 +294,7 @@ public abstract class BaseController extends AbstractBaseController {
                     Pattern.matches("^\\s*\\{\"date\".+\"hours\".+\"seconds\".+\"month\".+\"timezoneOffset\".+\"year\".+\"minutes\".+\"time\".+\"day\".+\\}\\s*$", value.toString())) {
                 value = cast(Date.class, FastJsonUtils.parse(value.toString(), Date.class));
             }
-            ReflectionUtils.setFieldValue(entity.getClass(), entity, EntityContext.getMethodName(fieldName, "set"), value);
+            ReflectionUtils.setFieldValue(entity.getClass(), entity, fieldName, value);
             postData.put(argname, String.format("#{%s}", fieldName));
         }
     }
