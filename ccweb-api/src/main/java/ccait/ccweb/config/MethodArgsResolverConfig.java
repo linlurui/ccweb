@@ -11,6 +11,7 @@
 
 package ccait.ccweb.config;
 
+import ccait.ccweb.resolver.PathVariableResolver;
 import ccait.ccweb.resolver.RequestArgumentResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,7 @@ public class MethodArgsResolverConfig {
     public void injectSelfMethodArgumentResolver() {
         List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>();
         argumentResolvers.add(new RequestArgumentResolver());
+        argumentResolvers.add(new PathVariableResolver());
         argumentResolvers.addAll(adapter.getArgumentResolvers());
         adapter.setArgumentResolvers(argumentResolvers);
     }

@@ -13,7 +13,8 @@ package ccait.ccweb.resolver;
 
 
 import ccait.ccweb.filter.CCWebRequestWrapper;
-import ccait.ccweb.utils.FastJsonUtils;
+import entity.tool.util.FastJsonUtils;
+import entity.tool.util.JsonUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Configuration;
@@ -45,30 +46,60 @@ public class RequestArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-
-        final String parameterJson = ((CCWebRequestWrapper) ((ServletWebRequest) webRequest).getRequest()).getRequestPostString();
-        final Type type = parameter.getGenericParameterType();
-        Class clazz = null;
-
-        if(type.getTypeName().indexOf("List<") > 0) {
-            List list = FastJsonUtils.convertJsonToObject(parameterJson, List.class);
-            List result = new ArrayList();
-            for(int i=0; i<list.size();i++) {
-                Type argType = ((ParameterizedTypeImpl) type).getActualTypeArguments()[0];
-                Object obj = FastJsonUtils.convert(list.get(i), getClassByType(argType) );
-                result.add(obj);
+        CCWebRequestWrapper requestWrapper = (CCWebRequestWrapper) ((ServletWebRequest) webRequest).getRequest();
+        try {
+            if(requestWrapper.getParameters() == null) {
+                return null;
+            }
+            final Type type = parameter.getGenericParameterType();
+            if(type.equals(String.class)) {
+                if(requestWrapper.getParameters().getClass().equals(String.class)) {
+                    return requestWrapper.getParameters();
+                }
+                return JsonUtils.toJson(requestWrapper.getParameters());
             }
 
-            return result;
+            Class clazz = null;
+            if (type.getTypeName().indexOf("List<") > 0) {
+                List parametes = (List) requestWrapper.getParameters();
+                List result = new ArrayList();
+                for (int i = 0; i < parametes.size(); i++) {
+                    Type argType = ((ParameterizedTypeImpl) type).getActualTypeArguments()[0];
+                    if (byte[].class.equals(argType) || String.class.equals(argType)) {
+                        result.add(parametes.get(i));
+                    }
+                    else if (parametes.get(i) instanceof Number) {
+                        result.add(parametes.get(i));
+                    }
+                    else {
+                        Object obj = JsonUtils.convert(parametes.get(i), getClassByType(argType));
+                        result.add(obj);
+                    }
+                }
+
+                return result;
+            } else {
+
+                clazz = getClassByType(type);
+            }
+
+            if(requestWrapper.getParameters() == null) {
+                return null;
+            }
+
+            try {
+                return JsonUtils.convert(requestWrapper.getParameters(), clazz);
+            }
+            catch (Exception ex) {
+                log.error(ex.getMessage());
+                return FastJsonUtils.convert(requestWrapper.getParameters(), clazz);
+            }
+        }
+        catch (Exception e) {
+            log.error("RequestBody参数化失败=====>>> ", e);
         }
 
-        else {
-
-            clazz = getClassByType(type);
-        }
-
-
-        return FastJsonUtils.convertJsonToObject(parameterJson, clazz);
+        return requestWrapper.getParameters().toString();
     }
 
     public Class getClassByType(Type type) {
