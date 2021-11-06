@@ -809,6 +809,14 @@ public class ApplicationContext implements ApplicationContextAware {
         columns.add(col);
 
         col = new ColumnInfo();
+        col.setColumnName("key");
+        col.setCanNotNull(true);
+        col.setDefaultValue("");
+        col.setMaxLength(64);
+        col.setType(String.class);
+        columns.add(col);
+
+        col = new ColumnInfo();
         col.setColumnName(modifyOnField);
         col.setCanNotNull(false);
         col.setType(Date.class);
