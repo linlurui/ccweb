@@ -102,7 +102,7 @@ public class JwtUtils {
                 //设置需要解析的jwt
                 .parseClaimsJws(token).getBody();
 
-        if (claims.get("password").equals(user.getPassword())) {
+        if (claims.get("password").equals(user.getKey())) {
             return true;
         }
 

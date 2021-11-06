@@ -142,7 +142,8 @@ public final class DefaultTrigger {
             }
 
             if(pk.isPresent() && item.containsKey(pk.get().getColumnName())) {
-                if(pk.get().getIsAutoIncrement() || item.get(pk.get().getColumnName())==null) {
+                if(pk.get().getIsAutoIncrement() || item.get(pk.get().getColumnName())==null ||
+                        "".equals(item.get(pk.get().getColumnName()))) {
                     item.remove(pk.get().getColumnName());
                 }
             }
