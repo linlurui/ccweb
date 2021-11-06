@@ -506,7 +506,7 @@ public class QueryInfo implements Serializable {
             createByField = String.format("[%s].[%s]", alias, context.createByField);
         }
 
-        List<Integer> useridList = (List<Integer>) ApplicationContext.getUserIdByAllGroups(request, user);
+        List<Integer> useridList = (List<Integer>) ApplicationContext.getUserIdByAllGroups(context.request, user);
         switch(privilegeScope) {
             case DENIED:
                 if(user == null) {
@@ -522,7 +522,7 @@ public class QueryInfo implements Serializable {
                 break;
             case CHILD:
                 if(!EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
-                    useridList = (List<Integer>)ApplicationContext.getUserIdBySubGroups(request, user);
+                    useridList = (List<Integer>)ApplicationContext.getUserIdBySubGroups(context.request, user);
                     where = getWhereByPrivilegeScope(where, user, createByField, useridList);
                 }
                 break;
@@ -533,7 +533,7 @@ public class QueryInfo implements Serializable {
                 break;
             case GROUP:
                 if(!EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
-                    useridList = (List<Integer>)ApplicationContext.getUserIdByCurrentGroups(request, user);
+                    useridList = (List<Integer>)ApplicationContext.getUserIdByCurrentGroups(context.request, user);
                     where = getWhereByPrivilegeScope(where, user, createByField, useridList);
                 }
                 break;
