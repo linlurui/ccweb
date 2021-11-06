@@ -498,7 +498,7 @@ public class QueryInfo implements Serializable {
         //控制查询权限
         DataSource dataSource = DataSourceFactory.getInstance().getDataSource(datasourceId);
 
-        UserModel user = (UserModel)context.request.getSession().getAttribute(context.request.getSession().getId() + LOGIN_KEY);
+        UserModel user = ApplicationContext.getSession(context.request, LOGIN_KEY, UserModel.class);
 
         String createByField = String.format("[%s]", context.createByField);
 
