@@ -117,7 +117,7 @@ public final class DefaultTrigger {
         }
 
         List<ColumnInfo> columnInfos = Queryable.getColumns(ApplicationContext.getCurrentDatasourceId(), EntityContext.getCurrentTable());
-        Optional<ColumnInfo> pk = columnInfos.stream().filter(a-> a.getIsPrimaryKey() && a.getIsAutoIncrement()).findFirst();
+        Optional<ColumnInfo> pk = columnInfos.stream().filter(a-> a.getIsPrimaryKey()).findFirst();
 
         for(Map item : list) {
 
@@ -142,7 +142,9 @@ public final class DefaultTrigger {
             }
 
             if(pk.isPresent() && item.containsKey(pk.get().getColumnName())) {
-                item.remove(pk.get().getColumnName());
+                if(pk.get().getIsAutoIncrement() || item.get(pk.get().getColumnName())==null) {
+                    item.remove(pk.get().getColumnName());
+                }
             }
         }
 
