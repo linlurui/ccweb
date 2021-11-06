@@ -244,7 +244,7 @@ public class PermissionUtils {
             ApplicationContext.getThreadLocalMap().put(CURRENT_DATASOURCE, datasource);
             if(StringUtils.isNotEmpty(currentTable)) {
                 ApplicationContext.getThreadLocalMap().put(CURRENT_TABLE, currentTable);
-                ApplicationContext.getThreadLocalMap().put(CURRENT_MAX_PRIVILEGE_SCOPE + currentTable, PrivilegeScope.DENIED);
+                ApplicationContext.getThreadLocalMap().put(CURRENT_MAX_PRIVILEGE_SCOPE + currentTable, PrivilegeScope.SELF);
             }
             myResult = false;
             return this;

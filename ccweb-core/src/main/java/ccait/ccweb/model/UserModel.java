@@ -57,6 +57,17 @@ public class UserModel extends Queryable<UserModel> {
   @Fieldname("status")
   private Integer status;
 
+  public Integer getKey() {
+    return key;
+  }
+
+  public void setKey(Integer key) {
+    this.key = key;
+  }
+
+  @Fieldname("key")
+  private Integer key;
+
   @Exclude
   private String token;
 
