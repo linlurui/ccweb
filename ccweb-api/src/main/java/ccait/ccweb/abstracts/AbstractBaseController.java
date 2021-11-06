@@ -10,6 +10,7 @@ import ccait.ccweb.utils.EncryptionUtil;
 import entity.query.Datetime;
 import entity.query.core.ApplicationConfig;
 import entity.tool.util.FastJsonUtils;
+import entity.tool.util.JsonUtils;
 import entity.tool.util.StringUtils;
 import org.apache.http.HttpException;
 import org.slf4j.Logger;
@@ -237,7 +238,8 @@ public abstract class AbstractBaseController {
             }
 
             try {
-                for (Map<String, Object> item : dataList) {
+                for (Object obj : dataList) {
+                    Map<String, Object> item = JsonUtils.convert(obj, Map.class);
                     for (String key : item.keySet()) {
                         Optional opt = map.keySet().stream()
                                 .filter(a -> a.equals(key) ||
