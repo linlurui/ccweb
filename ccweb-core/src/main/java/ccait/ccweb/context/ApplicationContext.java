@@ -285,6 +285,7 @@ public class ApplicationContext implements ApplicationContextAware {
             user.setUsername(admin);
             user.setPassword(pwd);
             user.setType("admin");
+            user.setKey(EncryptionUtil.md5(user.getUsername(), md5PublicKey, "UTF-8"));
             UserModel admin = user.where("[username]=#{username}").first();
             if(null == admin) {
                 user.insert();
@@ -760,6 +761,8 @@ public class ApplicationContext implements ApplicationContextAware {
         user.setCreateOn(new Date());
         user.setStatus(0);
         user.setCreateBy(Integer.valueOf(0));
+        user.setType("admin");
+        user.setKey(EncryptionUtil.md5(user.getUsername(), md5PublicKey, "UTF-8"));
 
         if(allTables.stream().filter(a->a.toLowerCase().equals(userTablename.toLowerCase())).findAny().isPresent()) {
             log.info(String.format(LOG_PRE_SUFFIX + "数据源初始化：数据表[%s]已存在！", userTablename));

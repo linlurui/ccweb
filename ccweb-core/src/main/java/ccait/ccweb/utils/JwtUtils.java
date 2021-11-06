@@ -22,7 +22,7 @@ public class JwtUtils {
      * @return
      */
     public static String createJWT(long ttlMillis, UserModel user) {
-        //指定签名的时候使用的签名算法，也就是header那部分，jjwt已经将这部分内容封装好了。
+        //指定签名的时候使用的签名算法，也就是header那部分，jwt已经将这部分内容封装好了。
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
         //生成JWT的时间
@@ -36,7 +36,7 @@ public class JwtUtils {
         claims.put("password", user.getPassword());
 
         //生成签名的时候使用的秘钥secret,这个方法本地封装了的，一般可以从本地配置文件中读取，切记这个秘钥不能外露哦。它就是你服务端的私钥，在任何场景都不应该流露出去。一旦客户端得知这个secret, 那就意味着客户端是可以自我签发jwt了。
-        String key = user.getPassword();
+        String key = user.getKey();
 
         //生成签发人
         String subject = user.getUsername();
@@ -72,7 +72,7 @@ public class JwtUtils {
      */
     public static Claims parseJWT(String token, UserModel user) {
         //签名秘钥，和生成的签名的秘钥一模一样
-        String key = user.getPassword();
+        String key = user.getKey();
 
         //得到DefaultJwtParser
         Claims claims = Jwts.parser()
@@ -93,7 +93,7 @@ public class JwtUtils {
      */
     public static Boolean isVerify(String token, UserModel user) {
         //签名秘钥，和生成的签名的秘钥一模一样
-        String key = user.getPassword();
+        String key = user.getKey();
 
         //得到DefaultJwtParser
         Claims claims = Jwts.parser()
