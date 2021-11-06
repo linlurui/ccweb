@@ -101,8 +101,8 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public ccait.ccweb.interceptors.SecurityInterceptor securityInterceptor() {
-        return new ccait.ccweb.interceptors.SecurityInterceptor();
+    public ccait.ccweb.interceptor.SecurityInterceptor securityInterceptor() {
+        return new ccait.ccweb.interceptor.SecurityInterceptor();
     }
 
     @Bean

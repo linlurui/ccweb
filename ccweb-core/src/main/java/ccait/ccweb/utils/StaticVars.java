@@ -22,4 +22,9 @@ public final class StaticVars {
     public static final String NO_PRIVILEGE_MESSAGE = "没有足够的权限执行该操作(No Privilege)";
     public static final String CURRENT_USER_ID_GROUPS = "CURRENT_USER_ID_GROUPS";
     public static final String CURRENT_USER_ID_SUB_GROUPS = "CURRENT_USER_ID_SUB_GROUPS";
+    public static final String HAS_UPLOAD_FILE = "HAS_UPLOAD_FILE";
+    public static final String DEFAULT_AUTHORIZATION = "Authorization";
+    public static final String DEFAULT_USERKEY = "userkey";
+    public static final String RESPONSE_END = "RESPONSE_END";
+    public static final String URI_TEMPLATE_VARIABLES_ATTRIBUTE = "org.springframework.web.servlet.HandlerMapping.uriTemplateVariables";
 }
