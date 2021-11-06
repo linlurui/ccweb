@@ -1013,7 +1013,7 @@ public class ApplicationContext implements ApplicationContextAware {
         return useridList;
     }
 
-    private static String getCurrentDatasourceId() {
+    public static String getCurrentDatasourceId() {
         String currentDatasource = "default";
         if (ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE) != null) {
             currentDatasource = ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE).toString();

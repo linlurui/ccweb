@@ -290,7 +290,7 @@ public abstract class BaseController extends AbstractBaseController {
                 }
             }
 
-            if(value.getClass().equals(String.class) &&
+            if(value!=null && value.getClass().equals(String.class) &&
                     Pattern.matches("^\\s*\\{\"date\".+\"hours\".+\"seconds\".+\"month\".+\"timezoneOffset\".+\"year\".+\"minutes\".+\"time\".+\"day\".+\\}\\s*$", value.toString())) {
                 value = cast(Date.class, FastJsonUtils.parse(value.toString(), Date.class));
             }

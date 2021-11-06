@@ -56,7 +56,7 @@ import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 @Component
 @Scope("prototype")
 @Trigger
-@Order(Ordered.HIGHEST_PRECEDENCE+555)
+@Order(Ordered.HIGHEST_PRECEDENCE+55)
 public final class DefaultTrigger {
 
     private static final Logger log = LoggerFactory.getLogger( DefaultTrigger.class );
@@ -116,6 +116,9 @@ public final class DefaultTrigger {
             throw new HttpResponseException(HttpStatus.UNAUTHORIZED.value(), LangConfig.getInstance().get("login_please"));
         }
 
+        List<ColumnInfo> columnInfos = Queryable.getColumns(ApplicationContext.getCurrentDatasourceId(), EntityContext.getCurrentTable());
+        Optional<ColumnInfo> pk = columnInfos.stream().filter(a-> a.getIsPrimaryKey() && a.getIsAutoIncrement()).findFirst();
+
         for(Map item : list) {
 
             setDefaultValues(item);
@@ -136,6 +139,10 @@ public final class DefaultTrigger {
 
             if(hasModifyOnField) {
                 item.put(modifyOnField, Datetime.now());
+            }
+
+            if(pk.isPresent() && item.containsKey(pk.get().getColumnName())) {
+                item.remove(pk.get().getColumnName());
             }
         }
 
