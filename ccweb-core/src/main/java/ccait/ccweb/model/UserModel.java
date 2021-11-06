@@ -57,19 +57,31 @@ public class UserModel extends Queryable<UserModel> {
   @Fieldname("status")
   private Integer status;
 
-  public Integer getKey() {
+  public String getKey() {
     return key;
   }
 
-  public void setKey(Integer key) {
+  public void setKey(String key) {
     this.key = key;
   }
 
   @Fieldname("key")
-  private Integer key;
+  private String key;
 
   @Exclude
-  private String token;
+  private String jwtToken;
+
+  public String getAesToken() {
+    return aesToken;
+  }
+
+  public void setAesToken(String aesToken) {
+    this.aesToken = aesToken;
+  }
+
+  @Exclude
+  private String aesToken;
+
 
   public Date getCreateOn() {
     return createOn;
@@ -154,12 +166,12 @@ public class UserModel extends Queryable<UserModel> {
     this.status = status;
   }
 
-  public String getToken() {
-    return token;
+  public String getJwtToken() {
+    return jwtToken;
   }
 
-  public void setToken(String token) {
-    this.token = token;
+  public void setJwtToken(String jwtToken) {
+    this.jwtToken = jwtToken;
   }
 
 }

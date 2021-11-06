@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
+
 import static ccait.ccweb.utils.StaticVars.*;
 
 public class UserContext {
@@ -59,18 +61,25 @@ public class UserContext {
 
         Boolean jwtEnable = Boolean.valueOf(ApplicationConfig.getInstance().get("${ccweb.auth.user.jwt.enable}", "false"));
         Boolean aesEnable = Boolean.valueOf(ApplicationConfig.getInstance().get("${ccweb.auth.user.aes.enable}", "false"));
-        Long jwtMillis = Long.valueOf(ApplicationConfig.getInstance().get("${ccweb.auth.user.jwt.millis}", "600000"));
+        Long jwtMillis = Long.valueOf(ApplicationConfig.getInstance().get("${ccweb.auth.user.jwt.millis}", "43200000"));
         String aesPublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.publicKey}", "ccait");
+
+        if(ApplicationConfig.getInstance().getMap("ccweb.auth.user.jwt.millis").containsKey("millis")) {
+            jwtMillis = Long.valueOf(ApplicationConfig.getInstance().getMap("ccweb.auth.user.jwt.millis").get("millis").toString());
+        }
 
         if(jwtEnable) {
             String token = JwtUtils.createJWT(jwtMillis, user);
-            user.setToken(token);
+            user.setJwtToken(token);
         }
 
-        else if(aesEnable) {
-            String vaildCode2 = EncryptionUtil.md5(EncryptionUtil.encryptByAES(user.getUserId().toString(), user.getUsername() + aesPublicKey), "UTF-8");
+        if(aesEnable) {
+            if(StringUtils.isEmpty(user.getKey())) {
+                throw new Exception(LangConfig.getInstance().get("can_not_find_the_user_key"));
+            }
+            String vaildCode2 = EncryptionUtil.md5(EncryptionUtil.encryptByAES(user.getUserId().toString(), user.getKey() + aesPublicKey), "UTF-8");
             String token = EncryptionUtil.encryptByAES(user.getUsername() + vaildCode2, aesPublicKey);
-            user.setToken(token);
+            user.setAesToken(token);
         }
 
         user.setPassword("******");
@@ -104,7 +113,8 @@ public class UserContext {
         UserGroupRoleModel model = new UserGroupRoleModel();
         model.setUserId(userId);
 
-        List<UserGroupRoleModel> userGroupRoleModels = model.where("[userId]=#{userId}").orderby("createOn desc").query();
+        String userIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userId}", "userId");
+        List<UserGroupRoleModel> userGroupRoleModels = model.where(userIdField + "=#{userId}").orderby("createOn desc").query();
 
 //    List<String> roleIdList = userGroupRoleModels.stream().filter(a-> a.getRoleId() != null)
 //            .map(b-> b.getRoleId().toString().replace("-", ""))
