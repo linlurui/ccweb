@@ -95,6 +95,8 @@ public final class UserTableTrigger implements ITrigger {
                     if (user.where("[username]=#{username}").exist()) {
                         throw new Exception(String.format(LangConfig.getInstance().get("username_already_exist"), data.get(key)));
                     }
+
+                    data.put("key", EncryptionUtil.md5(user.getUsername(), md5PublicKey, "UTF-8"));
                 }
             }
 
