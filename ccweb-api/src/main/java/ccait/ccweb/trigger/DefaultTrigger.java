@@ -44,6 +44,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Blob;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -301,27 +302,48 @@ public final class DefaultTrigger {
 
     private void vaildPostData(Map<String, Object> data) throws Exception {
         Map<String, Object> map = ApplicationConfig.getInstance().getMap("ccweb.validation");
-        if(map != null) {
-            for(String key : data.keySet()){
-                Optional opt = map.keySet().stream()
-                        .filter(a -> a.equals(key) ||
-                                String.format("%s.%s", EntityContext.getCurrentTable(), key).equals(a))
-                        .findAny();
+        if(map == null) {
+            return;
+        }
 
-                if(!opt.isPresent()){
-                    continue;
+        AtomicReference<String> errorMessage = new AtomicReference<>(null);
+        map.entrySet().stream().forEach(a-> {
+            if(StringUtils.isNotEmpty(errorMessage.get())) {
+                return;
+            }
+            String key = a.getKey();
+            if(a.getKey().indexOf(".")>0) {
+                if(!a.getKey().startsWith(EntityContext.getCurrentTable() + ".")) {
+                    return;
                 }
 
-                Map vaildation = (Map) opt.get();
-                if(vaildation.containsKey("match")) {
-                    if(!Pattern.matches(vaildation.get("match").toString(), data.get(key).toString())){
-                        if(vaildation.containsKey("message")) {
-                            throw new Exception(vaildation.get("message").toString());
-                        }
-                        throw new Exception(key + LangConfig.getInstance().get("field_has_invalid_parameter_value"));
+                key = StringUtils.splitString2List(a.getKey(), "\\.").get(1);
+            }
+            else if(!data.containsKey(key)) {
+                errorMessage.set(String.format("[%s]", key) + LangConfig.getInstance().get("field_has_invalid_parameter_value"));
+                return;
+            }
+
+            if(a.getValue() == null) {
+                return;
+            }
+
+
+            Map vaildation = (Map) a.getValue();
+            if(vaildation.containsKey("match")) {
+                if(!Pattern.matches(vaildation.get("match").toString(), data.get(key).toString())){
+                    if(vaildation.containsKey("message")) {
+                        errorMessage.set(vaildation.get("message").toString());
+                        return;
                     }
+                    errorMessage.set(String.format("[%s]", key) + LangConfig.getInstance().get("field_has_invalid_parameter_value"));
+                    return;
                 }
             }
+        });
+
+        if(StringUtils.isNotEmpty(errorMessage.get())) {
+            throw new Exception(errorMessage.get());
         }
     }
 
