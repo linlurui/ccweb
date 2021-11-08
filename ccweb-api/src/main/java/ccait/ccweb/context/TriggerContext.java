@@ -200,6 +200,8 @@ public final class TriggerContext {
                 .filter(a -> a.getTablename().equals(tablename) || a.getTablename().equals(DEFAULT_ALL_TABLE_EVENT))
                 .collect(Collectors.toList());
 
+        list.sort((EventInfo e1, EventInfo e2) -> e1.getOrder().compareTo(e2.getOrder()));
+
         for(EventInfo eventInfo : list) {
             Class<?> type = eventInfo.getType();
             String beanName = type.getSimpleName().substring(0, 1).toLowerCase() + type.getSimpleName().substring(1);

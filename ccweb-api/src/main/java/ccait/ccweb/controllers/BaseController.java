@@ -251,28 +251,6 @@ public abstract class BaseController extends AbstractBaseController {
 
             String key = argname;
 
-            Map<String, Object> defaultValueMap = ApplicationConfig.getInstance().getMap("entity.defaultValue");
-            if(defaultValueMap != null) {
-                if(!defaultValueMap.containsKey(key)) {
-                    key = String.format("%s.%s", getTablename(), key);
-                }
-
-                if(defaultValueMap.containsKey(key)) {
-                    switch (DefaultValueMode.valueOf(defaultValueMap.get(key).toString())) {
-                        case UUID_RANDOM:
-                            if(type.equals(String.class) && value == null) {
-                                value = UUID.randomUUID().toString().replace("-", "");
-                            }
-                            break;
-                        case DATE_NOW:
-                            if(type.equals(Date.class) && value == null) {
-                                value = Datetime.now();
-                            }
-                            break;
-                    }
-                }
-            }
-
             if(value == null) {
                 if(type.equals(Date.class) && isDefaultDateByNow) {
                     value = Datetime.now();

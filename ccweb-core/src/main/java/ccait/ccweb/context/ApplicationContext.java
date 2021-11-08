@@ -714,6 +714,13 @@ public class ApplicationContext implements ApplicationContextAware {
         columns.add(col);
 
         col = new ColumnInfo();
+        col.setColumnName("type");
+        col.setCanNotNull(true);
+        col.setMaxLength(64);
+        col.setType(String.class);
+        columns.add(col);
+
+        col = new ColumnInfo();
         col.setColumnName("description");
         col.setMaxLength(255);
         col.setType(String.class);

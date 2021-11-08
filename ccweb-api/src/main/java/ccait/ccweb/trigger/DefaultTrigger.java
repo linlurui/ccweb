@@ -154,34 +154,34 @@ public final class DefaultTrigger {
     }
 
     private void setDefaultValues(Map<String, Object> postData) {
-        List<String> argNames = postData.keySet().stream().collect(Collectors.toList());
-        for(final String argname : argNames) {
-            Object value = null;
-
-            String key = argname;
-
-            Map<String, Object> defaultValueMap = ApplicationConfig.getInstance().getMap("ccweb.defaultValue");
-            if(defaultValueMap != null) {
-                if(!defaultValueMap.containsKey(key)) {
-                    key = String.format("%s.%s", EntityContext.getCurrentTable(), key);
-                }
-
-                if(defaultValueMap.containsKey(key)) {
-                    switch (DefaultValueMode.valueOf(defaultValueMap.get(key).toString())) {
-                        case UUID_RANDOM:
-                            value = UUID.randomUUID().toString().replace("-", "");
-                            break;
-                        case DATE_NOW:
-                            value = Datetime.now();
-                            break;
-                    }
-                }
-            }
-
-            if(value != null) {
-                postData.put(argname, value);
-            }
+        Map<String, Object> defaultValueMap = ApplicationConfig.getInstance().getMap("ccweb.defaultValue");
+        if(defaultValueMap == null) {
+            return;
         }
+        defaultValueMap.entrySet().stream().forEach(a-> {
+            String key = a.getKey();
+            if(a.getKey().indexOf(".")>0) {
+                if(a.getKey().startsWith(EntityContext.getCurrentTable() + ".")) {
+                    return;
+                }
+
+                key = StringUtils.splitString2List(a.getKey(), "\\.").get(1);
+            }
+
+            Object value = a.getValue();
+            switch (DefaultValueMode.valueOf(value.toString())) {
+                case UUID_RANDOM:
+                    value = UUID.randomUUID().toString().replace("-", "");
+                    break;
+                case DATE_NOW:
+                    value = Datetime.now();
+                    break;
+            }
+
+            if(value != null && StringUtils.isNotEmpty(value.toString())) {
+                postData.put(key, value);
+            }
+        });
     }
 
     @OnUpdate
