@@ -167,6 +167,9 @@ public final class DefaultTrigger {
 
                 key = StringUtils.splitString2List(a.getKey(), "\\.").get(1);
             }
+            else if(!postData.containsKey(key)) {
+                return;
+            }
 
             Object value = a.getValue();
             switch (DefaultValueMode.valueOf(value.toString())) {
