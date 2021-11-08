@@ -167,6 +167,8 @@ public class InitializationFilter implements WebFilter, Filter {
                 res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
 
+            res.setContentType("application/json; charset=utf-8");
+            res.setCharacterEncoding("UTF-8");
             res.getWriter().write(JsonUtils.toJson(responseData));
             res.getWriter().flush();
             res.getWriter().close();
