@@ -60,8 +60,7 @@ public class InitializationFilter implements WebFilter, Filter {
         final HttpServletRequest req = (HttpServletRequest)request;
         final HttpServletResponse res = (HttpServletResponse)response;
 
-        req.setCharacterEncoding("utf-8");
-        res.setCharacterEncoding("utf-8");
+        res.setHeader("Content-type", "application/json;charset=UTF-8");
         CCWebRequestWrapper requestWrapper = new CCWebRequestWrapper(req);
 //        ResponseWrapper responseWrapper = new ResponseWrapper(res);
 
