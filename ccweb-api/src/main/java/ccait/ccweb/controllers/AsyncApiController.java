@@ -28,7 +28,7 @@ import static ccait.ccweb.utils.StaticVars.LOG_PRE_SUFFIX;
 
 
 @RestController
-@RequestMapping( value = {"asyncapi/{datasource}"} )
+@RequestMapping( value = {"asyncapi/{datasource}"}, produces = "text/plain;charset=UTF-8" )
 public class AsyncApiController extends BaseController {
 
     /***

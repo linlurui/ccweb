@@ -29,7 +29,7 @@ import static ccait.ccweb.utils.StaticVars.LOG_PRE_SUFFIX;
 
 
 @RestController
-@RequestMapping( value = {"api/{datasource}"} )
+@RequestMapping( value = {"api/{datasource}"}, produces = "text/plain;charset=UTF-8" )
 public class ApiController extends BaseController {
 
     /***
