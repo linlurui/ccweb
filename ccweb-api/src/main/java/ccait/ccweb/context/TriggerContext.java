@@ -286,12 +286,6 @@ public final class TriggerContext {
             try {
                 method.invoke(instance, params, request);
             } catch(Exception e) {
-
-                if(e.getCause() != null) {
-                    log.error("TriggerContext has error: " + e.getMessage(), e.getCause());
-                    throw new IllegalAccessException(e.getCause().getMessage());
-                }
-
                 throw e;
             }
         }
