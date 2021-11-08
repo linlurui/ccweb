@@ -161,7 +161,7 @@ public final class DefaultTrigger {
         defaultValueMap.entrySet().stream().forEach(a-> {
             String key = a.getKey();
             if(a.getKey().indexOf(".")>0) {
-                if(a.getKey().startsWith(EntityContext.getCurrentTable() + ".")) {
+                if(!a.getKey().startsWith(EntityContext.getCurrentTable() + ".")) {
                     return;
                 }
 
