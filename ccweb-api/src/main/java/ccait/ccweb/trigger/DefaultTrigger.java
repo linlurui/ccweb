@@ -171,18 +171,17 @@ public final class DefaultTrigger {
                 return;
             }
 
-            Object value = a.getValue();
-            switch (DefaultValueMode.valueOf(value.toString())) {
-                case UUID_RANDOM:
-                    value = UUID.randomUUID().toString().replace("-", "");
-                    break;
-                case DATE_NOW:
-                    value = Datetime.now();
-                    break;
+            if(a.getValue() == null) {
+                return;
             }
 
-            if(value != null && StringUtils.isNotEmpty(value.toString())) {
-                postData.put(key, value);
+            if(DefaultValueMode.UUID_RANDOM.getValue().equals(a.getValue())) {
+                postData.put(key, UUID.randomUUID().toString().replace("-", ""));
+            } else if(DefaultValueMode.DATE_NOW.getValue().equals(a.getValue())) {
+                postData.put(key, Datetime.now());
+            }
+            else {
+                postData.put(key, a.getValue());
             }
         });
     }
