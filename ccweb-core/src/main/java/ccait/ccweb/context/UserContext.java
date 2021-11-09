@@ -31,16 +31,23 @@ public class UserContext {
             throw new Exception(LangConfig.getInstance().get("username_and_password_can_not_be_empty"));
         }
 
-        UserModel user = new UserModel();
+        try {
+            UserModel user = new UserModel();
 
-        user.setUsername(username);
-        user.setPassword(passwordEncode);
+            user.setUsername(username);
+            user.setPassword(passwordEncode);
 
-        Where<UserModel> where = user.where("[username]=#{username}").and("[password]=#{password}");
+            Where<UserModel> where = user.where("[username]=#{username}").and("[password]=#{password}");
 
-        user = where.first();
+            user = where.first();
 
-        return UserContext.login(request, user);
+            return UserContext.login(request, user);
+        }
+        catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            log.error(e.getMessage(), e);
+            throw e;
+        }
     }
 
     public static UserModel login(HttpServletRequest request, UserModel user) throws Exception {
