@@ -25,12 +25,14 @@ import ccait.ccweb.utils.EncryptionUtil;
 import entity.query.ColumnInfo;
 import entity.query.core.ApplicationConfig;
 import entity.tool.util.JsonUtils;
+import org.apache.http.client.HttpResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -125,6 +127,24 @@ public final class UserTableTrigger implements ITrigger {
 
             if(userIdField.toLowerCase().equals(lowerKey)) {
                 data.remove(key);
+            }
+        }
+
+        UserModel user = ApplicationContext.getSession(request, LOGIN_KEY, UserModel.class);
+        if(user == null) {
+            throw new HttpResponseException(HttpStatus.UNAUTHORIZED.value(), LangConfig.getInstance().get("login_please"));
+        }
+
+        Map<String, Object> map = ApplicationConfig.getInstance().getMap("ccweb.validation");
+        if(keys.contains("password") && map != null && map.containsKey("password")) {
+            if(user.getPassword().equals(data.get("password"))) {
+                data.remove("password");
+            }
+            else if(data.containsKey("confirmPassword") && user.getPassword().equals(data.get("confirmPassword"))) {
+                data.remove("confirmPassword");
+            }
+            else {
+                throw new HttpResponseException(HttpStatus.UNAUTHORIZED.value(), LangConfig.getInstance().get("username_or_password_is_invalid"));
             }
         }
 

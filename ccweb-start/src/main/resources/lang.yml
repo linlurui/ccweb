@@ -35,6 +35,7 @@ en:
     message_can_not_be_empty: message can not be empty
     set_value_by_groupId_please: groupId can not be empty
     set_value_by_userId_please: userId can not be empty
+    uniquekey_duplicated: uniquekey duplicated
 cn:
     can_not_delete_self: 不能删除本账号
     admin_can_not_be_removed: 不能删除超级管理员
@@ -72,3 +73,4 @@ cn:
     message_can_not_be_empty: 消息不能为空
     set_value_by_groupId_please: 【groupId】不能为空
     set_value_by_userId_please: 【userId】不能为空
+    uniquekey_duplicated: 不允许重复键值

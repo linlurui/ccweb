@@ -15,6 +15,7 @@ import ccait.ccweb.annotation.*;
 import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.context.ApplicationContext;
 import ccait.ccweb.context.EntityContext;
+import ccait.ccweb.dynamic.DynamicClassBuilder;
 import ccait.ccweb.entites.ConditionInfo;
 import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.enums.DefaultValueMode;
@@ -27,7 +28,9 @@ import entity.query.ColumnInfo;
 import entity.query.Datetime;
 import entity.query.Queryable;
 import entity.query.core.ApplicationConfig;
+import entity.tool.util.DBUtils;
 import entity.tool.util.JsonUtils;
+import entity.tool.util.ReflectionUtils;
 import entity.tool.util.StringUtils;
 import org.apache.http.client.HttpResponseException;
 import org.slf4j.Logger;
@@ -341,6 +344,18 @@ public final class DefaultTrigger {
                 }
             }
         });
+
+        map = ApplicationConfig.getInstance().getMap("ccweb.uniquekey");
+        if(map != null && map.containsKey(EntityContext.getCurrentTable()) &&
+                data.containsKey(map.get(EntityContext.getCurrentTable()).toString()) &&
+                data.get(map.get(EntityContext.getCurrentTable()).toString())!=null) {
+            String key = map.get(EntityContext.getCurrentTable()).toString();
+            Queryable entity = (Queryable) EntityContext.getEntity(EntityContext.getCurrentTable(), data);
+            ReflectionUtils.setFieldValue(entity, key, data.get(key));
+            if(entity.where(String.format("[%s]=#{%s}", key, key)).exist()) {
+                errorMessage.set(String.format("[%s]", key) + LangConfig.getInstance().get("uniquekey_duplicated"));
+            }
+        }
 
         if(StringUtils.isNotEmpty(errorMessage.get())) {
             throw new Exception(errorMessage.get());
