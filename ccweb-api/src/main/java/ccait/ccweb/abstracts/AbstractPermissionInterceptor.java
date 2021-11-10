@@ -5,12 +5,15 @@ import ccait.ccweb.context.ApplicationContext;
 import ccait.ccweb.context.TriggerContext;
 import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.enums.EventType;
+import ccait.ccweb.enums.PrivilegeScope;
 import ccait.ccweb.filter.CCWebRequestWrapper;
+import ccait.ccweb.model.UserModel;
 import ccait.ccweb.utils.PermissionUtils;
 import ccait.ccweb.utils.StaticVars;
 import entity.query.ColumnInfo;
 import entity.tool.util.JsonUtils;
 import entity.tool.util.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,9 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static ccait.ccweb.utils.StaticVars.HAS_UPLOAD_FILE;
+import static ccait.ccweb.utils.StaticVars.*;
+import static ccait.ccweb.utils.StaticVars.CURRENT_MAX_PRIVILEGE_SCOPE;
 
 public abstract class AbstractPermissionInterceptor {
+
+    @Value("${ccweb.security.admin.username:admin}")
+    private String admin;
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
@@ -54,6 +61,12 @@ public abstract class AbstractPermissionInterceptor {
 
         if(StringUtils.isEmpty(currentTable)) {
             return true;
+        }
+
+        // session 中获取该用户的权限信息 并判断是否有权限
+        UserModel user = ApplicationContext.getSession(request, LOGIN_KEY, UserModel.class);
+        if( user != null && user.getUsername().equals(admin) ) { //超级管理员
+            ApplicationContext.getThreadLocalMap().put(CURRENT_MAX_PRIVILEGE_SCOPE + initLocalMap.getCurrentTable(), PrivilegeScope.ALL);
         }
 
         //执行触发器

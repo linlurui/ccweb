@@ -103,6 +103,13 @@ public class AuthInterceptor extends AbstractPermissionInterceptor implements Ha
 
         String currentTable = initLocalMap.getCurrentTable();
 
+        // session 中获取该用户的权限信息 并判断是否有权限
+        UserModel user = ApplicationContext.getSession(request, LOGIN_KEY, UserModel.class);
+        if( user != null && user.getUsername().equals(admin) ) { //超级管理员
+            log.info(String.format(LOG_PRE_SUFFIX + "超级管理员访问表[%s]！", initLocalMap.getCurrentTable()));
+            ApplicationContext.getThreadLocalMap().put(CURRENT_MAX_PRIVILEGE_SCOPE + initLocalMap.getCurrentTable(), PrivilegeScope.ALL);
+        }
+
         boolean result = check(request, response, handler, attrs, currentTable);
 
         return result;

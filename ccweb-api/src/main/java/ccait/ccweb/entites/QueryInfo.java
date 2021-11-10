@@ -15,7 +15,6 @@ package ccait.ccweb.entites;
 import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.context.ApplicationContext;
 import ccait.ccweb.context.EntityContext;
-import ccait.ccweb.context.EntityContext;
 import ccait.ccweb.context.UserContext;
 import ccait.ccweb.dynamic.DynamicClassBuilder;
 import ccait.ccweb.enums.Algorithm;

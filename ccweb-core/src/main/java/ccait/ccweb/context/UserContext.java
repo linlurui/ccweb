@@ -89,10 +89,10 @@ public class UserContext {
             user.setAesToken(token);
         }
 
-        user.setPassword("******");
-
         ApplicationContext.setSession(request, LOGIN_KEY, user);
         ApplicationContext.getUserIdByAllGroups(request, user);
+
+        user.setPassword("******");
 
         return user;
     }
