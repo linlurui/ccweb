@@ -195,7 +195,7 @@ public final class DefaultTrigger {
 
         Map<String, Object> data = queryInfo.getData();
 
-        vaildPostData(data);
+        vaildPostData(data, true);
 
         if(data.containsKey(createOnField)) {
             data.remove(createOnField);
@@ -304,6 +304,10 @@ public final class DefaultTrigger {
     }
 
     private void vaildPostData(Map<String, Object> data) throws Exception {
+        this.vaildPostData(data, false);
+    }
+
+    private void vaildPostData(Map<String, Object> data, Boolean isEdit) throws Exception {
         Map<String, Object> map = ApplicationConfig.getInstance().getMap("ccweb.validation");
         if(map == null) {
             return;
@@ -352,8 +356,20 @@ public final class DefaultTrigger {
             String key = map.get(EntityContext.getCurrentTable()).toString();
             Queryable entity = (Queryable) EntityContext.getEntity(EntityContext.getCurrentTable(), data);
             ReflectionUtils.setFieldValue(entity, key, data.get(key));
-            if(entity.where(String.format("[%s]=#{%s}", key, key)).exist()) {
-                errorMessage.set(String.format("[%s]", key) + LangConfig.getInstance().get("uniquekey_duplicated"));
+            Object obj = entity.where(String.format("[%s]=#{%s}", key, key)).first();
+            if(obj!=null) {
+                if(isEdit) {
+                    Object field = ReflectionUtils.getFieldValue(obj.getClass(), obj, "id");
+                    if(!field.equals(data.get("id"))) {
+                        errorMessage.set(String.format("[%s]", key) + LangConfig.getInstance().get("uniquekey_duplicated"));
+                    }
+                    else {
+                        data.remove(key);
+                    }
+                }
+                else {
+                    errorMessage.set(String.format("[%s]", key) + LangConfig.getInstance().get("uniquekey_duplicated"));
+                }
             }
         }
 
