@@ -609,7 +609,7 @@ public abstract class BaseController extends AbstractBaseController {
                 throw new Exception(NO_PRIVILEGE_MESSAGE);
             }
 
-            result.add(where.asyncDelete().toList().blockingGet());
+            result.add(where.delete());
 
             String currentDatasource = getCurrentDatasourceId();
 
