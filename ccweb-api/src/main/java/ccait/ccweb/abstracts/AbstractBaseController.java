@@ -150,8 +150,6 @@ public abstract class AbstractBaseController {
 
     private <T> ResponseData<T> handleResultEvent(ResponseData<T> result) throws InvocationTargetException, IllegalAccessException {
 
-        result.setStatus(0);
-
         String tablename = getTablename();
 
         try {
