@@ -586,7 +586,7 @@ public abstract class BaseController extends AbstractBaseController {
 
         List<Object> result = null;
 
-        String strid = idList.get(0);
+        String strid = idList.get(0).toString();
         String strIds = StringUtils.join("", idList);
         if(Pattern.matches("[^0-9]+", strIds)) {
             strid += "A";
