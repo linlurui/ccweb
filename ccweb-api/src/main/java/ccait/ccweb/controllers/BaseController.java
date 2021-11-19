@@ -584,7 +584,7 @@ public abstract class BaseController extends AbstractBaseController {
      */
     public List deleteByIdList(String table, List<Object> idList) throws Exception {
 
-        List<Object> result = null;
+        List<Object> result = new ArrayList<>();
 
         String strid = idList.get(0).toString();
         String strIds = StringUtils.join("", idList);

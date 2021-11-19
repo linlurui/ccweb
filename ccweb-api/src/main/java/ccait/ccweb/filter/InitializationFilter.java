@@ -147,6 +147,10 @@ public class InitializationFilter implements WebFilter, Filter {
         {
             String message = getErrorMessage(e);
 
+            if(StringUtils.isEmpty(message)) {
+                message = e.getMessage();
+            }
+
             log.error( LOG_PRE_SUFFIX + message, e );
 
             ResponseData responseData = new ResponseData();
@@ -159,11 +163,7 @@ public class InitializationFilter implements WebFilter, Filter {
             res.reset();
             res.setCharacterEncoding("UTF-8");
 
-            if(e instanceof HttpException) {
-                res.setStatus(HttpStatus.FORBIDDEN.value());
-            }
-
-            else {
+            if(res.getStatus()==200) {
                 res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
 

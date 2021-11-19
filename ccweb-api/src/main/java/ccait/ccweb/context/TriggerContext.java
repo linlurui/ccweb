@@ -284,6 +284,9 @@ public final class TriggerContext {
             }
 
             try {
+                if(params == null) {
+                    throw new IllegalAccessException("params can not be null on the trigger context!!!");
+                }
                 method.invoke(instance, params, request);
             } catch(Exception e) {
                 throw e;
