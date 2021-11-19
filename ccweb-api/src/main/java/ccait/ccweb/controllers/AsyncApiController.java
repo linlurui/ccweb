@@ -301,7 +301,7 @@ public class AsyncApiController extends BaseController {
     @ResponseBody
     @AccessCtrl
     @RequestMapping( value = "{table}/delete", method = RequestMethod.POST  )
-    public Mono deleteByIds(@PathVariable String table, @RequestBody List<String> idList) {
+    public Mono deleteByIds(@PathVariable String table, @RequestBody List<Object> idList) {
 
         List result = null;
         try {

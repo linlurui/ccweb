@@ -582,7 +582,7 @@ public abstract class BaseController extends AbstractBaseController {
      * @return
      * @throws Exception
      */
-    public List deleteByIdList(String table, List<String> idList) throws Exception {
+    public List deleteByIdList(String table, List<Object> idList) throws Exception {
 
         List<Object> result = null;
 
@@ -597,8 +597,8 @@ public abstract class BaseController extends AbstractBaseController {
         }
 
         Where where = null;
-        for (String id : idList) {
-            where = queryInfo.getWhereQueryableById(entity, table, id);
+        for (Object id : idList) {
+            where = queryInfo.getWhereQueryableById(entity, table, id.toString());
             Maybe<Map> flow = where.asyncFirst(Map.class);
             Map data = flow.blockingGet();
             if(data == null) {
