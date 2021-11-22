@@ -38,6 +38,78 @@ public class PrivilegeModel extends Queryable<PrivilegeModel> {
   @Fieldname("roleId")
   private Integer roleId;
 
+  public Integer getCanView() {
+    return canView;
+  }
+
+  public void setCanView(Integer canView) {
+    this.canView = canView;
+  }
+
+  public Integer getCanDownload() {
+    return canDownload;
+  }
+
+  public void setCanDownload(Integer canDownload) {
+    this.canDownload = canDownload;
+  }
+
+  public Integer getCanPreview() {
+    return canPreview;
+  }
+
+  public void setCanPreview(Integer canPreview) {
+    this.canPreview = canPreview;
+  }
+
+  public Integer getCanPlayVideo() {
+    return canPlayVideo;
+  }
+
+  public void setCanPlayVideo(Integer canPlayVideo) {
+    this.canPlayVideo = canPlayVideo;
+  }
+
+  public Integer getCanUpload() {
+    return canUpload;
+  }
+
+  public void setCanUpload(Integer canUpload) {
+    this.canUpload = canUpload;
+  }
+
+  public Integer getCanExport() {
+    return canExport;
+  }
+
+  public void setCanExport(Integer canExport) {
+    this.canExport = canExport;
+  }
+
+  public Integer getCanImport() {
+    return canImport;
+  }
+
+  public void setCanImport(Integer canImport) {
+    this.canImport = canImport;
+  }
+
+  public Integer getCanDecrypt() {
+    return canDecrypt;
+  }
+
+  public void setCanDecrypt(Integer canDecrypt) {
+    this.canDecrypt = canDecrypt;
+  }
+
+  public Integer getCanList() {
+    return canList;
+  }
+
+  public void setCanList(Integer canList) {
+    this.canList = canList;
+  }
+
   @Fieldname("aclId")
   private Integer aclId;
 
@@ -52,6 +124,33 @@ public class PrivilegeModel extends Queryable<PrivilegeModel> {
 
   @Fieldname("canQuery")
   private Integer canQuery;
+
+  @Fieldname("canView")
+  private Integer canView;
+
+  @Fieldname("canDownload")
+  private Integer canDownload;
+
+  @Fieldname("canPreview")
+  private Integer canPreview;
+
+  @Fieldname("canPlayVideo")
+  private Integer canPlayVideo;
+
+  @Fieldname("canUpload")
+  private Integer canUpload;
+
+  @Fieldname("canExport")
+  private Integer canExport;
+
+  @Fieldname("canImport")
+  private Integer canImport;
+
+  @Fieldname("canDecrypt")
+  private Integer canDecrypt;
+
+  @Fieldname("canList")
+  private Integer canList;
 
   @Fieldname("scope")
   private PrivilegeScope scope;

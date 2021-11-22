@@ -315,37 +315,42 @@ public final class DefaultTrigger {
 
         AtomicReference<String> errorMessage = new AtomicReference<>(null);
         map.entrySet().stream().forEach(a-> {
-            if(StringUtils.isNotEmpty(errorMessage.get())) {
-                return;
-            }
-            String key = a.getKey();
-            if(a.getKey().indexOf(".")>0) {
-                if(!a.getKey().startsWith(EntityContext.getCurrentTable() + ".")) {
+            try {
+                if (StringUtils.isNotEmpty(errorMessage.get())) {
                     return;
                 }
-
-                key = StringUtils.splitString2List(a.getKey(), "\\.").get(1);
-            }
-            else if(!data.containsKey(key)) {
-                errorMessage.set(String.format("[%s]", key) + LangConfig.getInstance().get("field_has_invalid_parameter_value"));
-                return;
-            }
-
-            if(a.getValue() == null) {
-                return;
-            }
-
-
-            Map vaildation = (Map) a.getValue();
-            if(vaildation.containsKey("match")) {
-                if(!Pattern.matches(vaildation.get("match").toString(), data.get(key).toString())){
-                    if(vaildation.containsKey("message")) {
-                        errorMessage.set(vaildation.get("message").toString());
+                String key = a.getKey();
+                if (a.getKey().indexOf(".") > 0) {
+                    if (!a.getKey().startsWith(EntityContext.getCurrentTable() + ".")) {
                         return;
                     }
+
+                    key = StringUtils.splitString2List(a.getKey(), "\\.").get(1);
+                } else if (!data.containsKey(key)) {
                     errorMessage.set(String.format("[%s]", key) + LangConfig.getInstance().get("field_has_invalid_parameter_value"));
                     return;
                 }
+
+                if (a.getValue() == null) {
+                    return;
+                }
+
+
+                Map vaildation = (Map) a.getValue();
+                if (data.containsKey(key) && vaildation.containsKey("match")) {
+                    if (!Pattern.matches(vaildation.get("match").toString(), data.get(key).toString())) {
+                        if (vaildation.containsKey("message")) {
+                            errorMessage.set(vaildation.get("message").toString());
+                            return;
+                        }
+                        errorMessage.set(String.format("[%s]", key) + LangConfig.getInstance().get("field_has_invalid_parameter_value"));
+                        return;
+                    }
+                }
+            }
+            catch (Exception e) {
+                log.error(e.getMessage(), e);
+                errorMessage.set(LangConfig.getInstance().get("field_has_invalid_parameter_value"));
             }
         });
 
