@@ -326,7 +326,6 @@ public class AuthInterceptor extends AbstractPermissionInterceptor implements Ha
         return true;
     }
 
-
     private boolean checkPrivilege(String table, UserModel user, List<AclModel> aclList, String method, Map<String, String> attrs,
                                    Object params, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
