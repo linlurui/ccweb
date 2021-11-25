@@ -339,7 +339,11 @@ public final class DefaultTrigger {
 
 
                 Map vaildation = (Map) a.getValue();
-                if (data.containsKey(key) && vaildation.containsKey("match")) {
+                if(!data.containsKey(key)) {
+                    errorMessage.set(vaildation.get("message").toString());
+                    return;
+                }
+                else if (data.containsKey(key) && vaildation.containsKey("match")) {
                     if (!Pattern.matches(vaildation.get("match").toString(), data.get(key).toString())) {
                         if (vaildation.containsKey("message")) {
                             errorMessage.set(vaildation.get("message").toString());
