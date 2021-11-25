@@ -1,6 +1,9 @@
 package ccait.ccweb.context;
 
 import ccait.ccweb.config.LangConfig;
+import ccait.ccweb.enums.PrivilegeScope;
+import ccait.ccweb.model.AclModel;
+import ccait.ccweb.model.PrivilegeModel;
 import ccait.ccweb.model.UserGroupRoleModel;
 import ccait.ccweb.model.UserModel;
 import ccait.ccweb.utils.EncryptionUtil;
@@ -9,15 +12,17 @@ import entity.query.Where;
 import entity.query.core.ApplicationConfig;
 import entity.tool.util.JsonUtils;
 import entity.tool.util.StringUtils;
+import org.apache.http.client.HttpResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static ccait.ccweb.utils.StaticVars.*;
 
@@ -130,5 +135,114 @@ public class UserContext {
         ApplicationContext.setSession(request, "UserGroupRoleModels", userGroupRoleModels);
 
         return userGroupRoleModels;
+    }
+
+    public static Map<String, PrivilegeModel> getPrivilegeMap(HttpServletRequest request) throws IOException, SQLException {
+        Map<String, PrivilegeModel> result = new HashMap<>();
+        Map<String, PrivilegeModel> adminPrivileges = new HashMap<>();
+        UserModel user = ApplicationContext.getSession( request, LOGIN_KEY, UserModel.class );
+        if(user == null) {
+            throw new HttpResponseException(HttpStatus.UNAUTHORIZED.value(), LangConfig.getInstance().get("login_please"));
+        }
+        List<AclModel> aclList = new AclModel().where("1=1").query();
+        if( ApplicationConfig.getInstance().get("${ccweb.security.admin.username}") != null &&
+                user.getUsername().equals(ApplicationConfig.getInstance().get("${ccweb.security.admin.username}")) ) { //超级管理员
+            aclList.forEach(a-> {
+                adminPrivileges.put(a.getTableName(), new PrivilegeModel() {{
+                    setCanList(1);
+                    setCanDecrypt(1);
+                    setCanImport(1);
+                    setCanUpload(1);
+                    setCanExport(1);
+                    setCanUpdate(1);
+                    setCanPreview(1);
+                    setCanPlayVideo(1);
+                    setCanDownload(1);
+                    setCanAdd(1);
+                    setCanDelete(1);
+                    setCanQuery(1);
+                    setCanView(1);
+                    setScope(PrivilegeScope.PARENT_AND_CHILD);
+                }});
+            });
+
+            return adminPrivileges;
+        }
+
+        PrivilegeModel privilege = new PrivilegeModel();
+        List<String> roleIdList = UserContext.getUserGroupRoleModels(request, user.getUserId()).stream().filter(a->a.getRoleId()!=null)
+                .map(a->a.getRoleId().toString().replace("-","")).collect(Collectors.toList());
+
+        roleIdList = roleIdList.stream().collect(
+                Collectors.collectingAndThen(Collectors.toCollection(() ->
+                        new TreeSet<>(Comparator.comparing(o -> o))), ArrayList::new));
+
+        List<Integer> groupIds = aclList.stream().filter(o-> o.getGroupId() != null).map(b->b.getGroupId()).collect(Collectors.toList());
+        groupIds = groupIds.stream().collect(
+                Collectors.collectingAndThen(Collectors.toCollection(() ->
+                        new TreeSet<>(Comparator.comparing(o -> o))), ArrayList::new));
+
+        List<PrivilegeModel> privilegeList = new ArrayList<PrivilegeModel>();
+        if(roleIdList.size() > 0) {
+            String roleWhere = String.format("[roleId] in ('%s')", String.join("','", roleIdList));
+            if(aclList.size() > 0) {
+                String groupsString = String.format("(groupId in ('%s') OR groupId IS NULL OR groupId='')", String.join("','",
+                        groupIds.stream().filter(o -> o != null).map(a -> a.toString().replace("-", ""))
+                                .collect(Collectors.toList())));
+                privilegeList = privilege.where(roleWhere)
+                        .and(groupsString).query();
+            }
+            else {
+                privilegeList = privilege.where(roleWhere).query();
+            }
+        }
+
+        else {
+            if(aclList.size() > 0) {
+                String groupString = String.format("(groupId in ('%s') OR groupId IS NULL OR groupId='')", String.join("','",
+                        groupIds.stream().filter(o->o != null).map(a -> a.toString().replace("-", ""))
+                                .collect(Collectors.toList())));
+
+                privilegeList =  privilege.where(groupString).query();
+            }
+            else {
+                return adminPrivileges;
+            }
+        }
+
+        privilegeList.stream().collect(Collectors.groupingBy(PrivilegeModel::getAclId));
+
+        privilegeList.forEach(a-> {
+            Optional<String> tableOpt = aclList.stream().filter(b -> b.getAclId() == a.getAclId()).map(c -> c.getTableName()).findFirst();
+            if(!tableOpt.isPresent() || StringUtils.isEmpty(tableOpt.get())) {
+                return;
+            }
+
+            if(result.containsKey(tableOpt.get())) {
+                PrivilegeModel b = result.get(tableOpt.get());
+                a.setCanList(a.getCanList() | b.getCanList());
+                a.setCanDecrypt(a.getCanDecrypt() | b.getCanDecrypt());
+                a.setCanImport(a.getCanImport() | b.getCanImport());
+                a.setCanUpload(a.getCanUpload() | b.getCanUpload());
+                a.setCanExport(a.getCanExport() | b.getCanExport());
+                a.setCanUpdate(a.getCanUpdate() | b.getCanUpdate());
+                a.setCanPreview(a.getCanPreview() | b.getCanPreview());
+                a.setCanPlayVideo(a.getCanPlayVideo() | b.getCanPlayVideo());
+                a.setCanDownload(a.getCanDownload() | b.getCanDownload());
+                a.setCanAdd(a.getCanAdd() | b.getCanAdd());
+                a.setCanDelete(a.getCanDelete() | b.getCanDelete());
+                a.setCanQuery(a.getCanQuery() | b.getCanQuery());
+                a.setCanView(a.getCanView() | b.getCanView());
+                a.setScope(b.getScope().getCode()>a.getScope().getCode()? b.getScope(): a.getScope());
+                a.setRoleId(0);
+                a.setAclId(0);
+                a.setPrivilegeId(0);
+                a.setGroupId(0);
+            }
+
+            result.put(tableOpt.get(), a);
+        });
+
+        return result;
     }
 }
