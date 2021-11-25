@@ -129,6 +129,8 @@ public final class DefaultTrigger {
 
             vaildPostData(item);
 
+            checkUniquekey(item, false);
+
             if(hasCreateBy) {
                 item.put(createByField, user.getUserId());
             }
@@ -354,6 +356,14 @@ public final class DefaultTrigger {
             }
         });
 
+        if(StringUtils.isNotEmpty(errorMessage.get())) {
+            throw new Exception(errorMessage.get());
+        }
+    }
+
+    private void checkUniquekey(Map<String, Object> data, Boolean isEdit) throws Exception {
+        AtomicReference<String> errorMessage = new AtomicReference<>();
+        Map<String, Object> map;
         map = ApplicationConfig.getInstance().getMap("ccweb.uniquekey");
         if(map != null && map.containsKey(EntityContext.getCurrentTable()) &&
                 data.containsKey(map.get(EntityContext.getCurrentTable()).toString()) &&
