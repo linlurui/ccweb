@@ -368,9 +368,6 @@ public final class DefaultTrigger {
                     if(!field.equals(data.get("id"))) {
                         errorMessage.set(String.format("[%s]", key) + LangConfig.getInstance().get("uniquekey_duplicated"));
                     }
-                    else {
-                        data.remove(key);
-                    }
                 }
                 else {
                     errorMessage.set(String.format("[%s]", key) + LangConfig.getInstance().get("uniquekey_duplicated"));
