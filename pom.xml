@@ -13,6 +13,7 @@
     <modules>
         <module>ccweb-core</module>
         <module>ccweb-api</module>
+        <module>ccweb-mail</module>
         <module>ccweb-office</module>
         <module>ccweb-repo</module>
         <module>ccweb-start</module>
