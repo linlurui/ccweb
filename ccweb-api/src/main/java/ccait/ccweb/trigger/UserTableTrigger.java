@@ -64,16 +64,23 @@ public final class UserTableTrigger implements ITrigger {
     @Value("${ccweb.security.encrypt.MD5.publicKey:ccait}")
     private String md5PublicKey;
 
+    @Value("${ccweb.table.reservedField.createBy:createBy}")
+    private String createByField;
+
+    private boolean isInsert = false;
+
     @PostConstruct
     private void construct() {
         admin = ApplicationConfig.getInstance().get("${ccweb.security.admin.username}", admin);
         userIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userId}", userIdField);
         md5PublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MD5.publicKey}", md5PublicKey);
+        createByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField);
     }
 
     @Override
     public void onInsert(List<Map<String, Object>> list, HttpServletRequest request) throws Exception {
 
+        isInsert = true;
         for(Map<String, Object> data : list) {
             List<String> keys = data.keySet().stream().collect(Collectors.toList());
             for (String key : keys) {
@@ -215,15 +222,20 @@ public final class UserTableTrigger implements ITrigger {
     @Override
     public void onSuccess(ResponseData responseData, HttpServletRequest request) throws Exception {
 
+        if(responseData.getData() == null) {
+            return;
+        }
+
+        if(ClassUtils.isBaseType(responseData.getData())) {
+            return;
+        }
+
+        if(isInsert) {
+            UserModel userModel = new UserModel();
+            userModel.setUserId(Integer.parseInt(responseData.getData().toString()));
+            userModel.where(String.format("[%s]=#{%s}", userIdField, userIdField)).update(String.format("[%s]=#{%s}", createByField, userIdField));
+        }
         if(request.getMethod().equalsIgnoreCase("GET") || request.getMethod().equalsIgnoreCase("POST")){
-
-            if(responseData.getData() == null) {
-                return;
-            }
-
-            if(ClassUtils.isBaseType(responseData.getData())) {
-                return;
-            }
 
             List<Map> list = new ArrayList<Map>();
 
