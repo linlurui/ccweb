@@ -211,7 +211,7 @@ public abstract class AbstractBaseController {
         List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
         boolean needReset = false;
         boolean returnList = false;
-        Map<String, Object> map = ApplicationConfig.getInstance().getMap("entity.formatter");
+        Map<String, Object> map = ApplicationConfig.getInstance().getMap("ccweb.formatter");
         if(map != null) {
 
             if(data == null) {

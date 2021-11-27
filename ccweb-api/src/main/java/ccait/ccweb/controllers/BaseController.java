@@ -668,7 +668,7 @@ public abstract class BaseController extends AbstractBaseController {
         for(String fieldname : data.keySet()) {
 
             Map<String, Object> uploadConfigMap = ApplicationConfig.getInstance()
-                    .getMap(String.format("entity.upload.%s.%s.%s", currentDatasource, table, fieldname));
+                    .getMap(String.format("ccweb.upload.%s.%s.%s", currentDatasource, table, fieldname));
 
             if(uploadConfigMap == null ||
                     uploadConfigMap.size() < 1 ||
@@ -1484,7 +1484,7 @@ public abstract class BaseController extends AbstractBaseController {
             currentDatasource = ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE).toString();
         }
 
-        Map<String, Object> configMap = ApplicationConfig.getInstance().getMap(String.format("entity.upload.%s.%s.%s", currentDatasource, table, field));
+        Map<String, Object> configMap = ApplicationConfig.getInstance().getMap(String.format("ccweb.upload.%s.%s.%s", currentDatasource, table, field));
         if(configMap == null || configMap.size() < 1) {
             throw new IOException(String.format("can not find upload config for %s.%s!!!", table, field));
         }
@@ -1614,7 +1614,7 @@ public abstract class BaseController extends AbstractBaseController {
 
         String currentDatasource = getCurrentDatasourceId();
         Map<String, Object> uploadConfigMap = ApplicationConfig.getInstance().getMap(
-                String.format("entity.upload.%s.%s.%s", currentDatasource, table, field)
+                String.format("ccweb.upload.%s.%s.%s", currentDatasource, table, field)
         );
         if(uploadConfigMap == null || uploadConfigMap.size() < 1) {
             throw new IOException("can not find the upload config!!!");
@@ -1682,7 +1682,7 @@ public abstract class BaseController extends AbstractBaseController {
             }
 
             Map<String, Object> uploadConfigMap = ApplicationConfig.getInstance().getMap(
-                    String.format("entity.upload.%s.%s.%s", datasourceId, table, field)
+                    String.format("ccweb.upload.%s.%s.%s", datasourceId, table, field)
             );
             if(uploadConfigMap == null || uploadConfigMap.size() < 1) {
                 throw new IOException("can not find the upload config!!!");

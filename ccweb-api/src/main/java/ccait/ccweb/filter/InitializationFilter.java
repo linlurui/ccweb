@@ -79,7 +79,7 @@ public class InitializationFilter implements WebFilter, Filter {
                 res.setContentType("application/json; charset=utf-8");
                 res.setCharacterEncoding("UTF-8");
 
-                log.info("entity.enableFlux============================================>>>" + ApplicationConfig.getInstance().get("${ccweb.enableFlux}"));
+                log.info("ccweb.enableFlux============================================>>>" + ApplicationConfig.getInstance().get("${ccweb.enableFlux}"));
                 if ("true".equals(ApplicationConfig.getInstance().get("${ccweb.enableFlux}"))) {
 
                     if (req.getRequestURI().indexOf("/preview/") == -1 &&

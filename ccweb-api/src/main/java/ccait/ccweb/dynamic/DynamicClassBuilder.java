@@ -52,7 +52,7 @@ public class DynamicClassBuilder {
 
         try {
             String className = String.format("%s%s", tablename.substring(0, 1).toUpperCase() + tablename.substring(1), suffix);
-            String packagePath = ApplicationConfig.getInstance().get("entity.package", DEFAULT_PACKAGE);
+            String packagePath = ApplicationConfig.getInstance().get("ccweb.package", DEFAULT_PACKAGE);
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
             if(compiler == null) {
