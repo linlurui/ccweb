@@ -11,7 +11,11 @@
 
 package ccait.ccweb.filter;
 
+import ccait.ccweb.model.UploadFileInfo;
+import ccait.ccweb.utils.UploadUtils;
+import entity.query.core.ApplicationConfig;
 import entity.tool.util.FastJsonUtils;
+import entity.tool.util.JsonUtils;
 import entity.tool.util.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -27,6 +31,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -38,7 +43,9 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
     private static Charset charSet;
     private String postString;
     private HttpServletRequest req;
-
+    private Boolean multipleUpload;
+    private Map<String, UploadFileInfo> uploadFileMap;
+    private static final String ISO_8859_1 = "ISO-8859-1";
     private static final Logger log = LoggerFactory.getLogger(CCWebRequestWrapper.class);
 
     public CCWebRequestWrapper(HttpServletRequest request, Map newParams)
@@ -46,11 +53,15 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
         super(request);
         this.params = newParams;
         this.postString = FastJsonUtils.toJson(newParams);
+        uploadFileMap = new HashMap<String, UploadFileInfo>();
+        multipleUpload = ApplicationConfig.getInstance().get("${ccweb.upload.multiple}", true);
     }
 
     public CCWebRequestWrapper(HttpServletRequest request) {
         super(request);
         req = request;
+        uploadFileMap = new HashMap<String, UploadFileInfo>();
+        multipleUpload = ApplicationConfig.getInstance().get("${ccweb.upload.multiple}", true);
 
         //缓存请求body
         try {
@@ -59,55 +70,100 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
                 requestBody = new byte[0];
             }
 
-            postString = new String(requestBody, "ISO-8859-1"); //上传文件的编码要用ISO-8859-1格式才不会变
+            log.info("requestBody length === > " + requestBody.length);
             Map<String, Object> map = new HashMap<String, Object>();
-            List<String> list = StringUtils.splitString2List(postString, "\\-{6}\\-*[\\d\\w]{6}[\\d\\w]*");
-            Pattern regex = Pattern.compile("Content-Disposition:\\s*form-data;\\s*name=\"([^\"]+)\"(;\\s*filename=\"([^\"]+)\")?\\s*(Content-Type:\\s*([^/]+/[^\\s]+)\\s*)?", Pattern.CASE_INSENSITIVE);
-            if(list.size() == 1 && (request.getRequestURI().endsWith("/upload") || request.getRequestURI().endsWith("/import"))) {
-                byte[] bytes = requestBody;
-                map.put("temp_upload_filename", "application/octet-stream"); //contentType
-                map.put("temp", bytes);
-            }
-            for(String content : list) {
-                if(list.size() == 1) {
-                    break;
-                }
-                Matcher m = regex.matcher(content);
-                while (m.find()) {
-                    String key = new String(m.group(1).getBytes("ISO-8859-1"), "UTF-8");
-                    Object value = content.substring(m.group(0).length());
 
-                    if (m.group(5) != null && Pattern.matches("[^/]+/.+", m.group(5))) {
+            String regexp = "(\\-{6}\\-*[\\d\\w]{6}[\\d\\w]*|--[\\-\\d\\w]{36}|--\\w+\\+[\\d\\w]{16})";
+            String spliter = UploadUtils.match(requestBody, 0, regexp, requestBody.length, ISO_8859_1);
+            if(StringUtils.isNotEmpty(spliter)) {
+                List<ByteBuffer> files = multipleUpload ? UploadUtils.split(requestBody, spliter, ISO_8859_1) :
+                        UploadUtils.trim(requestBody, spliter, ISO_8859_1);
 
-                        //返回字节数组，fastjson序列化时会进行Base64编码
-                        value = value.toString().getBytes("ISO-8859-1");
-                        map.put(String.format("%s_upload_filename", key), new String(m.group(3).getBytes("ISO-8859-1"), "UTF-8"));
-                    } else {
-                        //不是文件要改回UTF-8编码中文才不会乱码
-                        value = new String(m.group(6).getBytes("ISO-8859-1"), "UTF-8");
+                for (ByteBuffer buffer : files) {
+
+                    try {
+                        byte[] bytes = UploadUtils.getBytes(buffer);
+                        regexp = "Content-Disposition:\\s*form-data;\\s*name=\"([^\"]+)\"((;\\s*filename=\"([^;]+)\")\\s*((;\\s*filename\\*=[^;\\s]+)\\s*(Content-Type:\\s*([^/]+/[^\\s]+)\\s*)|\\s*(Content-Type:\\s*([^/]+/[^\\s]+)\\s*)))?";
+                        String summary = UploadUtils.match(bytes, 0, regexp, bytes.length, ISO_8859_1);
+                        if (StringUtils.isEmpty(summary)) {
+                            break;
+                        }
+                        if (summary.indexOf("Content-Type") == -1) {
+                            summary += UploadUtils.match(bytes, summary.length(), "(;?\\s*Content-Type:\\s*([^/]+/[^\\s]+)\\s*)", 1024, ISO_8859_1);
+                        }
+                        if (summary.indexOf("Content-Length") == -1) {
+                            summary += UploadUtils.match(bytes, summary.length(), "[\\r\\n]*Content-Length:\\s?\\d+[\\r\\n]{2}", 1024, ISO_8859_1);
+                        }
+                        bytes = UploadUtils.getBytes(ByteBuffer.wrap(bytes, summary.length(), bytes.length - summary.length()));
+                        buffer = UploadUtils.trimEnter(bytes); //去掉两边回车
+                        Matcher m = Pattern.compile(regexp).matcher(summary);
+                        while (m.find()) {
+                            try {
+                                String key = new String(m.group(1).getBytes(ISO_8859_1), "UTF-8");
+                                Object value = null;
+
+                                if (m.group(10) != null && Pattern.matches("[^/]+/.+", m.group(10))) {
+                                    saveToUploadFileInfo(buffer, m, key, 10);
+                                } else if (m.group(8) != null && Pattern.matches("[^/]+/.+", m.group(8))) {
+                                    saveToUploadFileInfo(buffer, m, key, 8);
+                                } else {
+                                    //不是文件要改回UTF-8编码中文才不会乱码
+                                    value = new String(UploadUtils.getBytes(buffer), "UTF-8");
+                                }
+
+                                if(value == null) {
+                                    map.put(key, null);
+                                }
+                                else {
+                                    map.put(key, ((String) value).trim());
+                                }
+
+                            } catch (IndexOutOfBoundsException ioEx) {
+                                break;
+                            }
+                        }
                     }
-
-                    map.put(key, value);
+                    finally {
+                        buffer.clear();
+                        buffer = null;
+                    }
                 }
             }
 
             if(map.size() > 0) {
-                postString = FastJsonUtils.toJson(map);
                 this.params = map;
             }
             else {
-                postString = new String(requestBody, "UTF-8");
-                if(Pattern.matches("\\s*^\\[[^\\[\\]]+\\]$\\s*", postString)) {
-                    this.params = FastJsonUtils.convert(postString, List.class);
+                String postString = new String(requestBody, "UTF-8");
+                if(StringUtils.isEmpty(postString)) {
+                    return;
                 }
-                else {
-                    this.params = FastJsonUtils.convert(postString, Map.class);
+
+                try {
+                    if (Pattern.matches("\\s*^\\[[^\\[\\]]+\\]$\\s*", postString)) {
+                        this.params = JsonUtils.parse(postString, List.class);
+                    } else {
+                        this.params = JsonUtils.parse(postString, Map.class);
+                    }
+                }
+                catch (Exception e) {
+                    log.warn(e.getMessage());
+                    this.params = postString;
                 }
             }
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    private void saveToUploadFileInfo(ByteBuffer buffer, Matcher m, String key, int i) throws UnsupportedEncodingException {
+        UploadFileInfo fileInfo = new UploadFileInfo();
+        fileInfo.setBuffer(ByteBuffer.wrap(UploadUtils.getBytes(buffer)));
+        fileInfo.setContentType(m.group(i));
+        fileInfo.setFieldName(m.group(1));
+        fileInfo.setFilename(new String(m.group(4).getBytes(ISO_8859_1), "UTF-8"));
+        uploadFileMap.put(key, fileInfo);
     }
 
     private Object params;
@@ -120,6 +176,10 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
     public  String getRequestPostString()
     {
         return postString;
+    }
+
+    public Map<String, UploadFileInfo> getUploadFileMap() {
+        return uploadFileMap;
     }
 
     public static String getRequestPostString(HttpServletRequest request)

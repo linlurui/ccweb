@@ -228,6 +228,44 @@ public class UploadUtils {
         return result;
     }
 
+    public static ByteBuffer trimEnter(byte[] bytes) {
+        int offset = 0, i;
+        for(i=0; i<bytes.length; i++) {
+            if(bytes[i] == 13) {
+                offset = i+1;
+                continue;
+            }
+            if(bytes[i] == 10) {
+                offset = i+1;
+                continue;
+            }
+            break;
+        }
+
+        if(bytes.length==offset) {
+            return ByteBuffer.wrap(new byte[0]);
+        }
+
+        int k = 0;
+        for(int j=bytes.length-1; j>=0; j--) {
+            if(bytes[j] == 13) {
+                k++;
+                continue;
+            }
+            if(bytes[j] == 10) {
+                k++;
+                continue;
+            }
+            break;
+        }
+
+        if((bytes.length - i - k) <= 0) {
+            return ByteBuffer.wrap(new byte[0]);
+        }
+
+        return ByteBuffer.wrap(bytes, offset, (bytes.length - i - k));
+    }
+
     private static List<ByteBuffer> getByteBuffersByIndex(byte[] bytes, List<ByteBuffer> result, String spliter, List<Integer> positions) {
         if (positions.size() < 2) {
             return result;

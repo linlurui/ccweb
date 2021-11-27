@@ -13,6 +13,7 @@ package ccait.ccweb.resolver;
 
 
 import ccait.ccweb.filter.CCWebRequestWrapper;
+import ccait.ccweb.model.UploadFileInfo;
 import entity.tool.util.FastJsonUtils;
 import entity.tool.util.JsonUtils;
 import org.slf4j.LoggerFactory;
@@ -34,9 +35,9 @@ import java.util.Map;
 
 
 @Configuration
-public class RequestArgumentResolver implements HandlerMethodArgumentResolver {
+public class RequestBodyResolver implements HandlerMethodArgumentResolver {
 
-    private static final Logger log = LoggerFactory.getLogger( RequestArgumentResolver.class );
+    private static final Logger log = LoggerFactory.getLogger( RequestBodyResolver.class );
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -60,6 +61,15 @@ public class RequestArgumentResolver implements HandlerMethodArgumentResolver {
             }
 
             Class clazz = null;
+            if (requestWrapper.getUploadFileMap().size() > 0) {
+                Map<String, Object> parameters = (Map<String, Object>) requestWrapper.getParameters();
+                for (Map.Entry<String, UploadFileInfo> item : requestWrapper.getUploadFileMap().entrySet()) {
+                    parameters.put(item.getKey(), item.getValue());
+                }
+
+                return parameters;
+            }
+
             if (type.getTypeName().indexOf("List<") > 0) {
                 List parametes = (List) requestWrapper.getParameters();
                 List result = new ArrayList();
