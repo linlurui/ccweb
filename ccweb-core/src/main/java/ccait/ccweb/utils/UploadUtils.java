@@ -889,7 +889,7 @@ public class UploadUtils {
             {"pcurl", "application/vnd.curl.pcurl"},
             {"pcx", "image/x-pcx"},
             {"pdb", "application/vnd.palm"},
-            {"ccait.ccweb.pdf", "application/ccait.ccweb.pdf"},
+            {"pdf", "application/pdf"},
             {"pfa", "application/x-font-type1"},
             {"pfb", "application/x-font-type1"},
             {"pfm", "application/x-font-type1"},
