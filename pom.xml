@@ -16,6 +16,7 @@
         <module>ccweb-mail</module>
         <module>ccweb-office</module>
         <module>ccweb-repo</module>
+        <module>ccweb-socket</module>
         <module>ccweb-start</module>
     </modules>
 
