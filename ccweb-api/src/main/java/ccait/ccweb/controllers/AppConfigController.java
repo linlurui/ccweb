@@ -1,7 +1,7 @@
 package ccait.ccweb.controllers;
 
 import ccait.ccweb.annotation.AccessCtrl;
-import ccait.ccweb.entites.AppConfig;
+import ccait.ccweb.model.AppConfig;
 import ccait.ccweb.service.AppConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

@@ -1,7 +1,7 @@
 package ccait.ccweb.processor;
 
 import ccait.ccweb.context.ApplicationContext;
-import ccait.ccweb.entites.AppConfig;
+import ccait.ccweb.model.AppConfig;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
