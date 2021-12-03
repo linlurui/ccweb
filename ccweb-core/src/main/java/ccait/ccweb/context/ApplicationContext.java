@@ -12,6 +12,7 @@
 package ccait.ccweb.context;
 
 
+import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.model.UserGroupRoleModel;
 import ccait.ccweb.model.UserModel;
 import ccait.ccweb.utils.EncryptionUtil;
@@ -171,7 +172,9 @@ public class ApplicationContext implements ApplicationContextAware {
     private String createByField;
 
     public static String adminName;
-
+    
+    private static final Map<String, List<String>> allTablesMap = new HashMap<>();
+    
     @PostConstruct
     private void init() {
         admin = ApplicationConfig.getInstance().get("${ccweb.security.admin.username}", admin);
@@ -265,6 +268,9 @@ public class ApplicationContext implements ApplicationContextAware {
             if(!"n1ql_jdbc".equals(ds.getDriverClassName())) {
 
                 allTables = Queryable.getTables(ds.getId());
+                if(!allTablesMap.containsKey(ds.getId())) {
+                    allTablesMap.put(ds.getId(), allTables);
+                }
 
                 List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
                 ColumnInfo col = null;
@@ -323,6 +329,31 @@ public class ApplicationContext implements ApplicationContextAware {
         }
 
         return opt.get();
+    }
+
+    public static boolean existTable(String datasource, String table) throws Exception {
+        if(!allTablesMap.containsKey(datasource)) {
+            List<String> allTables = Queryable.getTables(datasource);
+            allTablesMap.put(datasource, allTables);
+        }
+
+        if(!allTablesMap.containsKey(datasource)) {
+            log.error(String.format(LangConfig.getInstance().get("can_not_find_datasource_mapping"), datasource));
+        }
+        if(allTablesMap.get(datasource)
+                .stream().filter(a->a.toLowerCase().equals(table.toLowerCase()))
+                .findAny().isPresent()) {
+            return true;
+        }
+
+        boolean result = false;
+        try {
+            result = Queryable.exist(datasource, table);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return result;
     }
 
     private void createUserGroupRoleTable(DataSource ds, List<ColumnInfo> columns) throws Exception {
