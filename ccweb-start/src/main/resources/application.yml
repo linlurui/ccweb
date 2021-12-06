@@ -221,6 +221,7 @@ ccweb:
       userPath: userPath #创建者所属路径，体现父子关系，用于like查询
       createOn: createOn #数据创建时间
       createBy: createBy #数据创建者
+      owner: owner #数据所有者
       modifyOn: modifyOn #数据修改时间
       modifyBy: modifyBy #数据修改人
       groupId: groupId  #群组ID
@@ -317,6 +318,5 @@ ccweb:
 
   defaultValue: #指定表字段为null时赋于默认值，UUID_RANDOM=UUID.randomUUID()，DATE_NOW=new Date()
     userGroupRoleId: UUID_RANDOM
-    company.type: customer
     userinfo.key: UUID_RANDOM
 

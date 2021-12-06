@@ -161,6 +161,17 @@ public class PrivilegeModel extends Queryable<PrivilegeModel> {
   @Fieldname("${ccweb.table.reservedField.createBy:createBy}")
   private Integer createBy;
 
+  @Fieldname("${ccweb.table.reservedField.owner:owner}")
+  private Integer owner;
+
+  public Integer getOwner() {
+    return owner;
+  }
+
+  public void setOwner(Integer owner) {
+    this.owner = owner;
+  }
+
   public Date getCreateOn() {
     return createOn;
   }

@@ -72,6 +72,7 @@ public class QueryInfo implements Serializable {
         encoding = ApplicationConfig.getInstance().get("${ccweb.encoding}", encoding);
         groupIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.groupId}", groupIdField);
         createByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField);
+        ownerField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField);
     }
 
     @Autowired
@@ -79,6 +80,9 @@ public class QueryInfo implements Serializable {
 
     @Value("${ccweb.table.reservedField.createBy:createBy}")
     private String createByField;
+
+    @Value("${ccweb.table.reservedField.owner:owner}")
+    private String ownerField;
 
     @Value("${ccweb.table.reservedField.groupId:groupId}")
     private String groupIdField;
@@ -508,9 +512,11 @@ public class QueryInfo implements Serializable {
         UserModel user = ApplicationContext.getSession(context.request, LOGIN_KEY, UserModel.class);
 
         String createByField = String.format("[%s]", context.createByField);
+        String ownerField = String.format("[%s]", context.ownerField);
 
         if(StringUtils.isNotEmpty(alias)) {
             createByField = String.format("[%s].[%s]", alias, context.createByField);
+            ownerField = String.format("[%s].[%s]", alias, context.ownerField);
         }
 
         List<Integer> useridList = ApplicationContext
@@ -526,21 +532,23 @@ public class QueryInfo implements Serializable {
             case SELF:
 
                 if(context.userTablename.equals(tablename)) {
-                    where = where.and(String.format("%s='%s'", context.userIdField, user.getUserId()));
+                    where = where.and(String.format("(%s='%s' OR %s='%s')", context.userIdField, user.getUserId(), context.ownerField, user.getUserId()));
                 }
                 else if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
-                    where = where.and(String.format("%s='%s'", createByField, user.getUserId()));
+                    where = where.and(String.format("(%s='%s' OR %s='%s')", createByField, user.getUserId(), ownerField, user.getUserId()));
                 }
 
                 break;
             case CHILD:
-                if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
+                if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField) ||
+                   EntityContext.hasColumn(dataSource.getId(), tablename, context.ownerField)) {
                     useridList.add(user.getUserId());
-                    where = getWhereByPrivilegeScope(where, createByField, useridList);
+                    where = getWhereByPrivilegeScope(where, createByField, ownerField, useridList);
                 }
                 break;
             case PARENT_AND_CHILD:
-                if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
+                if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField) ||
+                        EntityContext.hasColumn(dataSource.getId(), tablename, context.ownerField)) {
                     for(UserGroupRoleModel item : UserContext.getUserGroupRoleModels(context.request, user.getUserId())) {
                         if(StringUtils.isEmpty(item.getPath())) {
                             continue;
@@ -554,18 +562,26 @@ public class QueryInfo implements Serializable {
                         useridList.add(Integer.parseInt(arr[arr.length - 2]));
                     }
                     useridList.add(user.getUserId());
-                    where = getWhereByPrivilegeScope(where, createByField, useridList);
+                    where = getWhereByPrivilegeScope(where, createByField, ownerField, useridList);
                 }
                 break;
             case GROUP:
-                if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) {
+                if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField) ||
+                        EntityContext.hasColumn(dataSource.getId(), tablename, context.ownerField)) {
                     useridList = ApplicationContext.getUserIdByCurrentGroups(context.request, user).stream().collect(Collectors.toList());
-                    where = getWhereByPrivilegeScope(where, createByField, useridList);
+                    where = getWhereByPrivilegeScope(where, createByField, ownerField, useridList);
                 }
                 break;
             case NO_GROUP:
                 //查询没有分组数据
-                if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) { //被访问的表有创建人ID时才需要检查分组权限
+                if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField) &&
+                        EntityContext.hasColumn(dataSource.getId(), tablename, context.ownerField)) { //被访问的表有创建人ID时才需要检查分组权限
+                    where = where.and(String.format("(%s is null OR %s is null)", createByField, ownerField));
+                }
+                else if(EntityContext.hasColumn(dataSource.getId(), tablename, context.ownerField)) { //被访问的表有Owner时才需要检查分组权限
+                    where = where.and(String.format("[%s] is null", ownerField));
+                }
+                else if(EntityContext.hasColumn(dataSource.getId(), tablename, context.createByField)) { //被访问的表有Owner时才需要检查分组权限
                     where = where.and(String.format("[%s] is null", createByField));
                 }
                 break;
@@ -574,8 +590,8 @@ public class QueryInfo implements Serializable {
         return where;
     }
 
-    private Where getWhereByPrivilegeScope(Where where, String createByField, List<Integer> useridList) {
-        where = where.and(String.format("%s IN (%s)", createByField, join(", ", useridList)));
+    private Where getWhereByPrivilegeScope(Where where, String createByField, String ownerField, List<Integer> useridList) {
+        where = where.and(String.format("(%s IN (%s) OR %s IN (%s))", createByField, join(", ", useridList), ownerField, join(", ", useridList)));
         return where;
     }
 

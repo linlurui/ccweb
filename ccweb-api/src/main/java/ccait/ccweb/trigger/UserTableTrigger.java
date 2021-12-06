@@ -23,6 +23,7 @@ import ccait.ccweb.model.UserModel;
 import ccait.ccweb.utils.ClassUtils;
 import ccait.ccweb.utils.EncryptionUtil;
 import entity.query.ColumnInfo;
+import entity.query.annotation.Fieldname;
 import entity.query.core.ApplicationConfig;
 import entity.tool.util.JsonUtils;
 import org.apache.http.client.HttpResponseException;

@@ -171,6 +171,9 @@ public class ApplicationContext implements ApplicationContextAware {
     @Value("${ccweb.table.reservedField.createBy:createBy}")
     private String createByField;
 
+    @Value("${ccweb.table.reservedField.owner:owner}")
+    private String ownerField;
+
     public static String adminName;
     
     private static final Map<String, List<String>> allTablesMap = new HashMap<>();
@@ -227,6 +230,7 @@ public class ApplicationContext implements ApplicationContextAware {
         userIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userId}", userIdField);
         roleIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.roleId}", roleIdField);
         createByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField);
+        ownerField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField);
     }
 
     /**
@@ -286,6 +290,7 @@ public class ApplicationContext implements ApplicationContextAware {
             String pwd = getEncryptPassword();
             UserModel user = new UserModel();
             user.setCreateBy(Integer.valueOf(0));
+            user.setOwner(Integer.valueOf(0));
             user.setStatus(0);
             user.setCreateOn(Datetime.getTime());
             user.setUsername(admin);
@@ -418,6 +423,12 @@ public class ApplicationContext implements ApplicationContextAware {
 
         col = new ColumnInfo();
         col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField));
+        col.setCanNotNull(false);
+        col.setType(Integer.class);
+        columns.add(col);
+
+        col = new ColumnInfo();
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField));
         col.setCanNotNull(false);
         col.setType(Integer.class);
         columns.add(col);
@@ -579,6 +590,12 @@ public class ApplicationContext implements ApplicationContextAware {
         col.setType(Integer.class);
         columns.add(col);
 
+        col = new ColumnInfo();
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField));
+        col.setCanNotNull(false);
+        col.setType(Integer.class);
+        columns.add(col);
+
         try {
             Queryable.createTable(ds.getId(), privilegeTablename, columns);
             log.info(String.format(LOG_PRE_SUFFIX + "权限表[%s]创建成功！", privilegeTablename));
@@ -645,6 +662,12 @@ public class ApplicationContext implements ApplicationContextAware {
         col.setType(Integer.class);
         columns.add(col);
 
+        col = new ColumnInfo();
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField));
+        col.setCanNotNull(false);
+        col.setType(Integer.class);
+        columns.add(col);
+
         try {
             Queryable.createTable(ds.getId(), aclTablename, columns);
             log.info(String.format(LOG_PRE_SUFFIX + "访问控制表[%s]创建成功！", aclTablename));
@@ -705,6 +728,12 @@ public class ApplicationContext implements ApplicationContextAware {
 
         col = new ColumnInfo();
         col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField));
+        col.setCanNotNull(false);
+        col.setType(Integer.class);
+        columns.add(col);
+
+        col = new ColumnInfo();
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField));
         col.setCanNotNull(false);
         col.setType(Integer.class);
         columns.add(col);
@@ -776,6 +805,12 @@ public class ApplicationContext implements ApplicationContextAware {
 
         col = new ColumnInfo();
         col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField));
+        col.setCanNotNull(false);
+        col.setType(Integer.class);
+        columns.add(col);
+
+        col = new ColumnInfo();
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField));
         col.setCanNotNull(false);
         col.setType(Integer.class);
         columns.add(col);
@@ -874,6 +909,12 @@ public class ApplicationContext implements ApplicationContextAware {
         col = new ColumnInfo();
         col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField));
         col.setCanNotNull(true);
+        col.setType(Integer.class);
+        columns.add(col);
+
+        col = new ColumnInfo();
+        col.setColumnName(ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField));
+        col.setCanNotNull(false);
         col.setType(Integer.class);
         columns.add(col);
 

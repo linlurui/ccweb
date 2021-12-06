@@ -105,6 +105,9 @@ public abstract class BaseController extends AbstractBaseController {
     @Value("${ccweb.table.reservedField.createBy:createBy}")
     protected String createByField;
 
+    @Value("${ccweb.table.reservedField.owner:owner}")
+    private String ownerField;
+
     @Value("${ccweb.table.reservedField.groupId:groupId}")
     protected String groupIdField;
 
@@ -197,6 +200,7 @@ public abstract class BaseController extends AbstractBaseController {
         appid = ApplicationConfig.getInstance().get("${ccweb.auth.user.wechat.appid}", appid);
         wechatEnable = ApplicationConfig.getInstance().get("${ccweb.auth.user.wechat.enable}", wechatEnable);
         createByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField);
+        ownerField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField);
         jwtEnable = ApplicationConfig.getInstance().get("${ccweb.auth.user.jwt.enable}", jwtEnable);
         jwtMillis = ApplicationConfig.getInstance().get("${ccweb.auth.user.jwt.millis}", jwtMillis);
     }
@@ -527,7 +531,7 @@ public abstract class BaseController extends AbstractBaseController {
      */
     protected boolean checkDataPrivilege(String table, Map data) throws SQLException, IOException {
 
-        if(!data.containsKey(createByField)) { //公开数据
+        if(!data.containsKey(createByField) && !data.containsKey(ownerField)) { //公开数据
             return true;
         }
 
@@ -535,7 +539,7 @@ public abstract class BaseController extends AbstractBaseController {
             return true;
         }
 
-        if(data.get(createByField) == null) { //无主数据
+        if(data.get(createByField) == null && data.get(ownerField)==null) { //无主数据
             return false;
         }
 
@@ -547,26 +551,28 @@ public abstract class BaseController extends AbstractBaseController {
             return true;
         }
 
-        if(data.get(createByField).toString().equals(getLoginUser().getUserId().toString())) {
+        if(data.get(createByField).toString().equals(getLoginUser().getUserId().toString()) ||
+                data.get(ownerField).toString().equals(getLoginUser().getUserId().toString())) {
             return true;
         }
 
         String createBy = data.get(createByField).toString();
+        String owner = data.get(ownerField).toString();
         switch(getCurrentMaxPrivilegeScope(table)) { // 与用户组相关的数据权限
             case CHILD:
                 useridList = ApplicationContext.getUserIdBySubGroups(request, getLoginUser()).stream().collect(Collectors.toList());
-                if(useridList.stream().filter(a->Integer.parseInt(createBy)==a).isParallel()) {
+                if(useridList.stream().filter(a->Integer.parseInt(createBy)==a || Integer.parseInt(owner)==a).isParallel()) {
                     return true;
                 }
                 break;
             case PARENT_AND_CHILD:
-                if(useridList.stream().filter(a->Integer.parseInt(createBy)==a).isParallel()) {
+                if(useridList.stream().filter(a->Integer.parseInt(createBy)==a || Integer.parseInt(owner)==a).isParallel()) {
                     return true;
                 }
                 break;
             case GROUP:
                 useridList = ApplicationContext.getUserIdByCurrentGroups(request, getLoginUser()).stream().collect(Collectors.toList());
-                if(useridList.stream().filter(a->Integer.parseInt(createBy)==a).isParallel()) {
+                if(useridList.stream().filter(a->Integer.parseInt(createBy)==a || Integer.parseInt(owner)==a).isParallel()) {
                     return true;
                 }
                 break;

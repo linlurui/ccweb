@@ -77,6 +77,9 @@ public final class DefaultTrigger {
     @Value("${ccweb.table.reservedField.createBy:createBy}")
     private String createByField;
 
+    @Value("${ccweb.table.reservedField.owner:owner}")
+    private String ownerField;
+
     @Value("${ccweb.table.reservedField.modifyBy:modifyBy}")
     private String modifyByField;
 
@@ -104,11 +107,13 @@ public final class DefaultTrigger {
         modifyByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.modifyBy}", modifyByField);
         userPathField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userPath}", userPathField);
         createByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField);
+        ownerField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField);
     }
 
     @OnInsert
     public void onInsert(List<Map<String, Object>> list, HttpServletRequest request) throws Exception {
 
+        boolean hasOwner = EntityContext.hasColumn(datasourceId, EntityContext.getCurrentTable(), ownerField);
         boolean hasCreateBy = EntityContext.hasColumn(datasourceId, EntityContext.getCurrentTable(), createByField);
         boolean hasCreateOn = EntityContext.hasColumn(datasourceId, EntityContext.getCurrentTable(), createOnField);
         boolean hasModifyByField = EntityContext.hasColumn(datasourceId, EntityContext.getCurrentTable(), modifyByField);
@@ -133,6 +138,12 @@ public final class DefaultTrigger {
 
             if(hasCreateBy) {
                 item.put(createByField, user.getUserId());
+            }
+
+            if(hasOwner) {
+                if(!item.containsKey(ownerField) || item.get(ownerField)==null) {
+                    item.put(ownerField, user.getUserId());
+                }
             }
 
             if(hasCreateOn) {
@@ -196,8 +207,14 @@ public final class DefaultTrigger {
     public void onUpdate(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
 
         Map<String, Object> data = queryInfo.getData();
-
+        boolean hasOwner = EntityContext.hasColumn(datasourceId, EntityContext.getCurrentTable(), ownerField);
         vaildPostData(data, true);
+
+        if(hasOwner) {
+            if(!data.containsKey(ownerField) || data.get(ownerField)==null) {
+                data.remove(ownerField);
+            }
+        }
 
         if(data.containsKey(createOnField)) {
             data.remove(createOnField);

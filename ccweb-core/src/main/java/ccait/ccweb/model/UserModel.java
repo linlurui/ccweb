@@ -45,6 +45,17 @@ public class UserModel extends Queryable<UserModel> {
   @Fieldname("${ccweb.table.reservedField.createBy:createBy}")
   private Integer createBy;
 
+  @Fieldname("${ccweb.table.reservedField.owner:owner}")
+  private Integer owner;
+
+  public Integer getOwner() {
+    return owner;
+  }
+
+  public void setOwner(Integer owner) {
+    this.owner = owner;
+  }
+
   @Fieldname("${ccweb.table.reservedField.modifyOn:modifyOn}")
   private Date modifyOn;
 
