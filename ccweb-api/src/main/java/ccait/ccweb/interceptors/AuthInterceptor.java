@@ -385,13 +385,13 @@ public class AuthInterceptor extends AbstractPermissionInterceptor implements Ha
                     privilegeWhere = "canExport=1";
                 }
 
-                QueryInfo queryInfo = JsonUtils.convert(params, QueryInfo.class);
-                if(queryInfo.getKeywords() == null || queryInfo.getKeywords().size() > 0 || queryInfo.getConditionList().size() > 0) {
-                    privilegeWhere = "canQuery=1";
-                }
-
                 else {
-                    privilegeWhere = "canList=1";
+                    QueryInfo queryInfo = JsonUtils.convert(params, QueryInfo.class);
+                    if (queryInfo.getKeywords() == null || queryInfo.getKeywords().size() > 0 || queryInfo.getConditionList().size() > 0) {
+                        privilegeWhere = "canQuery=1";
+                    } else {
+                        privilegeWhere = "canList=1";
+                    }
                 }
                 break;
             case "PUT":
