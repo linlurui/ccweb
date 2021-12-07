@@ -119,7 +119,11 @@ public class UserContext {
 
         List list = ApplicationContext.getSession(request, "UserGroupRoleModels", List.class);
         if(list != null && list.size() > 0) {
-            return JsonUtils.toList(JsonUtils.toJson(list), UserGroupRoleModel.class);
+            List<UserGroupRoleModel> userGroupRoleModels = JsonUtils.toList(JsonUtils.toJson(list), UserGroupRoleModel.class);
+            list = userGroupRoleModels.stream().filter(a-> a.getUserId() == userId).collect(Collectors.toList());
+            if(list != null && list.size() > 0) {
+                return JsonUtils.toList(JsonUtils.toJson(list), UserGroupRoleModel.class);
+            }
         }
 
         UserGroupRoleModel model = new UserGroupRoleModel();
