@@ -425,8 +425,8 @@ public class AuthInterceptor extends AbstractPermissionInterceptor implements Ha
                 Collectors.collectingAndThen(Collectors.toCollection(() ->
                         new TreeSet<>(Comparator.comparing(o -> o))), ArrayList::new));
 
-        List<Integer> groupIds = aclList.stream().filter(o-> o.getGroupId() != null).map(b->b.getGroupId()).collect(Collectors.toList());
-        groupIds = groupIds.stream().collect(
+        List<Integer> aclIds = aclList.stream().filter(o-> table.equals(o.getTableName())).map(b->b.getAclId()).collect(Collectors.toList());
+        aclIds = aclIds.stream().collect(
                 Collectors.collectingAndThen(Collectors.toCollection(() ->
                         new TreeSet<>(Comparator.comparing(o -> o))), ArrayList::new));
 
@@ -434,11 +434,11 @@ public class AuthInterceptor extends AbstractPermissionInterceptor implements Ha
         if(roleIdList.size() > 0) {
             String roleWhere = String.format("[roleId] in ('%s')", String.join("','", roleIdList));
             if(aclList.size() > 0) {
-                String groupsString = String.format("(groupId in ('%s') OR groupId IS NULL OR groupId='')", String.join("','",
-                        groupIds.stream().filter(o -> o != null).map(a -> a.toString().replace("-", ""))
+                String aclWhere = String.format("(aclId in ('%s') OR aclId IS NULL OR aclId='')", String.join("','",
+                        aclIds.stream().filter(o -> o != null).map(a -> a.toString().replace("-", ""))
                                 .collect(Collectors.toList())));
                 privilegeList = privilege.where(roleWhere).and(privilegeWhere)
-                        .and(groupsString).query();
+                        .and(aclWhere).query();
             }
             else {
                 privilegeList = privilege.where(roleWhere).and(privilegeWhere).query();
@@ -447,12 +447,12 @@ public class AuthInterceptor extends AbstractPermissionInterceptor implements Ha
 
         else {
             if(aclList.size() > 0) {
-                String groupString = String.format("(groupId in ('%s') OR groupId IS NULL OR groupId='')", String.join("','",
-                        groupIds.stream().filter(o->o != null).map(a -> a.toString().replace("-", ""))
+                String aclWhere = String.format("(aclId in ('%s') OR aclId IS NULL OR aclId='')", String.join("','",
+                        aclIds.stream().filter(o->o != null).map(a -> a.toString().replace("-", ""))
                                 .collect(Collectors.toList())));
 
                 privilegeList =  privilege.where(privilegeWhere)
-                        .and(groupString).query();
+                        .and(aclWhere).query();
             }
             else {
                 privilegeList = privilege.where(privilegeWhere).query();
