@@ -42,6 +42,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static ccait.ccweb.utils.StaticVars.*;
@@ -81,15 +82,15 @@ public class ApplicationContext implements ApplicationContextAware {
     public static Map<String, Object> getThreadLocalMap() {
 
         if(threadLocal.get() == null) {
-            threadLocal.set(new HashMap<String, Object>());
+            threadLocal.set(new ConcurrentHashMap<String, Object>());
         }
 
         return threadLocal.get();
     }
 
-    private final static InheritableThreadLocal<Map<String, Object>> threadLocal = new InheritableThreadLocal<Map<String, Object>>();
+    private final static ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
     static {
-        threadLocal.set(new HashMap<String, Object>());
+        threadLocal.set(new ConcurrentHashMap<String, Object>());
     }
 
     @Value(TABLE_USER)
