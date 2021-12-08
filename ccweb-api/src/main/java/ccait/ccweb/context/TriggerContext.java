@@ -56,10 +56,21 @@ public final class TriggerContext {
     @Value(TABLE_PRIVILEGE)
     private String privilegeTablename;
 
+    private static String userTablenameStatic;
+    private static String groupTablenameStatic;
+    private static String roleTablenameStatic;
+    private static String aclTablenameStatic;
+    private static String privilegeTablenameStatic;
+
     private final static List<EventInfo> eventList = new ArrayList<EventInfo>();
 
     @PostConstruct
     private void postConstruct() {
+        userTablenameStatic = userTablename;
+        groupTablenameStatic = groupTablename;
+        roleTablenameStatic = roleTablename;
+        aclTablenameStatic = aclTablename;
+        privilegeTablenameStatic = privilegeTablename;
 
         org.springframework.context.ApplicationContext app = ApplicationContext.getInstance();
         Map<String, Object> map = app.getBeansWithAnnotation(Trigger.class);
@@ -203,6 +214,9 @@ public final class TriggerContext {
         list.sort((EventInfo e1, EventInfo e2) -> e1.getOrder().compareTo(e2.getOrder()));
 
         for(EventInfo eventInfo : list) {
+            if(!tablename.equals(getTablename(eventInfo.getTablename()))) {
+                continue;
+            }
             Class<?> type = eventInfo.getType();
             String beanName = type.getSimpleName().substring(0, 1).toLowerCase() + type.getSimpleName().substring(1);
             Object obj = ApplicationContext.getInstance().getBean(beanName);
@@ -295,19 +309,23 @@ public final class TriggerContext {
     }
 
     private String getTablename(Trigger ann) {
-        switch (ann.tablename()) {
+        return getTablename(ann.tablename());
+    }
+
+    private static String getTablename(String tablename) {
+        switch (tablename) {
             case TABLE_ACL:
-                return aclTablename;
+                return aclTablenameStatic;
             case TABLE_GROUP:
-                return groupTablename;
+                return groupTablenameStatic;
             case TABLE_PRIVILEGE:
-                return privilegeTablename;
+                return privilegeTablenameStatic;
             case TABLE_ROLE:
-                return roleTablename;
+                return roleTablenameStatic;
             case TABLE_USER:
-                return userTablename;
+                return userTablenameStatic;
             default:
-                return ann.tablename();
+                return tablename;
         }
     }
 }
