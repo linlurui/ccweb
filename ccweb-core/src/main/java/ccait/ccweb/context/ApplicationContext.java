@@ -82,7 +82,7 @@ public class ApplicationContext implements ApplicationContextAware {
     public static Map<String, Object> getThreadLocalMap() {
 
         if(threadLocal.get() == null) {
-            threadLocal.set(new ConcurrentHashMap<String, Object>());
+            threadLocal.set(new ConcurrentHashMap<>());
         }
 
         return threadLocal.get();
@@ -90,7 +90,7 @@ public class ApplicationContext implements ApplicationContextAware {
 
     private final static ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
     static {
-        threadLocal.set(new ConcurrentHashMap<String, Object>());
+        threadLocal.set(new ConcurrentHashMap<>());
     }
 
     @Value(TABLE_USER)
