@@ -173,6 +173,9 @@ public abstract class BaseController extends AbstractBaseController {
     @Value("${ccweb.upload.watermark:}")
     private String watermark;
 
+    @Value("${ccweb.table.reservedField.createOn:createOn}")
+    private String createOnField;
+
     public BaseController() {
         RMessage = new ResponseData<Object>();
     }
@@ -203,6 +206,7 @@ public abstract class BaseController extends AbstractBaseController {
         ownerField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField);
         jwtEnable = ApplicationConfig.getInstance().get("${ccweb.auth.user.jwt.enable}", jwtEnable);
         jwtMillis = ApplicationConfig.getInstance().get("${ccweb.auth.user.jwt.millis}", jwtMillis);
+        createOnField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createOn}", createOnField);
     }
 
     protected boolean isFinish() {
@@ -1229,7 +1233,8 @@ public abstract class BaseController extends AbstractBaseController {
         DruidPooledConnection conn = queryable.dataSource().getConnection();
         conn.setAutoCommit(false);
         queryable.insert();
-        Object idValue = queryable.orderby("createOn desc").select(idField).first(String.class);
+        boolean hasCreateOn = EntityContext.hasColumn(getCurrentDatasourceId(), EntityContext.getCurrentTable(), createOnField);
+        Object idValue = queryable.orderby(String.format("%s desc", (hasCreateOn? createOnField: idField))).select(idField).first(String.class);
         conn.commit();
 
         ApplicationContext.setGroupsUserIdValue(request, table, JsonUtils.parse(json, Map.class), getLoginUser(), idValue);

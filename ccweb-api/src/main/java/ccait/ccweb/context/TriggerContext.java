@@ -214,7 +214,8 @@ public final class TriggerContext {
         list.sort((EventInfo e1, EventInfo e2) -> e1.getOrder().compareTo(e2.getOrder()));
 
         for(EventInfo eventInfo : list) {
-            if(!tablename.equals(getTablename(eventInfo.getTablename()))) {
+            if(!DEFAULT_ALL_TABLE_EVENT.equals(getTablename(eventInfo.getTablename())) &&
+                    !tablename.equals(getTablename(eventInfo.getTablename()))) {
                 continue;
             }
             Class<?> type = eventInfo.getType();
