@@ -492,8 +492,12 @@ public final class DefaultTrigger {
             List<String> aesFieldList = StringUtils.splitString2List(aesFields, ",");
 
             for(int i=0; i<list.size(); i++) {
-                if(list.get(i)==null || !list.get(i).getClass().isMemberClass()) {
-                    continue;
+                try {
+                    if (list.get(i) == null || !list.get(i).getClass().isMemberClass()) {
+                        break;
+                    }
+                } catch(Exception e) {
+                    break;
                 }
                 List<String> keyList = (List<String>) list.get(i).keySet().stream().map(a->a!=null ? a.toString() : "").collect(Collectors.toList());
                 for(Object key : keyList) {
