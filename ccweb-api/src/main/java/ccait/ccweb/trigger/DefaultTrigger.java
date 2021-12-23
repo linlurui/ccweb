@@ -493,7 +493,11 @@ public final class DefaultTrigger {
 
             for(int i=0; i<list.size(); i++) {
                 try {
-                    if (list.get(i) == null || !list.get(i).getClass().isMemberClass()) {
+                    boolean isMap = false;
+                    if(new HashMap<>() instanceof Map) {
+                        isMap = true;
+                    }
+                    if (list.get(i) == null || (!list.get(i).getClass().isMemberClass() && !isMap)) {
                         break;
                     }
                 } catch(Exception e) {
