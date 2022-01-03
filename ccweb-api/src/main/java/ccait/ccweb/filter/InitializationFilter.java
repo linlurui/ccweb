@@ -74,6 +74,7 @@ public class InitializationFilter implements WebFilter, Filter {
                 res.setHeader("Access-Control-Allow-Origin", "*");
                 res.setHeader("Access-Control-Allow-Credentials", "true");
                 res.setHeader("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE, PUT, OPTIONS");
+                res.setHeader("allow", "POST, GET, PATCH, DELETE, PUT, OPTIONS");
                 res.setHeader("Access-Control-Max-Age", "3600");
                 res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 res.setContentType("application/json; charset=utf-8");
