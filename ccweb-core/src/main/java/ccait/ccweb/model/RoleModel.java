@@ -44,6 +44,23 @@ public class RoleModel extends Queryable<RoleModel> {
   @Fieldname("${ccweb.table.reservedField.owner:owner}")
   private Integer owner;
 
+  @Fieldname("${ccweb.table.reservedField.modifyOn:modifyOn}")
+  private Date modifyOn;
+
+  @Fieldname("${ccweb.table.reservedField.modifyBy:modifyBy}")
+  private Integer modifyBy;
+
+  @Fieldname("type")
+  private String type;
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
   public Integer getOwner() {
     return owner;
   }
@@ -51,12 +68,6 @@ public class RoleModel extends Queryable<RoleModel> {
   public void setOwner(Integer owner) {
     this.owner = owner;
   }
-
-  @Fieldname("${ccweb.table.reservedField.modifyOn:modifyOn}")
-  private Date modifyOn;
-
-  @Fieldname("${ccweb.table.reservedField.modifyBy:modifyBy}")
-  private Integer modifyBy;
 
   public Date getCreateOn() {
     return createOn;
