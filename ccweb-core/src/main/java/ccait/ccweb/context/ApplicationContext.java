@@ -794,6 +794,12 @@ public class ApplicationContext implements ApplicationContextAware {
         columns.add(col);
 
         col = new ColumnInfo();
+        col.setColumnName("parentId");
+        col.setCanNotNull(false);
+        col.setType(Integer.class);
+        columns.add(col);
+
+        col = new ColumnInfo();
         col.setColumnName(modifyOnField);
         col.setCanNotNull(false);
         col.setType(Date.class);

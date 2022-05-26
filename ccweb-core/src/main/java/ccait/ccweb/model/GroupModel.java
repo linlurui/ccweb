@@ -85,6 +85,16 @@ public class GroupModel extends Queryable<GroupModel> {
   @Fieldname("${ccweb.table.reservedField.modifyBy:modifyBy}")
   private Integer modifyBy;
 
+  public Integer getParentId() {
+    return parentId;
+  }
+
+  public void setParentId(Integer parentId) {
+    this.parentId = parentId;
+  }
+
+  private Integer parentId;
+
   public Integer getGroupId() {
     return this.groupId;
   }
