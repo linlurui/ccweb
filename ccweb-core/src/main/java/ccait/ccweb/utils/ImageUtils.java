@@ -4,16 +4,12 @@ package ccait.ccweb.utils;
 import entity.tool.util.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import sun.misc.BASE64Decoder;
-
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigDecimal;
+import java.util.Base64;
 
 public final class ImageUtils {
 
@@ -145,8 +141,7 @@ public final class ImageUtils {
     }
 
     public static byte[] getBytesForBase64(String base64String) throws IOException {
-        BASE64Decoder decoder = new BASE64Decoder();
-        byte[] bytes = decoder.decodeBuffer(base64String);
+        byte[] bytes = Base64.getDecoder().decode(base64String);
         for (int i = 0; i < bytes.length; ++i) {
             if (bytes[i] < 0) {// 调整异常数据
                 bytes[i] += 256;

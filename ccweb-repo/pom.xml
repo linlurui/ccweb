@@ -13,8 +13,8 @@
 
     <repositories>
         <repository>
-            <id>entityQueryable</id>
-            <url>https://gitee.com/ccait/entityqueryable/raw/1.0</url>
+            <id>entity-orm</id>
+            <url>https://gitee.com/linlurui/entityqueryable/raw/1.0</url>
             <releases>
                 <updatePolicy>always</updatePolicy>
                 <enabled>true</enabled>
