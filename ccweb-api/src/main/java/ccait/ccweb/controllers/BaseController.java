@@ -47,7 +47,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
-import sun.misc.BASE64Decoder;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -1721,7 +1720,7 @@ public abstract class BaseController extends AbstractBaseController {
 
                 mediaType = new MediaType(arr[0], arr[1]);
 
-                buffer = new BASE64Decoder().decodeBuffer(fileString);
+                buffer = Base64.getDecoder().decode(fileString);
 
                 saveTempFile(buffer);
             }
