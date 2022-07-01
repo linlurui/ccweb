@@ -14,8 +14,7 @@ package ccait.ccweb.utils;
 
 import entity.tool.util.StringUtils;
 import org.apache.commons.codec.binary.Base64;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
@@ -285,7 +284,7 @@ public final class EncryptionUtil {
     public static String initMacKey() throws Exception {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(KEY_MAC);
         SecretKey secretKey = keyGenerator.generateKey();
-        return  (new BASE64Encoder()).encodeBuffer(secretKey.getEncoded());
+        return  Base64.encodeBase64String(secretKey.getEncoded());
     }
 
     /**
@@ -298,7 +297,7 @@ public final class EncryptionUtil {
      */
     public static String mac(byte[] data, String key) throws Exception {
 
-        SecretKey secretKey = new SecretKeySpec((new BASE64Decoder()).decodeBuffer(key), KEY_MAC);
+        SecretKey secretKey = new SecretKeySpec(Base64.decodeBase64(key), KEY_MAC);
         Mac mac = Mac.getInstance(secretKey.getAlgorithm());
         mac.init(secretKey);
         return new String(mac.doFinal(data));
