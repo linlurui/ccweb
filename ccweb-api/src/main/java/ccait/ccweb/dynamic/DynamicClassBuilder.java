@@ -11,14 +11,16 @@
 
 package ccait.ccweb.dynamic;
 
+import ccait.ccweb.context.ApplicationContext;
+import ccait.ccweb.context.EntityContext;
 import ccait.ccweb.entites.*;
 import ccait.ccweb.utils.OSUtils;
 import entity.query.ColumnInfo;
 import entity.query.core.ApplicationConfig;
 import entity.tool.util.StringUtils;
 import javapoet.JavaFile;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -26,6 +28,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.FileFilter;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,21 +42,34 @@ public class DynamicClassBuilder {
     private static final Logger log = LoggerFactory.getLogger( DynamicClassBuilder.class );
 
     private static final String DEFAULT_PACKAGE = "ccait.ccweb.entites";
+    private static JavaCompiler compiler;
+    private volatile static Object locker = new Object();
 
-    public static Object create(String tablename, List<ColumnInfo> columns) {
-        return create(tablename, columns, true);
+    public static Object create(String tablename, List<ColumnInfo> columns) throws SQLException {
+        return create(EntityContext.getCurrentDatasourceId(), tablename, columns, true);
     }
 
-    public static Object create(String tablename, List<ColumnInfo> columns, boolean isQueryable) {
+    public static Object create(String datasource, String tablename, List<ColumnInfo> columns) {
+        return create(datasource, tablename, columns, true);
+    }
+
+    public static Object create(String datasource, String tablename, List<ColumnInfo> columns, boolean isQueryable) {
 
         tablename = tablename.trim();
+        columns = ensureDatetimeColumns(tablename, columns);
         String suffix = UUID.randomUUID().toString().replace("-", "");
-        JavaFile javaFile = getJavaFile(columns, tablename, "id", "public", suffix, isQueryable);
+        JavaFile javaFile = getJavaFile(columns, tablename, datasource, "id", "public", suffix, isQueryable);
 
         try {
             String className = String.format("%s%s", tablename.substring(0, 1).toUpperCase() + tablename.substring(1), suffix);
             String packagePath = ApplicationConfig.getInstance().get("ccweb.package", DEFAULT_PACKAGE);
-            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+            if(compiler == null) {
+                synchronized (locker) {
+                    if(compiler == null) {
+                        compiler = ToolProvider.getSystemJavaCompiler();
+                    }
+                }
+            }
 
             if(compiler == null) {
                 log.error("compiler has been null!!!");
@@ -92,7 +108,7 @@ public class DynamicClassBuilder {
                 }
             }
             catch (Exception e) {
-                log.error(LOG_PRE_SUFFIX + e.getMessage(), e);
+                log.error(LOG_PRE_SUFFIX + "ERROR=====> ", e);
             }
         }
         catch (Exception e){
@@ -100,6 +116,29 @@ public class DynamicClassBuilder {
         }
 
         return null;
+    }
+
+    private static List<ColumnInfo> ensureDatetimeColumns(String tablename, List<ColumnInfo> columns) {
+        try {
+            if(ApplicationContext.existTable(tablename)) {
+                List<ColumnInfo> columnsCache = EntityContext.getColumns(tablename)
+                        .stream().filter(a->"datetime".equals(a.getDataType()))
+                        .collect(Collectors.toList());
+
+                for(ColumnInfo columnInfo : columns) {
+                    final String columnName = columnInfo.getColumnName();
+                    Optional<ColumnInfo> opt = columnsCache.stream()
+                            .filter(a -> a.getColumnName().equals(columnName)).findFirst();
+
+                    if(opt.isPresent()) {
+                        columnInfo.setDataType(Date.class.getTypeName());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("CCApplicationContext Error----->", e);
+        }
+        return columns;
     }
 
     public static List<ColumnInfo> getColumnInfosBySelectList(List<SelectInfo> selectInfos) {
@@ -111,6 +150,15 @@ public class DynamicClassBuilder {
                 if ("id".equals(ensureColumnName(item.getField()).toLowerCase())) {
                     continue;
                 }
+
+                if(columns.stream().filter(a->a.getColumnName().equals(item.getField())).isParallel()) {
+                    continue;
+                }
+
+                if(columns.stream().filter(a->a.getAlias().equals(item.getAlias())).isParallel()) {
+                    continue;
+                }
+
                 ColumnInfo col = new ColumnInfo();
                 col.setColumnName(ensureColumnName(item.getField()));
                 col.setAlias(item.getAlias());
@@ -121,15 +169,10 @@ public class DynamicClassBuilder {
             }
         }
 
-        //去重
-        columns = columns.stream().collect(
-                Collectors.collectingAndThen(Collectors.toCollection(() ->
-                        new TreeSet<>(Comparator.comparing(o -> o.getColumnName()))), ArrayList::new));
-
         return columns;
     }
 
-    public static Object create(String tablename, Map<String, Object> data) {
+    public static Object create(String tablename, Map<String, Object> data) throws SQLException {
         List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
         if(data != null) {
             for(Map.Entry<String, Object> item : data.entrySet()) {
@@ -148,7 +191,7 @@ public class DynamicClassBuilder {
             }
         }
 
-        //去重
+        //去重并重新排序
         columns = columns.stream().collect(
                 Collectors.collectingAndThen(Collectors.toCollection(() ->
                         new TreeSet<>(Comparator.comparing(o -> o.getColumnName()))), ArrayList::new));
@@ -171,7 +214,7 @@ public class DynamicClassBuilder {
         return name;
     }
 
-    public static Object create(String tablename, QueryInfo queryInfo) {
+    public static Object create(String tablename, QueryInfo queryInfo) throws SQLException {
         List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
         if(queryInfo != null) {
             if(queryInfo.getConditionList() != null) {
@@ -251,7 +294,7 @@ public class DynamicClassBuilder {
             }
         }
 
-        //去重
+        //去重并重新排序
         columns = columns.stream().collect(
                 Collectors.collectingAndThen(Collectors.toCollection(() ->
                         new TreeSet<>(Comparator.comparing(o -> o.getColumnName()))), ArrayList::new));

@@ -46,6 +46,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
@@ -73,19 +74,19 @@ public abstract class BaseController extends AbstractBaseController {
     private static final Logger log = LoggerFactory.getLogger(BaseController.class);
 
     @Value("${ccweb.auth.user.jwt.millis:600000}")
-    private long jwtMillis;
+    protected long jwtMillis;
 
     @Value("${ccweb.auth.user.jwt.enable:false}")
-    private boolean jwtEnable;
+    protected boolean jwtEnable;
 
     @Value("${ccweb.auth.user.aes.enable:false}")
-    private boolean aesEnable;
+    protected boolean aesEnable;
 
     @Value(value = "${ccweb.elasticSearch.timeout:10000}")
-    private int esTimeout;
+    protected int esTimeout;
 
     @Value(value = "${ccweb.elasticSearch.cluster-name:}")
-    private String esClusterName;
+    protected String esClusterName;
 
     public ResponseData<Object> RMessage;
 
@@ -96,7 +97,7 @@ public abstract class BaseController extends AbstractBaseController {
     protected HttpServletResponse response;
 
     @Autowired
-    private QueryInfo queryInfo;
+    protected QueryInfo queryInfo;
 
     @Value("${ccweb.queryable.ignoreTotalCount:true}")
     protected boolean ignoreTotalCount;
@@ -105,7 +106,7 @@ public abstract class BaseController extends AbstractBaseController {
     protected String createByField;
 
     @Value("${ccweb.table.reservedField.owner:owner}")
-    private String ownerField;
+    protected String ownerField;
 
     @Value("${ccweb.table.reservedField.groupId:groupId}")
     protected String groupIdField;
@@ -115,65 +116,65 @@ public abstract class BaseController extends AbstractBaseController {
     protected Integer maxPageSize;
 
     @Value("${ccweb.security.encrypt.MD5.fields:}")
-    private String md5Fields;
+    protected String md5Fields;
 
     @Value("${ccweb.security.encrypt.MD5.publicKey:ccait}")
-    private String md5PublicKey;
+    protected String md5PublicKey;
 
     @Value("${ccweb.security.encrypt.MAC.fields:}")
-    private String macFields;
+    protected String macFields;
 
     @Value("${ccweb.security.encrypt.MAC.publicKey:ccait}")
-    private String macPublicKey;
+    protected String macPublicKey;
 
     @Value("${ccweb.security.encrypt.AES.fields:}")
-    private String aesFields;
+    protected String aesFields;
 
     @Value("${ccweb.security.encrypt.AES.publicKey:ccait}")
-    private String aesPublicKey;
+    protected String aesPublicKey;
 
     @Value("${ccweb.security.encrypt.SHA.fields:}")
-    private String shaFields;
+    protected String shaFields;
 
     @Value("${ccweb.security.encrypt.SHA.publicKey:ccait}")
-    private String shaPublicKey;
+    protected String shaPublicKey;
 
     @Value("${ccweb.encoding:UTF-8}")
-    private String encoding;
+    protected String encoding;
 
     @Value("${ccweb.security.encrypt.BASE64.fields:}")
-    private String base64Fields;
+    protected String base64Fields;
 
     @Value("${ccweb.defaultDateByNow:false}")
-    private boolean defaultDateByNow;
-    private Map<String, Object> data;
+    protected boolean defaultDateByNow;
+    protected Map<String, Object> data;
 
     @Value("${ccweb.security.admin.username:admin}")
-    private String admin;
+    protected String admin;
 
     @Value("${ccweb.download.thumb.fixedWidth:0}")
-    private Integer fixedWidth;
+    protected Integer fixedWidth;
 
     @Value("${ccweb.download.thumb.scalRatio:0}")
-    private Integer scalRatio;
+    protected Integer scalRatio;
 
     @Value("${ccweb.auth.user.wechat.secret:}")
-    private String secret;
+    protected String secret;
 
     @Value("${ccweb.auth.user.wechat.appid:}")
-    private String appid;
+    protected String appid;
 
     @Value("${ccweb.auth.user.wechat.enable:false}")
-    private boolean wechatEnable;
+    protected boolean wechatEnable;
 
     @Autowired
-    private NonStaticResourceHttpRequestHandler nonStaticResourceHttpRequestHandler;
+    protected NonStaticResourceHttpRequestHandler nonStaticResourceHttpRequestHandler;
 
     @Value("${ccweb.upload.watermark:}")
-    private String watermark;
+    protected String watermark;
 
     @Value("${ccweb.table.reservedField.createOn:createOn}")
-    private String createOnField;
+    protected String createOnField;
 
     public BaseController() {
         RMessage = new ResponseData<Object>();
@@ -728,11 +729,25 @@ public abstract class BaseController extends AbstractBaseController {
      */
     public List joinQuery(QueryInfo queryInfo, boolean byExport) throws Exception {
 
+        if(queryInfo.getPageInfo() == null) {
+            queryInfo.setPageInfo(new PageInfo());
+        }
+
+        if(queryInfo.getPageInfo().getPageSize() < 1 &&
+                ApplicationConfig.getInstance().get("${ccweb.page.default}", 0)>0) {
+            queryInfo.getPageInfo().setPageSize(ApplicationConfig.getInstance().get("${ccweb.page.default}", 10));
+        }
+
+        if(ApplicationConfig.getInstance().get("${ccweb.page.maxSize}", 0) > 0 &&
+                queryInfo.getPageInfo().getPageSize() > ApplicationConfig.getInstance().get("${ccweb.page.maxSize}", 0)) {
+            queryInfo.getPageInfo().setPageSize(ApplicationConfig.getInstance().get("${ccweb.page.maxSize}", 0));
+        }
+
         if(byExport) {
 
             List<ColumnInfo> columns = DynamicClassBuilder.getColumnInfosBySelectList(queryInfo.getSelectList());
 
-            Object info = DynamicClassBuilder.create("TABLE" + UUID.randomUUID().toString().replace("-", ""), columns, false);
+            Object info = DynamicClassBuilder.create(EntityContext.getCurrentDatasourceId(),"TABLE" + UUID.randomUUID().toString().replace("-", ""), columns, false);
 
             queryInfo.getSelectList().clear();
 
@@ -861,11 +876,25 @@ public abstract class BaseController extends AbstractBaseController {
 
         encrypt(queryInfo.getConditionList());
 
+        if(queryInfo.getPageInfo() == null) {
+            queryInfo.setPageInfo(new PageInfo());
+        }
+
+        if(queryInfo.getPageInfo().getPageSize() < 1 &&
+                ApplicationConfig.getInstance().get("${ccweb.page.default}", 0)>0) {
+            queryInfo.getPageInfo().setPageSize(ApplicationConfig.getInstance().get("${ccweb.page.default}", 10));
+        }
+
+        if(ApplicationConfig.getInstance().get("${ccweb.page.maxSize}", 0) > 0 &&
+                queryInfo.getPageInfo().getPageSize() > ApplicationConfig.getInstance().get("${ccweb.page.maxSize}", 0)) {
+            queryInfo.getPageInfo().setPageSize(ApplicationConfig.getInstance().get("${ccweb.page.maxSize}", 0));
+        }
+
         if(byExport) {
 
             List<ColumnInfo> columns = DynamicClassBuilder.getColumnInfosBySelectList(queryInfo.getSelectList());
 
-            Object info = DynamicClassBuilder.create(table, columns, false);
+            Object info = DynamicClassBuilder.create(EntityContext.getCurrentDatasourceId(), table, columns, false);
 
             queryInfo.getSelectList().clear();
 
@@ -1365,11 +1394,11 @@ public abstract class BaseController extends AbstractBaseController {
                 .body(BodyInserters.fromResource(resource)).switchIfEmpty(Mono.empty());
     }
 
-    protected Mono exportAs(String filename, List data, QueryInfo queryInfo) throws IOException {
+    protected Mono exportAs(String filename, List data, QueryInfo queryInfo) throws IOException, SQLException {
 
         List<ColumnInfo> columns = DynamicClassBuilder.getColumnInfosBySelectList(queryInfo.getSelectList());
 
-        Object entity = DynamicClassBuilder.create(getTablename(), columns);
+        Object entity = DynamicClassBuilder.create(EntityContext.getCurrentTable(), columns);
 
         filename = filename + ExcelTypeEnum.XLSX.getValue();
 
@@ -1381,7 +1410,7 @@ public abstract class BaseController extends AbstractBaseController {
 
         ByteArrayResource resource = new ByteArrayResource(bos.toByteArray());
 
-        return ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"))
+        return ServerResponse.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"))
                 .contentType(new MediaType("application", "vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(BodyInserters.fromResource(resource)).switchIfEmpty(Mono.empty());
     }

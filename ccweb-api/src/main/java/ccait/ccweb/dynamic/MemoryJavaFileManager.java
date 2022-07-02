@@ -10,7 +10,6 @@
 
 package ccait.ccweb.dynamic;
 
-import ccait.ccweb.context.ApplicationContext;
 import com.alibaba.excel.annotation.ExcelProperty;
 import entity.query.ColumnInfo;
 import entity.query.Queryable;
@@ -36,7 +35,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static ccait.ccweb.dynamic.DynamicClassBuilder.smallHump;
-import static ccait.ccweb.utils.StaticVars.CURRENT_DATASOURCE;
 
 /**
  * In-memory java file manager.
@@ -68,7 +66,7 @@ public class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileMan
     }
 
     @Override
-    public JavaFileObject getJavaFileForOutput(JavaFileManager.Location location, String className, Kind kind,
+    public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind,
                                                FileObject sibling) throws IOException {
         if (kind == Kind.CLASS) {
             return new MemoryOutputJavaFileObject(className);
@@ -117,14 +115,13 @@ public class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileMan
         }
     }
 
-    public static JavaFile getJavaFile(List<ColumnInfo> columns, String tablename, String primaryKey, String scope, String suffix, boolean isQueryable) {
+    public static JavaFile getJavaFile(List<ColumnInfo> columns, String tablename, String datasource, String primaryKey, String scope, String suffix, boolean isQueryable) {
 
         String packagePath = ApplicationConfig.getInstance().get("ccweb.package", DEFAULT_PACKAGE);
         String className = String.format("%s%s", tablename.substring(0, 1).toUpperCase() + tablename.substring(1), suffix).replaceAll("\\s", "");
         TypeSpec.Builder builder = TypeSpec.classBuilder(className).addModifiers(getModifier(scope));
         builder.addAnnotation(Component.class);
 
-        String datasource = (String) ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE);
         if(StringUtils.isNotEmpty(datasource)) {
             AnnotationSpec annDataSource = AnnotationSpec.builder(DataSource.class).addMember("value", "$S", datasource).build();
             builder.addAnnotation(annDataSource);
@@ -164,7 +161,7 @@ public class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileMan
                     fldSpec.addJavadoc(col.getColumnComment());
                 }
 
-                if(col.getIsPrimaryKey() || primaryKey.toLowerCase().equals(col.getColumnName().toLowerCase())) {
+                if(col.isPrimaryKey() || primaryKey.toLowerCase().equals(col.getColumnName().toLowerCase())) {
                     AnnotationSpec annPrimaryKey = AnnotationSpec.builder(PrimaryKey.class).build();
                     fldSpec.addAnnotation(annPrimaryKey);
 

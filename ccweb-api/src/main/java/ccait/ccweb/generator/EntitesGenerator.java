@@ -71,7 +71,7 @@ public class EntitesGenerator {
         try {
 
             String configPath = System.getProperty("user.dir") + "/src/main/resources/"
-                    + ApplicationConfig.getInstance().get("entity.queryable.configFile", "db-config.xml");
+                    + ApplicationConfig.getInstance().get("entity.datasource.configFile", "db-config.xml");
             String packagePath = ApplicationConfig.getInstance().get("ccweb.package", DEFAULT_PACKAGE);
 
             Collection<DataSource> dsList = DataSourceFactory.getInstance().getAllDataSource(configPath);
@@ -108,7 +108,7 @@ public class EntitesGenerator {
                     }
 
                     String suffix = ApplicationConfig.getInstance().get("ccweb.suffix", "Entity");
-                    JavaFile javaFile = getJavaFile(tb.getValue(), tb.getKey().toString(), primaryKey, ds.getClassScope(), suffix, true);
+                    JavaFile javaFile = getJavaFile(tb.getValue(), tb.getKey().toString(), ds.getId(), primaryKey, ds.getClassScope(), suffix, true);
 
                     if(javaFile != null) {
 

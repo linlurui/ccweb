@@ -13,6 +13,7 @@ package ccait.ccweb.context;
 
 
 import ccait.ccweb.config.LangConfig;
+import ccait.ccweb.model.SheetHeaderModel;
 import ccait.ccweb.model.UserGroupRoleModel;
 import ccait.ccweb.model.UserModel;
 import ccait.ccweb.utils.EncryptionUtil;
@@ -23,6 +24,7 @@ import entity.query.annotation.*;
 import entity.query.core.ApplicationConfig;
 import entity.query.core.DataSource;
 import entity.query.core.DataSourceFactory;
+import entity.query.enums.AlterMode;
 import entity.tool.util.JsonUtils;
 import entity.tool.util.ReflectionUtils;
 import entity.tool.util.StringUtils;
@@ -36,6 +38,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -43,6 +46,7 @@ import java.lang.reflect.Modifier;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static ccait.ccweb.utils.StaticVars.*;
@@ -61,6 +65,8 @@ public class ApplicationContext implements ApplicationContextAware {
     }
 
     private List<String> allTables = new ArrayList<String>();
+
+    private static final Map<String, Map<String, List<ColumnInfo>>> tableColumnsMap = new HashMap<String, Map<String, List<ColumnInfo>>>();
 
     public static final String TABLE_USER = "${ccweb.table.user}";
     public static final String TABLE_GROUP = "${ccweb.table.group}";
@@ -175,14 +181,83 @@ public class ApplicationContext implements ApplicationContextAware {
     @Value("${ccweb.table.reservedField.owner:owner}")
     private String ownerField;
 
-    public static String adminName;
-    
+    @Value("${ccweb.table.reservedField.aclId:aclId}")
+    private String aclIdField;
+
+    @Value("${ccweb.table.reservedField.privilegeId:privilegeId}")
+    private String privilegeIdField;
+
+    @Value("${ccweb.table.reservedField.userGroupRoleId:userGroupRoleId}")
+    private String userGroupRoleIdField;
+
+    @Value(value = "${ccweb.suffix:Entity}")
+    private String suffix;
+
     private static final Map<String, List<String>> allTablesMap = new HashMap<>();
-    
+
+    private static String createOnFieldStatic;
+    private static String createByFieldStatic;
+    private static String modifyByFieldStatic;
+    private static String ownerFieldStatic;
+    private static String modifyOnFieldStatic;
+    private static String userTableStatic;
+    private static String userIdFieldStatic;
+    private static String privilegeTableStatic;
+    private static String aclTableStatic;
+    private static String groupTableStatic;
+    private static String userGroupRoleTableStatic;
+    private static String roleTableSataic;
+    private static String userGroupRoleIdFieldStatic;
+    private static String aclIdFieldStatic;
+    private static String privilegeIdFieldStatic;
+    private static String roleIdFieldStatic;
+    private static String groupIdFieldStatic;
+    public static String adminFieldStatic;
+    public static String userPathFieldStatic;
+
     @PostConstruct
     private void init() {
-        admin = ApplicationConfig.getInstance().get("${ccweb.security.admin.username}", admin);
-        adminName = admin;
+        adminFieldStatic = admin;
+        createByFieldStatic = createByField;
+        createOnFieldStatic = createOnField;
+        modifyByFieldStatic = modifyByField;
+        ownerFieldStatic = ownerField;
+        modifyOnFieldStatic = modifyOnField;
+        userTableStatic = userTablename;
+        privilegeTableStatic = privilegeTablename;
+        aclTableStatic = aclTablename;
+        groupTableStatic = groupTablename;
+        userGroupRoleTableStatic = userGroupRoleTablename;
+        roleTableSataic = roleTablename;
+        userIdFieldStatic  = userIdField;
+        userGroupRoleIdFieldStatic = userGroupRoleIdField;
+        aclIdFieldStatic = aclIdField;
+        privilegeIdFieldStatic = privilegeIdField;
+        roleIdFieldStatic = roleIdField;
+        groupIdFieldStatic = groupIdField;
+        userPathFieldStatic = userPathField;
+        try {
+            org.springframework.context.ApplicationContext app = ApplicationContext.getInstance();
+            initTableColumnsCache();
+            if (app == null) {
+                throw new RuntimeException("程序启动顺序不正确, ApplicationContext必须优先启动！");
+            }
+            String[] names = app.getBeanNamesForAnnotation(Tablename.class);
+            if (names != null) {
+                for (String name : names) {
+
+                    String key = name;
+                    if (StringUtils.isNotEmpty(suffix) && name.length() > suffix.length() &&
+                            name.substring(name.length() - suffix.length()).equals(suffix)) {
+                        key = name.substring(0, name.length() - suffix.length());
+                    }
+                }
+            }
+
+            log.info(LOG_PRE_SUFFIX + "实体类上下文 ： [CCEntityContext]", "初始化完成");
+        } catch (Exception e) {
+            log.error(LOG_PRE_SUFFIX + "实体类上下文 ： [CCEntityContext]", "初始化失败！！！", e);
+        }
     }
 
     public static void dispose() {
@@ -335,31 +410,6 @@ public class ApplicationContext implements ApplicationContextAware {
         }
 
         return opt.get();
-    }
-
-    public static boolean existTable(String datasource, String table) throws Exception {
-        if(!allTablesMap.containsKey(datasource)) {
-            List<String> allTables = Queryable.getTables(datasource);
-            allTablesMap.put(datasource, allTables);
-        }
-
-        if(!allTablesMap.containsKey(datasource)) {
-            log.error(String.format(LangConfig.getInstance().get("can_not_find_datasource_mapping"), datasource));
-        }
-        if(allTablesMap.get(datasource)
-                .stream().filter(a->a.toLowerCase().equals(table.toLowerCase()))
-                .findAny().isPresent()) {
-            return true;
-        }
-
-        boolean result = false;
-        try {
-            result = Queryable.exist(datasource, table);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-
-        return result;
     }
 
     private void createUserGroupRoleTable(DataSource ds, List<ColumnInfo> columns) throws Exception {
@@ -1039,7 +1089,7 @@ public class ApplicationContext implements ApplicationContextAware {
 
     public static Set<Integer> getUserIdByAllGroups(HttpServletRequest request, UserModel user) throws SQLException, IOException {
 
-        if(user == null || adminName.equals(user.getUsername())) {
+        if(user == null || adminFieldStatic.equals(user.getUsername())) {
             return new HashSet<>();
         }
 
@@ -1060,7 +1110,7 @@ public class ApplicationContext implements ApplicationContextAware {
 
     public static Set<Integer> getUserIdBySubGroups(HttpServletRequest request, UserModel user) throws SQLException, IOException {
 
-        if(user == null || adminName.equals(user.getUsername())) {
+        if(user == null || adminFieldStatic.equals(user.getUsername())) {
             return new HashSet<>();
         }
 
@@ -1088,7 +1138,7 @@ public class ApplicationContext implements ApplicationContextAware {
 
     public static Set<Integer> getUserIdByCurrentGroups(HttpServletRequest request, UserModel user) throws SQLException, IOException {
 
-        if(user == null || adminName.equals(user.getUsername())) {
+        if(user == null || adminFieldStatic.equals(user.getUsername())) {
             return new HashSet<>();
         }
 
@@ -1116,12 +1166,138 @@ public class ApplicationContext implements ApplicationContextAware {
         return useridList;
     }
 
+    public static String getCurrentTable() {
+        Map map = ApplicationContext.getThreadLocalMap();
+        if(!map.containsKey(CURRENT_TABLE)) {
+            return "";
+        }
+
+        return map.get(CURRENT_TABLE).toString();
+    }
+
     public static String getCurrentDatasourceId() {
         String currentDatasource = "default";
         if (ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE) != null) {
             currentDatasource = ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE).toString();
         }
         return currentDatasource;
+    }
+
+
+    public static boolean existTable(String table) throws Exception {
+        return existTable(getCurrentDatasourceId(), table);
+    }
+
+    public static boolean existTable(String datasource, String table) throws Exception {
+        if(!allTablesMap.containsKey(datasource)) {
+            List<String> allTables = Queryable.getTables(datasource);
+            allTablesMap.put(datasource, allTables);
+        }
+
+        if(!allTablesMap.containsKey(datasource)) {
+            log.error(String.format(LangConfig.getInstance().get("can_not_find_datasource_mapping"), datasource));
+        }
+        if(allTablesMap.get(datasource)
+                .stream().filter(a->a.toLowerCase().equals(table.toLowerCase()))
+                .findAny().isPresent()) {
+            return true;
+        }
+
+        boolean result = false;
+        try {
+            result = Queryable.exist(datasource, table);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return result;
+    }
+
+    public static void ensureTable(Map<String, Object> data) throws Exception {
+        ensureTable(data, null, getCurrentDatasourceId(), getCurrentTable());
+    }
+
+    public static void ensureTable(Map<String, Object> data, String table) throws Exception {
+        ensureTable(data, null, getCurrentDatasourceId(), table);
+    }
+
+    public static void ensureTable(Map<String, Object> data, final List<String> uniqueList) throws Exception {
+        ensureTable(data, uniqueList, getCurrentTable());
+    }
+
+    public static void ensureTable(Map<String, Object> data, final List<String> uniqueList, String table) throws Exception {
+        ensureTable(data, uniqueList, getCurrentDatasourceId(), table);
+    }
+
+    public static List<ColumnInfo> ensureTable(Map<String, Object> data, String datasource, String table) throws Exception {
+        return ensureTable(data, null, datasource, table);
+    }
+
+    public static List<ColumnInfo> ensureTable(Map<String, Object> data, final List<String> uniqueList, String datasource, String table) throws Exception {
+
+        if(existTable(datasource, table)) {
+            return getColumns(datasource, table);
+        }
+
+        if(uniqueList != null) {
+            for(int i=0; i<uniqueList.size(); i++) {
+                uniqueList.set(i, uniqueList.get(i).toLowerCase());
+            }
+        }
+
+        List<ColumnInfo> columns = data.entrySet().stream().map(a-> new ColumnInfo(){{
+            setColumnName(a.getKey());
+            if(createOnFieldStatic.equals(a.getKey()) || modifyOnFieldStatic.equals(a.getKey())) {
+                setType(Date.class);
+            }
+
+            else if(createByFieldStatic.equals(a.getKey()) || modifyByFieldStatic.equals(a.getKey()) || ownerFieldStatic.equals(a.getKey())) {
+                setType(Integer.class);
+            }
+
+            else {
+                setType(String.class);
+            }
+
+            if(uniqueList!=null && uniqueList.contains(a.getKey().toLowerCase())) {
+                setUnique(true);
+            }
+        }}).collect(Collectors.toList());
+        String pk = "id";
+        if(userTableStatic.equals(table)) {
+            pk = userIdFieldStatic;
+        }
+
+        else if(userGroupRoleTableStatic.equals(table)) {
+            pk = userGroupRoleIdFieldStatic;
+        }
+
+        else if(aclTableStatic.equals(table)) {
+            pk = aclIdFieldStatic;
+        }
+
+        else if(privilegeTableStatic.equals(table)) {
+            pk = privilegeIdFieldStatic;
+        }
+
+        else if(roleTableSataic.equals(table)) {
+            pk = roleIdFieldStatic;
+        }
+
+        else if(groupTableStatic.equals(table)) {
+            pk = groupIdFieldStatic;
+        }
+
+        if(!data.containsKey(pk)) {
+            ColumnInfo idField = new ColumnInfo();
+            idField.setColumnName(pk);
+            idField.setType(Integer.class);
+            idField.setPk(true);
+            idField.setIsAutoIncrement(true);
+            columns.add(0, idField);
+        }
+
+        return ensureTable(datasource, table, columns);
     }
 
     public static List<ColumnInfo> ensureTable(Class<?> type) throws Exception {
@@ -1137,7 +1313,7 @@ public class ApplicationContext implements ApplicationContextAware {
 
     public static List<ColumnInfo> ensureTable(Class<?> type, String table) throws Exception {
 
-        String datasource = ApplicationContext.getCurrentDatasourceId();
+        String datasource = getCurrentDatasourceId();
         entity.query.annotation.DataSource annDs = type.getAnnotation(entity.query.annotation.DataSource.class);
         if(annDs!=null && StringUtils.isNotEmpty(annDs.value())) {
             datasource = annDs.value();
@@ -1176,8 +1352,8 @@ public class ApplicationContext implements ApplicationContextAware {
             table = type.getName();
         }
 
-        if(Queryable.exist(datasource, table)) {
-            return Queryable.getColumns(datasource, table);
+        if(existTable(datasource, table)) {
+            return getColumns(datasource, table);
         }
 
         List<ColumnInfo> columns = new ArrayList<>();
@@ -1223,11 +1399,267 @@ public class ApplicationContext implements ApplicationContextAware {
 
     public static List<ColumnInfo> ensureTable(String datasource, String table, List<ColumnInfo> cloumns) throws Exception {
 
-        if(Queryable.exist(datasource, table)) {
-            return Queryable.getColumns(datasource, table);
+        if(existTable(table)) {
+            return getColumns(datasource, table);
         }
 
         Queryable.createTable(datasource, table, cloumns);
-        return Queryable.getColumns(datasource, table);
+        allTablesMap.get(datasource).add(table);
+        return getColumns(datasource, table);
+    }
+
+    public static void ensureColumns(Map<String, Object> data) throws Exception {
+        if(existTable(getCurrentTable())) {
+            ensureColumns(getCurrentDatasourceId(), getCurrentTable(), data, null);
+        }
+    }
+
+    public static void ensureColumns(Map<String, Object> data, final List<String> uniqueList) throws Exception {
+        if(existTable(getCurrentTable())) {
+            ensureColumns(getCurrentDatasourceId(), getCurrentTable(), data, uniqueList);
+        }
+    }
+
+    public static List<ColumnInfo> ensureColumns(String datasource, String table, Map<String, Object> data) throws Exception {
+        return ensureColumns(datasource, table, data, null);
+    }
+
+    public static List<ColumnInfo> ensureColumns(String datasource, String table, Map<String, Object> data, final List<String> uniqueList) throws Exception {
+
+        if(uniqueList != null) {
+            for(int i=0; i<uniqueList.size(); i++) {
+                uniqueList.set(i, uniqueList.get(i).toLowerCase());
+            }
+        }
+        List<ColumnInfo> dataColumns = convertToColumnInfos(data);
+
+        return ensureColumns(datasource, table, uniqueList, dataColumns);
+    }
+
+    public static List<ColumnInfo> ensureColumns(String datasource, String table, List<String> uniqueList, List<ColumnInfo> dataColumns) throws Exception {
+        List<ColumnInfo> columnInfos = getColumns(datasource, table);
+        List<String> fieldList = columnInfos.stream().map(a->a.getColumnName()).collect(Collectors.toList());
+        List<ColumnInfo> newFieldList = dataColumns.stream().filter(a -> !fieldList.contains(a.getColumnName()))
+                .collect(Collectors.toList());
+
+        for(ColumnInfo field : newFieldList) {
+            ColumnInfo column = new ColumnInfo() {{
+                setColumnName(field.getColumnName());
+                setAlterMode(AlterMode.ADD);
+                if(createOnFieldStatic.equals(field.getColumnName()) || modifyOnFieldStatic.equals(field.getColumnName())) {
+                    setType(Date.class);
+                }
+
+                else if(createByFieldStatic.equals(field.getColumnName()) || modifyByFieldStatic.equals(field.getColumnName()) || ownerFieldStatic.equals(field.getColumnName())) {
+                    setType(Integer.class);
+                }
+
+                else if(field.getDataType() != null){
+                    setDataType(field.getDataType());
+                }
+
+                else if(field.getType() != null){
+                    setType(field.getType());
+                }
+
+                else {
+                    setType(String.class);
+                }
+
+                if(uniqueList!=null && uniqueList.contains(field.getColumnName().toLowerCase())) {
+                    setUnique(true);
+                }
+            }};
+
+            columnInfos.add(column);
+        }
+
+        Queryable.alterTable(datasource, table, columnInfos);
+
+        return columnInfos;
+    }
+
+    public static <T> List<ColumnInfo> convertToColumnInfos(T data) {
+        List<ColumnInfo> result = new ArrayList<>();
+        if(data instanceof Map) {
+            Map<String, Object> map = (Map) data;
+            result = map.entrySet().stream()
+                    .map(a -> new ColumnInfo() {{
+                        setColumnName(a.getKey());
+                    }}).collect(Collectors.toList());
+        }
+
+        else if(data instanceof List) {
+            List list = (List) data;
+            if(list.size() < 1) {
+                return result;
+            }
+
+            if(list.get(0) instanceof SheetHeaderModel) {
+                final List<SheetHeaderModel> dataList = list;
+                result = dataList.stream().map(a -> new ColumnInfo() {{
+                    setColumnName(a.getField());
+                    setDataType(a.getType());
+                }}).collect(Collectors.toList());
+            }
+
+            else if(list.get(0) instanceof String) {
+                final List<String> dataList = list;
+                result = dataList.stream().map(a -> new ColumnInfo() {{
+                    setColumnName(a);
+                }}).collect(Collectors.toList());
+            }
+        }
+
+        return result;
+    }
+
+
+    public static List<ColumnInfo> getColumns(String table) throws SQLException {
+        return getColumns(getCurrentDatasourceId(), table);
+    }
+
+    public static List<ColumnInfo> getColumns(String datasource, String table) {
+
+        if(!tableColumnsMap.containsKey(datasource) ||
+                !tableColumnsMap.get(datasource).containsKey(table)) {
+
+            List<ColumnInfo> columns = Queryable.getColumns(datasource, table);
+            String primaryKey = Queryable.getPrimaryKey(datasource, table);
+            for(ColumnInfo column : columns) {
+                if(column.getColumnName().equals(primaryKey)) {
+                    column.setIsPrimaryKey(Boolean.TRUE);
+                }
+            }
+            tableColumnsMap.put(datasource, new HashMap<String, List<ColumnInfo>>());
+            tableColumnsMap.get(datasource).put(table, columns);
+        }
+
+        return tableColumnsMap.get(datasource).get(table);
+    }
+
+    public static ColumnInfo getPrimaryKey(String datasourceId, String table) {
+        if(!tableColumnsMap.containsKey(datasourceId)) {
+            return null;
+        }
+
+        if(!tableColumnsMap.get(datasourceId).containsKey(table)) {
+            return null;
+        }
+
+        Optional<ColumnInfo> optional = tableColumnsMap.get(datasourceId).get(table).stream()
+                .filter(a->a.isPrimaryKey()==true).findAny();
+
+        if(optional.isPresent()) {
+            ColumnInfo info = optional.get();
+            if(info == null) {
+                return null;
+            }
+
+            return info;
+        }
+
+        return null;
+    }
+
+    public static boolean hasColumn(String datasourceId, String table, String columnName) {
+        if(!tableColumnsMap.containsKey(datasourceId)) {
+            return false;
+        }
+
+        if(!tableColumnsMap.get(datasourceId).containsKey(table)) {
+            return false;
+        }
+
+        Optional<ColumnInfo> optional = tableColumnsMap.get(datasourceId).get(table).stream()
+                .filter(a->a.getColumnName().equals(columnName)).findAny();
+
+        if(optional.isPresent()) {
+            ColumnInfo info = optional.get();
+            if(info == null) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void addColumnById(String datasourceId, String table, String id, List<ColumnInfo> columns) {
+
+        String fieldname = "id";
+        if(tableColumnsMap.containsKey(datasourceId) && tableColumnsMap.get(datasourceId).containsKey(table)) {
+            Optional<ColumnInfo> optional = tableColumnsMap.get(datasourceId).get(table).stream()
+                    .filter(a -> a.isPrimaryKey() == true).findAny();
+
+            if(optional.isPresent()) {
+                ColumnInfo column = optional.get();
+                fieldname = column.getColumnName();
+            }
+        }
+
+        if(Pattern.matches("^[0-9]{1,32}$", id)) {
+            columns.add(new ColumnInfo(fieldname, "integer", true));
+        }
+
+        else if(Pattern.matches("^\\d+$", id)) {
+            columns.add(new ColumnInfo(fieldname, "long", true));
+        }
+
+        else {
+            columns.add(new ColumnInfo(fieldname, "text", true));
+        }
+    }
+
+    public void initTableColumnsCache() {
+        try {
+            String configPath = System.getProperty("user.dir") + "/src/main/resources/"
+                    + ApplicationConfig.getInstance().get("entity.datasource.configFile", "db-config.xml");
+
+            Collection<DataSource> dsList = DataSourceFactory.getInstance().getAllDataSource(configPath);
+            if(dsList == null || dsList.size() < 1) {
+                //tomcat路径
+                String property = System.getProperty("catalina.home");
+                String path =property + File.separator + "conf" + File.separator + "db-config.xml";
+                dsList = DataSourceFactory.getInstance().getAllDataSource(path);
+            }
+
+            for(DataSource ds : dsList) {
+                try {
+                    if(ds.getConnection() == null) {
+                        continue;
+                    }
+
+                    List<String> tablenames = Queryable.getTables(ds.getId());
+                    for (String tb : tablenames) {
+
+                        if (StringUtils.isEmpty(tb)) {
+                            continue;
+                        }
+
+                        List<ColumnInfo> columns = Queryable.getColumns(ds.getId(), tb);
+                        String primaryKey = Queryable.getPrimaryKey(ds.getId(), tb);
+                        for(ColumnInfo column : columns) {
+                            if(column.getColumnName().equals(primaryKey)) {
+                                column.setIsPrimaryKey(Boolean.TRUE);
+                            }
+                        }
+                        if (!tableColumnsMap.containsKey(ds.getId())) {
+                            tableColumnsMap.put(ds.getId(), new HashMap<String, List<ColumnInfo>>());
+                        }
+                        tableColumnsMap.get(ds.getId()).put(tb, columns);
+                    }
+                }
+                catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                }
+
+                log.info("table==>columns==>");
+                log.info(JsonUtils.toJson(tableColumnsMap));
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 }

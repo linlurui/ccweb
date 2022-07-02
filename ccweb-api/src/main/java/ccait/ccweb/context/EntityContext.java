@@ -26,16 +26,19 @@ import entity.query.core.DataSourceFactory;
 import entity.tool.util.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static ccait.ccweb.utils.StaticVars.LOG_PRE_SUFFIX;
+import static ccait.ccweb.utils.StaticVars.*;
+import static ccait.ccweb.utils.StaticVars.CURRENT_DATASOURCE;
 
 @Order(-55555)
 public final class EntityContext {
@@ -50,11 +53,6 @@ public final class EntityContext {
     private static final Map<Class<?>, List<Field>> objectFieldsMap = new HashMap<Class<?>, List<Field>>() ;
 
     private static final Map<String, Map<String, List<ColumnInfo>>> tableColumnsMap = new HashMap<String, Map<String, List<ColumnInfo>>>();
-
-    public static String getCurrentTable() {
-        Map map = ApplicationContext.getThreadLocalMap();
-        return !map.containsKey(StaticVars.CURRENT_TABLE) ? "" : map.get(StaticVars.CURRENT_TABLE).toString();
-    }
 
     @PostConstruct
     private void postConstruct() {
@@ -78,23 +76,11 @@ public final class EntityContext {
         log.info(LOG_PRE_SUFFIX + "实体类上下文 ： [EntityContext]", "初始化完成");
     }
 
-    public static Object getEntity(String tablename, Map<String, Object> data, String id) {
-
-        data.put("id", id);
-        return getEntity(tablename, data);
+    public static Object getEntity(String tablename, List<String> fieldList) throws SQLException {
+        return getEntity(getCurrentDatasourceId(), tablename, fieldList);
     }
 
-    public static Object getEntity(String tablename, Map<String, Object> data) {
-
-        Object bean = getEntity(tablename);
-        if(bean == null) {
-            bean = DynamicClassBuilder.create(tablename, data);
-        }
-
-        return bean;
-    }
-
-    public static Object getEntity(String tablename, List<String> fieldList) {
+    public static Object getEntity(String datasource, String tablename, List<String> fieldList) {
 
         Object bean = getEntity(tablename);
         if(bean == null) {
@@ -116,13 +102,13 @@ public final class EntityContext {
                 columns.add(col);
             }
 
-            bean = DynamicClassBuilder.create(tablename, columns);
+            bean = DynamicClassBuilder.create(datasource, tablename, columns);
         }
 
         return bean;
     }
 
-    public static Object getEntity(String tablename, QueryInfo queryInfo) {
+    public static Object getEntity(String tablename, QueryInfo queryInfo) throws SQLException {
 
         Object bean = getEntity(tablename);
         if(bean == null) {
@@ -132,7 +118,23 @@ public final class EntityContext {
         return bean;
     }
 
-    public static Object getEntityId(String datasourceId, String tablename, String id) {
+    public static Object getEntity(String tablename, Map<String, Object> data, String id) throws SQLException {
+
+        data.put("id", id);
+        return getEntity(tablename, data);
+    }
+
+    public static Object getEntity(String tablename, Map<String, Object> data) throws SQLException {
+
+        Object bean = getEntity(tablename);
+        if(bean == null) {
+            bean = DynamicClassBuilder.create(tablename, data);
+        }
+
+        return bean;
+    }
+
+    public static Object getEntityId(String datasourceId, String tablename, String id) throws SQLException {
         Object bean = getEntity(tablename);
         if(bean == null) {
             List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
@@ -278,6 +280,51 @@ public final class EntityContext {
         }
 
         return result;
+    }
+
+    public static String getCurrentTable() {
+        Map map = ApplicationContext.getThreadLocalMap();
+        if(!map.containsKey(CURRENT_TABLE)) {
+            return "";
+        }
+
+        return map.get(CURRENT_TABLE).toString();
+    }
+
+    public static String getCurrentDatasourceId() throws SQLException, BeansException {
+        String currentDatasource;
+        if (ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE) != null) {
+            currentDatasource = ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE).toString();
+        }
+
+        else {
+            currentDatasource = DataSourceFactory.getInstance().getDataSource().getId();
+        }
+
+        return currentDatasource;
+    }
+
+    public static List<ColumnInfo> getColumns(String table) throws SQLException {
+        return getColumns(getCurrentDatasourceId(), table);
+    }
+
+    public static List<ColumnInfo> getColumns(String datasource, String table) {
+
+        if(!tableColumnsMap.containsKey(datasource) ||
+                !tableColumnsMap.get(datasource).containsKey(table)) {
+
+            List<ColumnInfo> columns = Queryable.getColumns(datasource, table);
+            String primaryKey = Queryable.getPrimaryKey(datasource, table);
+            for(ColumnInfo column : columns) {
+                if(column.getColumnName().equals(primaryKey)) {
+                    column.setIsPrimaryKey(Boolean.TRUE);
+                }
+            }
+            tableColumnsMap.put(datasource, new HashMap<String, List<ColumnInfo>>());
+            tableColumnsMap.get(datasource).put(table, columns);
+        }
+
+        return tableColumnsMap.get(datasource).get(table);
     }
 
     public static String getColumnName(Field fld) {
