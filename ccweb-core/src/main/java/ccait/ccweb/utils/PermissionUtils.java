@@ -216,7 +216,7 @@ public class PermissionUtils {
             return result.toUpperCase();
         }
 
-        public InitLocalMap invoke() throws IOException {
+        public InitLocalMap invoke() throws Exception {
             String datasource = null;
             currentTable = null;
 
@@ -239,6 +239,10 @@ public class PermissionUtils {
                     myResult = true;
                     return this;
                 }
+            }
+
+            if(StringUtils.isEmpty(datasource)) {
+                throw new Exception("No datasource has been activated!");
             }
 
             ApplicationContext.getThreadLocalMap().put(CURRENT_DATASOURCE, datasource);
