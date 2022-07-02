@@ -20,7 +20,6 @@ release/conf
 /release/conf
 */release/conf
 **/release/conf
-ccweb-core
 allatori
 entityqueryable
 cc-service.jar
