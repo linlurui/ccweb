@@ -17,6 +17,7 @@
         <module>ccweb-office</module>
         <module>ccweb-repo</module>
         <module>ccweb-socket</module>
+        <module>ccweb-webagent</module>
         <module>ccweb-start</module>
     </modules>
 
