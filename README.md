@@ -12,7 +12,7 @@
      2019@copyright     v1.0.0   HTTP:  //    ///   CCAIT.CN FREAMEWORK
 
     =========================================================================
-    :: CCWEB :: (v2.0.0-SNAPSHOT)  Author: linlurui 2020@copyright
+    :: CCWEB :: (v2.0.0-SNAPSHOT)  Author: linlurui 2019@copyright
 
 CCWEB是基于springboot设计的CQRS敏捷web api开发框架，项目由深圳市春蚕智能信息技术有限公司启动于2018底，2019年发布第一个版本，经过多次迭代现已升级到2.0，CCWEB提倡动态向前端提供基础数据，由前端根据基础数据组装业务来提高开发效率;内置用户管理、权限设置 等安全模块，启动服务后无需添加任何后端代码前端便可以通过默认接口直接访问到自己在数据库建的表和查询视图；底层orm采用entityQueryable访问数据，支持SpringCloud微服务扩展；支持elasticSerach搜索引擎；在横向扩展方面ccweb兼容了多种数据库系统，包括主流的mysql、sqlserver、oralce、MariaDB、PostgreSQL、db2、sybase等，有易于数据集成及高度扩展的能力，可以让数据自由地穿梭于各种数据存储系统之间：项目包含ccweb-core、ccweb-api、ccweb-start、ccweb-socket、ccweb-auth、ccweb-config、ccweb-gateway、ccweb-logs、ccweb-office、ccweb-webagent、ccweb-iot，整个2.0版本除ccweb-core之外，其余均选择了开源。
 </p>
