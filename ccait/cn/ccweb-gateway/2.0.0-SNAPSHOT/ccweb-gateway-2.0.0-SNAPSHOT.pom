@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>ccweb-framework</artifactId>
+        <groupId>ccait.cn</groupId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>ccweb-gateway</artifactId>
+
+    <!-- 打包方式 -->
+    <packaging>jar</packaging>
+
+    <version>2.0.0-SNAPSHOT</version>
+
+    <properties>
+        <!-- Release train Spring Boot compatibility
+            Hoxton     2.2.x
+            Greenwich  2.1.x
+            Finchley   2.0.x
+            Edgware    1.5.x
+            Dalston    1.5.x
+        -->
+        <spring-cloud.version>Hoxton.RELEASE</spring-cloud.version>
+    </properties>
+    <!-- 加入依赖 -->
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-eureka</artifactId>
+            <version>1.4.2.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zuul</artifactId>
+            <version>1.4.2.RELEASE</version>
+        </dependency>
+    </dependencies>
+
+    <!-- 插件依赖 -->
+    <build>
+        <finalName>ccweb-gateway-2.0.0-SNAPSHOT</finalName>
+        <defaultGoal>compile</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
