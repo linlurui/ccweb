@@ -1,8 +1,9 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Sat Aug 06 09:59:31 CST 2022
-@default-ccweb2-https\://gitee.com/ccait/ccweb2/raw/2.0/.lastUpdated=1659751171215
-https\://maven.aliyun.com/repository/central/.error=
-https\://maven.aliyun.com/repository/central/.lastUpdated=1659751171049
+#Tue Nov 08 16:02:08 CST 2022
+@default-ccweb2-https\://gitee.com/ccait/ccweb2/raw/2.0/.lastUpdated=1667894526780
+https\://maven.aliyun.com/repository/central/.lastUpdated=1667894525109
 https\://gitee.com/ccait/ccweb2/raw/2.0/.error=Could not transfer artifact ccait.cn\:ccweb-core\:pom\:2.0.0-SNAPSHOT from/to ccweb2 (https\://gitee.com/ccait/ccweb2/raw/2.0)\: authorization failed for https\://gitee.com/ccait/ccweb2/raw/2.0/ccait/cn/ccweb-core/2.0.0-SNAPSHOT/ccweb-core-2.0.0-SNAPSHOT.pom, status\: 403 Forbidden
 https\://gitee.com/linlurui/entityqueryable/raw/1.0/.error=
-https\://gitee.com/linlurui/entityqueryable/raw/1.0/.lastUpdated=1659751171389
+https\://gitee.com/ccait/ccweb/raw/release/.lastUpdated=1667533680488
+https\://gitee.com/linlurui/entityqueryable/raw/1.0/.lastUpdated=1667894528380
+https\://maven.aliyun.com/repository/central/.error=

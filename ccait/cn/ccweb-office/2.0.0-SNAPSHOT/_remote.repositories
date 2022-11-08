@@ -1,4 +1,6 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Fri Nov 04 11:39:37 CST 2022
+#Tue Nov 08 19:55:31 CST 2022
+ccweb-office-2.0.0-SNAPSHOT.pom>ccweb=
 ccweb-office-2.0.0-SNAPSHOT.jar>=
+ccweb-office-2.0.0-SNAPSHOT.jar>ccweb=
 ccweb-office-2.0.0-SNAPSHOT.pom>=

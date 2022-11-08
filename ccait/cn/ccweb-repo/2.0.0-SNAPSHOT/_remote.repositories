@@ -1,4 +1,6 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Fri Nov 04 11:39:41 CST 2022
+#Tue Nov 08 19:55:33 CST 2022
 ccweb-repo-2.0.0-SNAPSHOT.pom>=
+ccweb-repo-2.0.0-SNAPSHOT.pom>ccweb=
+ccweb-repo-2.0.0-SNAPSHOT.jar>ccweb=
 ccweb-repo-2.0.0-SNAPSHOT.jar>=

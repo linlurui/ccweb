@@ -57,21 +57,8 @@
             </snapshots>
         </repository>
         <repository>
-            <id>ccweb2</id>
-            <url>https://gitee.com/ccait/ccweb2/raw/2.0</url>
-            <releases>
-                <updatePolicy>always</updatePolicy>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <updatePolicy>always</updatePolicy>
-                <enabled>true</enabled>
-                <checksumPolicy>ignore</checksumPolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>entity-orm</id>
-            <url>https://gitee.com/linlurui/entityqueryable/raw/1.0</url>
+            <id>ccweb</id>
+            <url>https://gitee.com/ccait/ccweb/raw/release</url>
             <releases>
                 <updatePolicy>always</updatePolicy>
                 <enabled>true</enabled>
