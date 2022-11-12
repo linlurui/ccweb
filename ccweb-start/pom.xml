@@ -140,6 +140,13 @@
             <version>9.3-1102-jdbc41</version>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>com.sun</groupId>-->
+<!--            <artifactId>tools</artifactId>-->
+<!--            <version>1.8</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${project.basedir}/lib/tools.jar</systemPath>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

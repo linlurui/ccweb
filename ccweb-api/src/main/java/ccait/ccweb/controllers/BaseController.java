@@ -17,6 +17,7 @@ import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.context.*;
 import ccait.ccweb.dynamic.DynamicClassBuilder;
 import ccait.ccweb.entites.*;
+import ccait.ccweb.entites.TableInfo;
 import ccait.ccweb.enums.*;
 import ccait.ccweb.handler.NonStaticResourceHttpRequestHandler;
 import ccait.ccweb.listener.ExcelListener;

@@ -14,6 +14,7 @@ package ccait.ccweb.context;
 import ccait.ccweb.dynamic.DynamicClassBuilder;
 import ccait.ccweb.entites.PrimaryKeyInfo;
 import ccait.ccweb.entites.QueryInfo;
+import ccait.ccweb.entites.TableInfo;
 import ccait.ccweb.utils.StaticVars;
 import entity.query.ColumnInfo;
 import entity.query.Queryable;
@@ -355,15 +356,15 @@ public final class EntityContext {
                         continue;
                     }
 
-                    List<String> tablenames = Queryable.getTables(ds.getId());
-                    for (String tb : tablenames) {
+                    List<TableInfo> tablenames = Queryable.getTables(ds.getId(), TableInfo.class);
+                    for (TableInfo tb : tablenames) {
 
-                        if (StringUtils.isEmpty(tb)) {
+                        if (StringUtils.isEmpty(tb.getTablename())) {
                             continue;
                         }
 
-                        List<ColumnInfo> columns = Queryable.getColumns(ds.getId(), tb);
-                        String primaryKey = Queryable.getPrimaryKey(ds.getId(), tb);
+                        List<ColumnInfo> columns = Queryable.getColumns(ds.getId(), tb.getTablename());
+                        String primaryKey = Queryable.getPrimaryKey(ds.getId(), tb.getTablename());
                         for(ColumnInfo column : columns) {
                             if(column.getColumnName().equals(primaryKey)) {
                                 column.setIsPrimaryKey(Boolean.TRUE);
@@ -372,7 +373,7 @@ public final class EntityContext {
                         if (!tableColumnsMap.containsKey(ds.getId())) {
                             tableColumnsMap.put(ds.getId(), new HashMap<String, List<ColumnInfo>>());
                         }
-                        tableColumnsMap.get(ds.getId()).put(tb, columns);
+                        tableColumnsMap.get(ds.getId()).put(tb.getTablename(), columns);
                     }
                 }
                 catch (Exception e) {

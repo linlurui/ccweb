@@ -14,6 +14,7 @@ package ccait.ccweb.generator;
 
 import entity.query.ColumnInfo;
 import entity.query.Queryable;
+import entity.query.TableInfo;
 import entity.query.core.ApplicationConfig;
 import entity.query.core.DataSource;
 import entity.tool.util.StringUtils;
@@ -44,18 +45,18 @@ public class EntitesGenerator {
             }
 
             for(DataSource ds : dsList) {
-                List<String> tablenames = Queryable.getTables(ds.getId());
-                for(String tb : tablenames) {
+                List<TableInfo> tablenames = Queryable.getTables(ds.getId());
+                for(TableInfo tb : tablenames) {
 
-                    if(StringUtils.isEmpty(tb)) {
+                    if(StringUtils.isEmpty(tb.getTableName())) {
                         continue;
                     }
 
-                    List<ColumnInfo> columns = Queryable.getColumns(ds.getId(), tb);
+                    List<ColumnInfo> columns = Queryable.getColumns(ds.getId(), tb.getTableName());
                     if(!tableColumnsMap.containsKey(ds.getId())) {
                         tableColumnsMap.put(ds.getId(), new HashMap<String, List<ColumnInfo>>());
                     }
-                    tableColumnsMap.get(ds.getId()).put(tb, columns);
+                    tableColumnsMap.get(ds.getId()).put(tb.getTableName(), columns);
                 }
             }
         } catch (Exception e) {

@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 @Resource
 @Component
@@ -225,7 +226,7 @@ public class ApplicationConfigProcessor implements EnvironmentPostProcessor {
             return;
         }
 
-        tables = Queryable.getTables(ds.getId());
+        tables = Queryable.getTables(ds.getId()).stream().map(a-> a.getTableName()).collect(Collectors.toList());
         if(!tables.stream().anyMatch(a->a.equals(configTable))) {
             List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
             columns.add(new ColumnInfo(){{

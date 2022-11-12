@@ -20,6 +20,7 @@ import ccait.ccweb.utils.EncryptionUtil;
 import entity.query.ColumnInfo;
 import entity.query.Datetime;
 import entity.query.Queryable;
+import entity.query.TableInfo;
 import entity.query.annotation.*;
 import entity.query.core.ApplicationConfig;
 import entity.query.core.DataSource;
@@ -346,8 +347,11 @@ public class ApplicationContext implements ApplicationContextAware {
             }
 
             if(!"n1ql_jdbc".equals(ds.getDriverClassName())) {
+                List<TableInfo> tableInfos = Queryable.getTables(ds.getId());
+                if(tableInfos != null) {
+                    allTables = tableInfos.stream().map(a-> a.getTableName()).collect(Collectors.toList());
+                }
 
-                allTables = Queryable.getTables(ds.getId());
                 if(!allTablesMap.containsKey(ds.getId())) {
                     allTablesMap.put(ds.getId(), allTables);
                 }
@@ -1190,7 +1194,7 @@ public class ApplicationContext implements ApplicationContextAware {
 
     public static boolean existTable(String datasource, String table) throws Exception {
         if(!allTablesMap.containsKey(datasource)) {
-            List<String> allTables = Queryable.getTables(datasource);
+            List<String> allTables = Queryable.getTables(datasource).stream().map(a-> a.getTableName()).collect(Collectors.toList());
             allTablesMap.put(datasource, allTables);
         }
 
@@ -1631,15 +1635,15 @@ public class ApplicationContext implements ApplicationContextAware {
                         continue;
                     }
 
-                    List<String> tablenames = Queryable.getTables(ds.getId());
-                    for (String tb : tablenames) {
+                    List<TableInfo> tablenames = Queryable.getTables(ds.getId());
+                    for (TableInfo tb : tablenames) {
 
-                        if (StringUtils.isEmpty(tb)) {
+                        if (StringUtils.isEmpty(tb.getTableName())) {
                             continue;
                         }
 
-                        List<ColumnInfo> columns = Queryable.getColumns(ds.getId(), tb);
-                        String primaryKey = Queryable.getPrimaryKey(ds.getId(), tb);
+                        List<ColumnInfo> columns = Queryable.getColumns(ds.getId(), tb.getTableName());
+                        String primaryKey = Queryable.getPrimaryKey(ds.getId(), tb.getTableName());
                         for(ColumnInfo column : columns) {
                             if(column.getColumnName().equals(primaryKey)) {
                                 column.setIsPrimaryKey(Boolean.TRUE);
@@ -1648,7 +1652,7 @@ public class ApplicationContext implements ApplicationContextAware {
                         if (!tableColumnsMap.containsKey(ds.getId())) {
                             tableColumnsMap.put(ds.getId(), new HashMap<String, List<ColumnInfo>>());
                         }
-                        tableColumnsMap.get(ds.getId()).put(tb, columns);
+                        tableColumnsMap.get(ds.getId()).put(tb.getTableName(), columns);
                     }
                 }
                 catch (Exception e) {
