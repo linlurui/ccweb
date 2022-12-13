@@ -109,6 +109,9 @@ public class CCRepository {
     }
 
     public void commit() {
+        if(dataSourceMap.get() == null) {
+            dataSourceMap.set(new Hashtable<>());
+        }
         for(Map.Entry<String, DataSource> item : dataSourceMap.get().entrySet()) {
             item.getValue().commit();
         }
@@ -116,6 +119,9 @@ public class CCRepository {
     }
 
     private void releaseSession() {
+        if(dataSourceMap.get() == null) {
+            dataSourceMap.set(new Hashtable<>());
+        }
         for(Map.Entry<String, DataSource> item : dataSourceMap.get().entrySet()) {
             item.getValue().rollback();
         }
