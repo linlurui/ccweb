@@ -152,6 +152,11 @@ public abstract class AbstractPermissionInterceptor {
                         TriggerContext.exec(table, EventType.Insert, params, request);
                     }
 
+                    else if(request.getRequestURI().endsWith("/save")) {
+                        QueryInfo queryInfo2 = JsonUtils.parse(postString, QueryInfo.class);
+                        TriggerContext.exec(table, EventType.Save, queryInfo2, request);
+                    }
+
                     else {
                         Map data = JsonUtils.parse(postString, Map.class);
                         TriggerContext.exec(table, EventType.Insert, data, request);

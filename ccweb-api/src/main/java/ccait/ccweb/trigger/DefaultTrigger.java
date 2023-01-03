@@ -203,6 +203,11 @@ public final class DefaultTrigger {
         });
     }
 
+    @OnSave
+    public void onSave(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
+        this.onUpdate(queryInfo, request);
+    }
+
     @OnUpdate
     public void onUpdate(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
 

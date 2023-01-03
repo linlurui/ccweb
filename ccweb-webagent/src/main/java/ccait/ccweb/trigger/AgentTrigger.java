@@ -96,6 +96,11 @@ public class AgentTrigger {
         ownerField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField);
     }
 
+    @OnSave
+    public void onSave(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
+        this.onSave(queryInfo, request);
+    }
+
     @OnInsert
     public void onInsert(List<Map<String, Object>> list, HttpServletRequest request) throws Exception {
 
@@ -131,7 +136,7 @@ public class AgentTrigger {
             RestAgent rest = new RestAgent(platformInfo, opt.get());
             rest.replaceUserId(platformInfo.getRequired(), user);
             rest.replaceUserId(rest.getAgentProfile().getRequired(), user);
-            
+
             for (Map item : list) {
                 try {
                     rest.replaceUserId(item, user);

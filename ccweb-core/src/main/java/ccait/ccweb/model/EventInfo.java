@@ -43,7 +43,21 @@ public class EventInfo {
     }
 
     private Set<Method> onInsertMethodSet;
+
+    public void setOnDownloadMethodSet(Set<Method> onDownloadMethodSet) {
+        this.onDownloadMethodSet = onDownloadMethodSet;
+    }
+
+    public void setOnPreviewDocMethodSet(Set<Method> onPreviewDocMethodSet) {
+        this.onPreviewDocMethodSet = onPreviewDocMethodSet;
+    }
+
+    public void setOnUploadMethodSet(Set<Method> onUploadMethodSet) {
+        this.onUploadMethodSet = onUploadMethodSet;
+    }
+
     private Set<Method> onUpdateMethodSet;
+    private Set<Method> onSaveMethodSet;
     private Set<Method> onDeleteMethodSet;
     private Set<Method> onListMethodSet;
     private Set<Method> onViewMethodSet;
@@ -67,6 +81,7 @@ public class EventInfo {
     public EventInfo() {
         onInsertMethodSet = new TreeSet<Method>(new EventComparator());
         onUpdateMethodSet = new TreeSet<Method>(new EventComparator());
+        onSaveMethodSet = new TreeSet<Method>(new EventComparator());
         onDeleteMethodSet = new TreeSet<Method>(new EventComparator());
         onListMethodSet = new TreeSet<Method>(new EventComparator());
         onViewMethodSet = new TreeSet<Method>(new EventComparator());
@@ -119,8 +134,16 @@ public class EventInfo {
         return onUpdateMethodSet;
     }
 
+    public Set<Method> getOnSaveMethodSet() {
+        return onSaveMethodSet;
+    }
+
     public void setOnUpdateMethodSet(Set<Method> onUpdateMethodSet) {
         this.onUpdateMethodSet = onUpdateMethodSet;
+    }
+
+    public void setOnSaveMethodSet(Set<Method> onSaveMethodSet) {
+        this.onSaveMethodSet = onSaveMethodSet;
     }
 
     public Set<Method> getOnDeleteMethodSet() {

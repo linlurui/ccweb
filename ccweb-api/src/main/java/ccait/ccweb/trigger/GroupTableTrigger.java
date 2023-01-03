@@ -51,6 +51,11 @@ public final class GroupTableTrigger implements ITrigger {
     }
 
     @Override
+    public void onSave(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
+        this.onUpdate(queryInfo, request);
+    }
+
+    @Override
     public void onInsert(List<Map<String, Object>> list, HttpServletRequest request) {
         CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
         wrapper.setPostParameter(list);

@@ -1,6 +1,7 @@
 package ccait.trigger;
 
 import ccait.ccweb.annotation.OnInsert;
+import ccait.ccweb.annotation.OnSave;
 import ccait.ccweb.annotation.OnUpdate;
 import ccait.ccweb.annotation.Trigger;
 import ccait.ccweb.config.LangConfig;
@@ -43,7 +44,6 @@ public class CommonTrigger {
         }
     }
 
-
     @OnUpdate
     public void onUpdate(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
         UserModel user = ApplicationContext.getSession(request, LOGIN_KEY, UserModel.class);
@@ -59,5 +59,10 @@ public class CommonTrigger {
                 entry.setValue(user.getUserId());
             }
         }
+    }
+
+    @OnSave
+    public void onSave(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
+        this.onUpdate(queryInfo, request);
     }
 }

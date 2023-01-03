@@ -126,6 +126,11 @@ public final class TriggerContext {
                     continue;
                 }
 
+                if(m.getAnnotation(OnSave.class) != null) {
+                    eventInfo.getOnSaveMethodSet().add(method);
+                    continue;
+                }
+
                 if(m.getAnnotation(OnDelete.class) != null) {
                     eventInfo.getOnDeleteMethodSet().add(method);
                     continue;
@@ -234,6 +239,9 @@ public final class TriggerContext {
                     break;
                 case Update:
                     invoke(eventInfo.getOnUpdateMethodSet(), obj, params, request);
+                    break;
+                case Save:
+                    invoke(eventInfo.getOnSaveMethodSet(), obj, params, request);
                     break;
                 case Delete:
                     invoke(eventInfo.getOnDeleteMethodSet(), obj, params, request);

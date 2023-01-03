@@ -80,6 +80,11 @@ public final class UserGroupRoleTableTrigger implements ITrigger {
     }
 
     @Override
+    public void onSave(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
+        this.onUpdate(queryInfo, request);
+    }
+
+    @Override
     public void onInsert(List<Map<String, Object>> list, HttpServletRequest request) throws Exception {
         for(Map<String, Object> data : list) {
 

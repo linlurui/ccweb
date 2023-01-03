@@ -9,25 +9,17 @@
  */
 
 
-package ccait.ccweb.enums;
+package ccait.ccweb.annotation;
 
 
-public enum EventType {
-    Insert,
-    Update,
-    Save,
-    Delete,
-    List,
-    View,
-    Query,
-    Response,
-    Success,
-    Error,
-    BuildTable,
-    Download,
-    PreviewDoc,
-    PlayVideo,
-    Upload,
-    Import,
-    Export,
+import java.lang.annotation.*;
+
+/**
+ * @description 数据保存事件（新增或修改）
+ */
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+@Documented
+public @interface OnSave {
 }

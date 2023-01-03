@@ -173,6 +173,11 @@ public final class UserTableTrigger implements ITrigger {
     }
 
     @Override
+    public void onSave(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
+        this.onUpdate(queryInfo, request);
+    }
+
+    @Override
     public void onDelete(String id, HttpServletRequest request) throws Exception {
 
         UserModel user = ApplicationContext.getSession(request, LOGIN_KEY, UserModel.class);

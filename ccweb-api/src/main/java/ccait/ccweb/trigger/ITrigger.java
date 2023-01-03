@@ -47,6 +47,16 @@ public interface ITrigger {
     void onUpdate(QueryInfo queryInfo, HttpServletRequest request) throws Exception;
 
     /***
+     * 保存（新增或修改）
+     * @param queryInfo （提交的数据）
+     * @param request （当前请求）
+     * @throws Exception
+     */
+    @OnSave
+    @Order(-55555)
+    void onSave(QueryInfo queryInfo, HttpServletRequest request) throws Exception;
+
+    /***
      * 删除数据事件
      * @param id （要删除的数据ID）
      * @param request （当前请求）
