@@ -98,7 +98,7 @@ public class AgentTrigger {
 
     @OnSave
     public void onSave(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
-        this.onSave(queryInfo, request);
+        this.onUpdate(queryInfo, request);
     }
 
     @OnInsert
