@@ -337,6 +337,10 @@ public final class DefaultTrigger {
             return;
         }
 
+        if(data==null || data.size()<1) {
+            throw new Exception(LangConfig.getInstance().get("can_not_find_data_for_update"));
+        }
+
         AtomicReference<String> errorMessage = new AtomicReference<>(null);
         map.entrySet().stream().forEach(a-> {
             try {
