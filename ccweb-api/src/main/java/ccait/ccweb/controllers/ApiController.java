@@ -17,6 +17,7 @@ import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.model.ResponseData;
 import ccait.ccweb.model.*;
 import entity.query.ColumnInfo;
+import entity.tool.util.JsonUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -297,6 +298,32 @@ public class ApiController extends BaseController {
 
         catch (Exception e) {
             getLogger().error(LOG_PRE_SUFFIX + e, e);
+
+            return error(130, e);
+        }
+    }
+
+    /***
+     * save
+     * @return
+     */
+    @ResponseBody
+    @AccessCtrl
+    @RequestMapping( value = "{table}/save", method = RequestMethod.PUT  )
+    public ResponseData doSave(@PathVariable String table, @PathVariable String id, @RequestBody QueryInfo queryInfo) {
+        try {
+            List list = super.query(table, queryInfo);
+            if(list.size()>0) {
+                Map<String, Object> info = JsonUtils.convert(list.get(0), Map.class);
+                return success(super.update(table, info.get("id").toString(), queryInfo.getData()));
+            }
+            else {
+                return success(super.insert(table, queryInfo.getData()));
+            }
+        }
+
+        catch (Exception e) {
+            getLogger().error(LOG_PRE_SUFFIX + "ERROR=====> ", e);
 
             return error(130, e);
         }

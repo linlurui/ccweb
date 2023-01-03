@@ -70,7 +70,7 @@ public final class GroupTableTrigger implements ITrigger {
         }
         CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
         String[] arr = request.getRequestURI().split("/");
-        if("update".equals(arr[arr.length - 1].toLowerCase())) {
+        if("update".equals(arr[arr.length - 1].toLowerCase()) || "save".equals(arr[arr.length - 1].toLowerCase())) {
             wrapper.setPostParameter(queryInfo);
         }
 

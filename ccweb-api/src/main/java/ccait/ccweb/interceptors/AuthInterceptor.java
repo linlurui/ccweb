@@ -396,11 +396,13 @@ public class AuthInterceptor extends AbstractPermissionInterceptor implements Ha
             case "PUT":
                 String[] arr = request.getRequestURI().split("/");
                 if(StringUtils.isEmpty(attrs.get("id")) && arr[arr.length - 1].toLowerCase() != "update") {
-                    privilegeWhere = "canAdd=1";
-                }
 
-                else if(request.getRequestURI().endsWith("/save")) {
-                    privilegeWhere = "canAdd=1 AND canUpdate=1";
+                    if(request.getRequestURI().endsWith("/save")) {
+                        privilegeWhere = "canAdd=1 AND canUpdate=1";
+                    }
+                    else {
+                        privilegeWhere = "canAdd=1";
+                    }
                 }
 
                 else {

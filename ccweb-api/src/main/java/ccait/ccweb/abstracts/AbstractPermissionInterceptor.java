@@ -148,13 +148,15 @@ public abstract class AbstractPermissionInterceptor {
             case "PUT":
                 if(StringUtils.isEmpty(attrs.get("id"))) {
                     if(Pattern.matches("^\\s*\\[[^\\[\\]]+\\]\\s*$", postString)) {
-                        List<Map<String, Object>> params = JsonUtils.parse(postString, List.class);
-                        TriggerContext.exec(table, EventType.Insert, params, request);
-                    }
 
-                    else if(request.getRequestURI().endsWith("/save")) {
-                        QueryInfo queryInfo2 = JsonUtils.parse(postString, QueryInfo.class);
-                        TriggerContext.exec(table, EventType.Save, queryInfo2, request);
+                        if(request.getRequestURI().endsWith("/save")) {
+                            QueryInfo queryInfo2 = JsonUtils.parse(postString, QueryInfo.class);
+                            TriggerContext.exec(table, EventType.Save, queryInfo2, request);
+                        }
+                        else {
+                            List<Map<String, Object>> params = JsonUtils.parse(postString, List.class);
+                            TriggerContext.exec(table, EventType.Insert, params, request);
+                        }
                     }
 
                     else {
