@@ -17,6 +17,7 @@ public abstract class DownloadData {
 
     protected final String datasourceId;
     protected final String table;
+    protected Integer index;
     protected final String field;
     protected final String id;
     protected String[] arrMessage;
@@ -33,6 +34,17 @@ public abstract class DownloadData {
         this.datasourceId = datasourceId;
         this.preview = false;
         this.page = 0;
+        this.index = 0;
+    }
+
+    public DownloadData(String datasourceId, String table, String field, String id, Integer index) {
+        this.table = table;
+        this.field = field;
+        this.id = id;
+        this.datasourceId = datasourceId;
+        this.preview = false;
+        this.page = 0;
+        this.index = index;
     }
 
     public DownloadData(String datasourceId, String table, String field, String id, int page) {
@@ -42,6 +54,17 @@ public abstract class DownloadData {
         this.datasourceId = datasourceId;
         this.preview = true;
         this.page = page;
+        this.index = 0;
+    }
+
+    public DownloadData(String datasourceId, String table, String field, String id, Integer index, int page) {
+        this.table = table;
+        this.field = field;
+        this.id = id;
+        this.datasourceId = datasourceId;
+        this.preview = true;
+        this.page = page;
+        this.index = index;
     }
 
     public String getPath() {

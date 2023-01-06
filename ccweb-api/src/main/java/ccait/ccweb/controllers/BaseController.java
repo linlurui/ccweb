@@ -1338,8 +1338,8 @@ public abstract class BaseController extends AbstractBaseController {
         return result;
     }
 
-    protected void download(String table, String field, String id) throws Exception {
-        ccait.ccweb.model.DownloadData downloadData = new DownloadData(getCurrentDatasourceId(), table, field, id).invoke();
+    protected void download(String table, String field, String id, Integer index) throws Exception {
+        ccait.ccweb.model.DownloadData downloadData = new DownloadData(getCurrentDatasourceId(), table, field, id, index).invoke();
 
         TriggerContext.exec(table, EventType.Download, downloadData, request);
 
@@ -1376,8 +1376,8 @@ public abstract class BaseController extends AbstractBaseController {
         EasyExcel.write(response.getOutputStream()).sheet().head(data.get(0).getClass()).doWrite(data);
     }
 
-    protected Mono downloadAs(String table, String field, String id) throws Exception {
-        ccait.ccweb.model.DownloadData downloadData = new DownloadData(getCurrentDatasourceId(), table, field, id).invoke();
+    protected Mono downloadAs(String table, String field, String id, Integer index) throws Exception {
+        ccait.ccweb.model.DownloadData downloadData = new DownloadData(getCurrentDatasourceId(), table, field, id, index).invoke();
 
         TriggerContext.exec(table, EventType.Download, downloadData, request);
 
@@ -1416,8 +1416,8 @@ public abstract class BaseController extends AbstractBaseController {
                 .body(BodyInserters.fromResource(resource)).switchIfEmpty(Mono.empty());
     }
 
-    protected void preview(String table, String field, String id, Integer page) throws Exception {
-        ccait.ccweb.model.DownloadData downloadData = new DownloadData(getCurrentDatasourceId(), table, field, id, page).invoke();
+    protected void preview(String table, String field, String id, Integer index, Integer page) throws Exception {
+        ccait.ccweb.model.DownloadData downloadData = new DownloadData(getCurrentDatasourceId(), table, field, id, index, page).invoke();
 
         TriggerContext.exec(table, EventType.PreviewDoc, downloadData, request);
 
@@ -1435,8 +1435,8 @@ public abstract class BaseController extends AbstractBaseController {
         output.write(data);
     }
 
-    protected Mono previewAs(String table, String field, String id, Integer page) throws Exception {
-        ccait.ccweb.model.DownloadData downloadData = new DownloadData(getCurrentDatasourceId(), table, field, id, page).invoke();
+    protected Mono previewAs(String table, String field, String id, Integer index, Integer page) throws Exception {
+        ccait.ccweb.model.DownloadData downloadData = new DownloadData(getCurrentDatasourceId(), table, field, id, index, page).invoke();
         if(downloadData.getMimeType().indexOf("image") != 0) {
             throw new  Exception(LangConfig.getInstance().get("not_support_file_format"));
         }
@@ -1650,7 +1650,7 @@ public abstract class BaseController extends AbstractBaseController {
         }
     }
 
-    protected void playVideo(String table, String field, String id) throws Exception {
+    protected void playVideo(String table, String field, String id, Integer index) throws Exception {
 
         String currentDatasource = getCurrentDatasourceId();
         Map<String, Object> uploadConfigMap = ApplicationConfig.getInstance().getMap(
@@ -1672,7 +1672,12 @@ public abstract class BaseController extends AbstractBaseController {
         decrypt(data);
 
         String content = data.get(field).toString();
-        DownloadData downloadData = new DownloadData(getCurrentDatasourceId(), table, field, id);
+
+        if(index<0) {
+            index = 0;
+        }
+
+        DownloadData downloadData = new DownloadData(getCurrentDatasourceId(), table, field, id, index);
         String filePath = downloadData.getFullPath(content, uploadConfigMap);
         if(!(new File(filePath)).exists()) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -1695,12 +1700,12 @@ public abstract class BaseController extends AbstractBaseController {
 
     public class DownloadData extends ccait.ccweb.model.DownloadData {
 
-        public DownloadData(String datasourceId, String table, String field, String id) {
-            super(datasourceId, table, field, id);
+        public DownloadData(String datasourceId, String table, String field, String id, Integer index) {
+            super(datasourceId, table, field, id, index);
         }
 
-        public DownloadData(String datasourceId, String table, String field, String id, int page) {
-            super(datasourceId, table, field, id, page);
+        public DownloadData(String datasourceId, String table, String field, String id, Integer index, Integer page) {
+            super(datasourceId, table, field, id, index, page);
         }
 
         @Override
@@ -1716,6 +1721,18 @@ public abstract class BaseController extends AbstractBaseController {
             decrypt(data);
 
             String content = data.get(field).toString();
+
+            if(this.index<0) {
+                this.index = 0;
+            }
+
+            List<String> urlList = StringUtils.splitString2List(content, ";");
+            if(urlList.size()>0) {
+                if(this.index>=urlList.size()) {
+                    this.index = 0;
+                }
+                content = urlList.get(index);
+            }
 
             if(StringUtils.isEmpty(content)) {
                 throw new Exception(LangConfig.getInstance().get("image_field_is_empty"));

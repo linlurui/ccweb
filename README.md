@@ -343,6 +343,7 @@ ccweb-start内置了默认的api接口可以让前端直接通过表名操作数
 * 请求方式：GET
 * URL参数：{table}为数据库表名称，{field}为字段名，{id}为主键
 * POST参数：无
+* 注：上传多文件字段可在URL后追加：/index/{index}指定要下载第几个文件，{index}为文件下标
 
 
 ### 13. 文件预览（支持预览图片、视频、PPT）
@@ -350,7 +351,7 @@ ccweb-start内置了默认的api接口可以让前端直接通过表名操作数
 * 请求方式：GET
 * URL参数：{table}为数据库表名称，{field}为字段名，{id}为主键，{page}为可选入参，可指定页码
 * POST参数：无
-
+* 注：上传多文件字段可在URL后追加：/index/{index}指定要预览第几个文件，{index}为文件下标
 
 ### 14. 上传文件
 * URL：/api/{datasource}/{table}/{field}/upload 
@@ -498,6 +499,7 @@ ccweb-start内置了默认的api接口可以让前端直接通过表名操作数
 * 请求方式：GET
 * URL参数：{table}为数据库表名称，{field}为字段名，{id}为主键
 * POST参数：无
+* 注：上传多文件字段可在URL后追加：/index/{index}指定要播放第几个文件，{index}为文件下标
 
 ### 21. 导入Excel
 * URL：/api/{datasource}/{table}/import 

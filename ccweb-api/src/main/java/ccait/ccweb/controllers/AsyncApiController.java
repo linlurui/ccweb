@@ -356,8 +356,18 @@ public class AsyncApiController extends BaseController {
     @AccessCtrl
     @RequestMapping( value = "download/{table}/{field}/{id}", method = RequestMethod.GET  )
     public void downloaded(@PathVariable String table, @PathVariable String field, @PathVariable String id) throws Exception {
+        super.download(table, field, id, 0);
+    }
 
-        super.download(table, field, id);
+    /***
+     * download
+     * @return
+     */
+    @ResponseBody
+    @AccessCtrl
+    @RequestMapping( value = "download/{table}/{field}/{id}/index/{index}", method = RequestMethod.GET  )
+    public void downloadedByIndex(@PathVariable String table, @PathVariable String field, @PathVariable String id, @PathVariable Integer index) throws Exception {
+        super.download(table, field, id, index);
     }
 
     /***
@@ -368,8 +378,18 @@ public class AsyncApiController extends BaseController {
     @AccessCtrl
     @RequestMapping( value = "preview/{table}/{field}/{id}", method = RequestMethod.GET  )
     public Mono previewed(@PathVariable String table, @PathVariable String field, @PathVariable String id) throws Exception {
+        return super.previewAs(table, field, id, 0, 0);
+    }
 
-        return super.previewAs(table, field, id, 0);
+    /***
+     * preview
+     * @return
+     */
+    @ResponseBody
+    @AccessCtrl
+    @RequestMapping( value = "preview/{table}/{field}/{id}/index/{index}", method = RequestMethod.GET  )
+    public Mono previewedByIndex(@PathVariable String table, @PathVariable String field, @PathVariable String id, @PathVariable Integer index) throws Exception {
+        return super.previewAs(table, field, id, index, 0);
     }
 
     /***
@@ -380,7 +400,17 @@ public class AsyncApiController extends BaseController {
     @AccessCtrl
     @RequestMapping( value = "preview/{table}/{field}/{id}/{page}", method = RequestMethod.GET  )
     public Mono previewedPage(@PathVariable String table, @PathVariable String field, @PathVariable String id, @PathVariable Integer page) throws Exception {
+        return super.previewAs(table, field, id, 0, page);
+    }
 
-        return super.previewAs(table, field, id, page);
+    /***
+     * preview
+     * @return
+     */
+    @ResponseBody
+    @AccessCtrl
+    @RequestMapping( value = "preview/{table}/{field}/{id}/{page}/index/{index}", method = RequestMethod.GET  )
+    public Mono previewedPageByIndex(@PathVariable String table, @PathVariable String field, @PathVariable String id, @PathVariable Integer page, @PathVariable Integer index) throws Exception {
+        return super.previewAs(table, field, id, index, page);
     }
 }

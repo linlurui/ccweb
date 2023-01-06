@@ -412,10 +412,20 @@ public class ApiController extends BaseController {
      */
     @ResponseBody
     @AccessCtrl
+    @RequestMapping( value = "download/{table}/{field}/{id}/index/{index}", method = RequestMethod.GET )
+    public void downloadedByIndex(@PathVariable String table, @PathVariable String field, @PathVariable String id, @PathVariable Integer index) throws Exception {
+        super.download(table, field, id, index);
+    }
+
+    /***
+     * download
+     * @return
+     */
+    @ResponseBody
+    @AccessCtrl
     @RequestMapping( value = "download/{table}/{field}/{id}", method = RequestMethod.GET )
     public void downloaded(@PathVariable String table, @PathVariable String field, @PathVariable String id) throws Exception {
-
-        super.download(table, field, id);
+        super.download(table, field, id, 0);
     }
 
     /***
@@ -437,8 +447,18 @@ public class ApiController extends BaseController {
     @AccessCtrl
     @RequestMapping( value = "preview/{table}/{field}/{id}", method = RequestMethod.GET )
     public void previewed(@PathVariable String table, @PathVariable String field, @PathVariable String id) throws Exception {
+        super.preview(table, field, id, 0, 0);
+    }
 
-        super.preview(table, field, id, 0);
+    /***
+     * preview
+     * @return
+     */
+    @ResponseBody
+    @AccessCtrl
+    @RequestMapping( value = "preview/{table}/{field}/{id}/index/{index}", method = RequestMethod.GET )
+    public void previewedByIndex(@PathVariable String table, @PathVariable String field, @PathVariable String id, @PathVariable Integer index) throws Exception {
+        super.preview(table, field, id, index, 0);
     }
 
     /***
@@ -449,8 +469,18 @@ public class ApiController extends BaseController {
     @AccessCtrl
     @RequestMapping( value = "preview/{table}/{field}/{id}/{page}", method = RequestMethod.GET )
     public void previewedPage(@PathVariable String table, @PathVariable String field, @PathVariable String id, @PathVariable Integer page) throws Exception {
+        super.preview(table, field, id, 0, page);
+    }
 
-        super.preview(table, field, id, page);
+    /***
+     * preview
+     * @return
+     */
+    @ResponseBody
+    @AccessCtrl
+    @RequestMapping( value = "preview/{table}/{field}/{id}/{page}/index/{index}", method = RequestMethod.GET )
+    public void previewedPageByIndex(@PathVariable String table, @PathVariable String field, @PathVariable String id, @PathVariable Integer index, @PathVariable Integer page) throws Exception {
+        super.preview(table, field, id, index, page);
     }
 
     /***
@@ -461,8 +491,18 @@ public class ApiController extends BaseController {
     @AccessCtrl
     @RequestMapping( value = "play/{table}/{field}/{id}", method = RequestMethod.GET )
     public void playVideo(@PathVariable String table, @PathVariable String field, @PathVariable String id) throws Exception {
+        super.playVideo(table, field, id, 0);
+    }
 
-        super.playVideo(table, field, id);
+    /***
+     * play video
+     * @return
+     */
+    @ResponseBody
+    @AccessCtrl
+    @RequestMapping( value = "play/{table}/{field}/{id}/index/{index}", method = RequestMethod.GET )
+    public void playVideoByIndex(@PathVariable String table, @PathVariable String field, @PathVariable String id, @PathVariable Integer index) throws Exception {
+        super.playVideo(table, field, id, index);
     }
 
     /***
