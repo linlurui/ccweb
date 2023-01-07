@@ -35,7 +35,7 @@ import java.util.Map;
 
 
 @Component
-@Scope("request")
+@Scope("singleton")
 @Trigger(tablename = "${ccweb.table.role}")
 @Order(Ordered.HIGHEST_PRECEDENCE+666)
 public final class RoleTableTrigger implements ITrigger {

@@ -44,7 +44,7 @@ import java.util.*;
 import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 
 @Component
-@Scope("request")
+@Scope("singleton")
 @Trigger(tablename = "${ccweb.table.userGroupRole}")
 @Order(Ordered.HIGHEST_PRECEDENCE+666)
 public final class UserGroupRoleTableTrigger implements ITrigger {

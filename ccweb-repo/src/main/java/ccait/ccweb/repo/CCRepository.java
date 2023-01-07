@@ -15,7 +15,7 @@ import java.sql.Connection;
 import java.util.Hashtable;
 import java.util.Map;
 
-@Scope("request")
+@Scope("singleton")
 @org.springframework.stereotype.Repository
 public class CCRepository {
 

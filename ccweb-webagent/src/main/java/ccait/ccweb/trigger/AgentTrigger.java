@@ -46,7 +46,7 @@ import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 import static ccait.ccweb.utils.StaticVars.LOG_PRE_SUFFIX;
 
 @Component
-@Scope("request")
+@Scope("singleton")
 @Order(Ordered.HIGHEST_PRECEDENCE+500)
 @Trigger
 public class AgentTrigger {
