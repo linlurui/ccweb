@@ -49,7 +49,7 @@ import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 import static ccait.ccweb.utils.StaticVars.VARS_PATH;
 
 @Component
-@Scope("singleton")
+@Scope("prototype")
 @Trigger(tablename = "${ccweb.table.user}")
 @Order(Ordered.HIGHEST_PRECEDENCE+666)
 public final class UserTableTrigger implements ITrigger {
@@ -76,6 +76,7 @@ public final class UserTableTrigger implements ITrigger {
         userIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userId}", userIdField);
         md5PublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MD5.publicKey}", md5PublicKey);
         createByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField);
+        log.info("init trigger  =================================> " + this.getClass().getSimpleName());
     }
 
     @Override

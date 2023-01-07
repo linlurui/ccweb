@@ -58,7 +58,7 @@ import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 
 
 @Component
-@Scope("singleton")
+@Scope("prototype")
 @Trigger
 @Order(Ordered.HIGHEST_PRECEDENCE+555)
 public final class DefaultTrigger {
@@ -108,6 +108,7 @@ public final class DefaultTrigger {
         userPathField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userPath}", userPathField);
         createByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField);
         ownerField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField);
+        log.info("init trigger  =================================> " + this.getClass().getSimpleName());
     }
 
     @OnInsert

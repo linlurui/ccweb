@@ -8,7 +8,10 @@ import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.context.ApplicationContext;
 import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.model.UserModel;
+import jdk.nashorn.internal.objects.annotations.Constructor;
 import org.apache.http.client.HttpResponseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -21,9 +24,15 @@ import java.util.Map;
 import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 
 @Component
-@Scope("singleton")
+@Scope("prototype")
 @Trigger
 public class CommonTrigger {
+    private static final Logger log = LoggerFactory.getLogger( CommonTrigger.class );
+
+    @Constructor
+    private void init() {
+        log.info("init trigger  =================================> " + this.getClass().getSimpleName());
+    }
 
     @OnInsert
     public void onInsert(List<Map<String, Object>> list, HttpServletRequest request) throws Exception {

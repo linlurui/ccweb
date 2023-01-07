@@ -35,7 +35,7 @@ import java.util.Map;
 
 
 @Component
-@Scope("singleton")
+@Scope("prototype")
 @Trigger(tablename = "${ccweb.table.privilege}")
 @Order(Ordered.HIGHEST_PRECEDENCE+666)
 public final class PrivilegeTableTrigger implements ITrigger {
@@ -48,6 +48,7 @@ public final class PrivilegeTableTrigger implements ITrigger {
     @PostConstruct
     private void init() {
         privilegeIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.privilegeId}", privilegeIdField);
+        log.info("init trigger  =================================> " + this.getClass().getSimpleName());
     }
 
     @Override

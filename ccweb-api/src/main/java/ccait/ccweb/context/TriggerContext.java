@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static ccait.ccweb.context.ApplicationContext.*;
@@ -63,6 +64,8 @@ public final class TriggerContext {
     private static String privilegeTablenameStatic;
 
     private final static List<EventInfo> eventList = new ArrayList<EventInfo>();
+
+    private volatile static Map<String, Object> triggerBeanMap = new ConcurrentHashMap<>();
 
     @PostConstruct
     private void postConstruct() {
@@ -225,7 +228,8 @@ public final class TriggerContext {
             }
             Class<?> type = eventInfo.getType();
             String beanName = type.getSimpleName().substring(0, 1).toLowerCase() + type.getSimpleName().substring(1);
-            Object obj = ApplicationContext.getInstance().getBean(beanName);
+
+            Object obj = getTriggerBean(beanName);
 
             switch (eventType) {
                 case Insert:
@@ -289,6 +293,16 @@ public final class TriggerContext {
                     throw new IllegalAccessException("Invalid event type!!!");
             }
         }
+    }
+
+    private static Object getTriggerBean(String beanName) {
+        if(triggerBeanMap.containsKey(beanName)) {
+            return triggerBeanMap.get(beanName);
+        }
+        synchronized (triggerBeanMap) {
+            triggerBeanMap.put(beanName, ApplicationContext.getInstance().getBean(beanName));
+        }
+        return triggerBeanMap.get(beanName);
     }
 
     private static <T> void invoke(Set<Method> methodSet, Object instance, T params, HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {

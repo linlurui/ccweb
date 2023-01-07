@@ -46,7 +46,7 @@ import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 import static ccait.ccweb.utils.StaticVars.LOG_PRE_SUFFIX;
 
 @Component
-@Scope("singleton")
+@Scope("prototype")
 @Order(Ordered.HIGHEST_PRECEDENCE+500)
 @Trigger
 public class AgentTrigger {
@@ -94,6 +94,7 @@ public class AgentTrigger {
         userTable = ApplicationConfig.getInstance().get("${ccweb.table.user}", userTable);
         userIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userId}", userIdField);
         ownerField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField);
+        log.info("init trigger  =================================> " + this.getClass().getSimpleName());
     }
 
     @OnSave

@@ -44,7 +44,7 @@ import java.util.*;
 import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 
 @Component
-@Scope("singleton")
+@Scope("prototype")
 @Trigger(tablename = "${ccweb.table.userGroupRole}")
 @Order(Ordered.HIGHEST_PRECEDENCE+666)
 public final class UserGroupRoleTableTrigger implements ITrigger {
@@ -76,7 +76,7 @@ public final class UserGroupRoleTableTrigger implements ITrigger {
         groupIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.groupId}", groupIdField);
         userPathField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userPath}", userPathField);
         userIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userId}", userIdField);
-
+        log.info("init trigger  =================================> " + this.getClass().getSimpleName());
     }
 
     @Override

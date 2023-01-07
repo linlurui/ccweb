@@ -35,7 +35,7 @@ import java.util.Map;
 
 
 @Component
-@Scope("singleton")
+@Scope("prototype")
 @Trigger(tablename = "${ccweb.table.role}")
 @Order(Ordered.HIGHEST_PRECEDENCE+666)
 public final class RoleTableTrigger implements ITrigger {
@@ -48,6 +48,7 @@ public final class RoleTableTrigger implements ITrigger {
     @PostConstruct
     private void init() {
         roleIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.roleId}", roleIdField);
+        log.info("init trigger  =================================> " + this.getClass().getSimpleName());
     }
 
     @Override

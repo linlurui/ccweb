@@ -35,7 +35,7 @@ import java.util.Map;
 
 
 @Component
-@Scope("singleton")
+@Scope("prototype")
 @Trigger(tablename = "${ccweb.table.group}")
 @Order(Ordered.HIGHEST_PRECEDENCE+666)
 public final class GroupTableTrigger implements ITrigger {
@@ -48,6 +48,7 @@ public final class GroupTableTrigger implements ITrigger {
     @PostConstruct
     private void init() {
         groupIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.groupId}", groupIdField);
+        log.info("init trigger  =================================> " + this.getClass().getSimpleName());
     }
 
     @Override
