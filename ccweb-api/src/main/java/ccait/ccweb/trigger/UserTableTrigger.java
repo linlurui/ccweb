@@ -49,7 +49,7 @@ import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 import static ccait.ccweb.utils.StaticVars.VARS_PATH;
 
 @Component
-@Scope("prototype")
+@Scope("request")
 @Trigger(tablename = "${ccweb.table.user}")
 @Order(Ordered.HIGHEST_PRECEDENCE+666)
 public final class UserTableTrigger implements ITrigger {

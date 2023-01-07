@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Component
-@Scope("prototype")
+@Scope("request")
 @Tablename("${ccweb.table.privilege}")
 public class PrivilegeModel extends Queryable<PrivilegeModel> {
   @PrimaryKey

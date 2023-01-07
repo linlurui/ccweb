@@ -35,7 +35,7 @@ import java.util.Map;
 
 
 @Component
-@Scope("prototype")
+@Scope("request")
 @Trigger(tablename = "${ccweb.table.privilege}")
 @Order(Ordered.HIGHEST_PRECEDENCE+666)
 public final class PrivilegeTableTrigger implements ITrigger {

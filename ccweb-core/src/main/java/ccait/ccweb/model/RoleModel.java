@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Component
-@Scope("prototype")
+@Scope("request")
 @Tablename("${ccweb.table.role}")
 public class RoleModel extends Queryable<RoleModel> {
   @PrimaryKey

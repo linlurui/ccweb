@@ -58,7 +58,7 @@ import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 
 
 @Component
-@Scope("prototype")
+@Scope("request")
 @Trigger
 @Order(Ordered.HIGHEST_PRECEDENCE+555)
 public final class DefaultTrigger {

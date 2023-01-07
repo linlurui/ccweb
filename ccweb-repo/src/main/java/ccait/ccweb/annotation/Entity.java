@@ -14,7 +14,7 @@ import java.lang.annotation.RetentionPolicy;
 @Tablename
 @Documented
 @DataSource
-@Scope("prototype")
+@Scope("request")
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Entity {
     @AliasFor(annotation = Component.class)

@@ -21,7 +21,7 @@ import java.util.Map;
 import static ccait.ccweb.utils.StaticVars.LOGIN_KEY;
 
 @Component
-@Scope("prototype")
+@Scope("request")
 @Trigger
 public class CommonTrigger {
 

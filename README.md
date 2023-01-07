@@ -753,7 +753,7 @@ BaseContoller规范了ResponseData返回数据的格式，并为用户封装了�
 
 ```java
 @Component
-@Scope("prototype")
+@Scope("request")
 @Trigger(tablename = "privilege") //触发器注解,tablename为表名,可选参数
 public final class DefaultTrigger {
 

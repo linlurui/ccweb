@@ -18,7 +18,7 @@ import java.util.UUID;
 import static ccait.ccweb.utils.StaticVars.LOG_PRE_SUFFIX;
 
 @Component
-@Scope("prototype")
+@Scope("request")
 @Tablename("${ccweb.table.userGroupRole}")
 public class UserGroupRoleModel extends Queryable<UserGroupRoleModel> {
 

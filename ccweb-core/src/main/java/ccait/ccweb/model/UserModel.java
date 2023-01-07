@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-@Scope("prototype")
+@Scope("request")
 @Tablename("${ccweb.table.user}")
 public class UserModel extends Queryable<UserModel> {
 

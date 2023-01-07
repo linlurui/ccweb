@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
-@Scope("prototype")
+@Scope("request")
 @Tablename("${ccweb.app-config.table}")
 public class AppConfig extends Queryable<AppConfig> {
 
