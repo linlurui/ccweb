@@ -23,6 +23,7 @@
         <module>ccweb-repo</module>
         <module>ccweb-mail</module>
         <module>ccweb-jobs</module>
+        <module>ccweb-plugin</module>
     </modules>
 
     <parent>
