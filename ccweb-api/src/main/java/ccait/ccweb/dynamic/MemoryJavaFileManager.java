@@ -127,7 +127,7 @@ public class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileMan
             builder.addAnnotation(annDataSource);
         }
 
-        AnnotationSpec annScopeSpec = AnnotationSpec.builder(Scope.class).addMember("value", "$S", "prototype").build();
+        AnnotationSpec annScopeSpec = AnnotationSpec.builder(Scope.class).addMember("value", "$S", "request").build();
         builder.addAnnotation(annScopeSpec);
 
         AnnotationSpec annClassSpec = AnnotationSpec.builder(Tablename.class).addMember("value", "$S", tablename).build();
