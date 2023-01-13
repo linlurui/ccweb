@@ -36,6 +36,19 @@ en:
     set_value_by_groupId_please: groupId can not be empty
     set_value_by_userId_please: userId can not be empty
     uniquekey_duplicated: uniquekey duplicated
+    fail_to_request_message: fail to request %s, error message：%s
+    wrong_to_expression: wrong to expression
+    key_can_not_be_find: key can not be find!
+    is_effective_date: Current datetime is effective!!!
+    invalid_table_or_field: invalid table or field
+    upload_empty: upload files can not be empty
+    page_number_over: page number can not be over
+    fail_to_convert_page_number: fail to convert page number
+    not_found_upload_config: can not find the upload config
+    not_found_file: can not find the file
+    can_not_find_datasource_mapping: can not find %s datasource mapping
+    parent_can_not_be_equals_self: parent can not be equals self
+    can_not_find_parent: can not find parent
 cn:
     can_not_delete_self: 不能删除本账号
     admin_can_not_be_removed: 不能删除超级管理员
@@ -74,3 +87,16 @@ cn:
     set_value_by_groupId_please: 【groupId】不能为空
     set_value_by_userId_please: 【userId】不能为空
     uniquekey_duplicated: 不允许重复键值
+    fail_to_request_message: 【%s】请求失败, 错误消息：%s
+    wrong_to_expression: 不正确的表达式
+    key_can_not_be_find: KEY不存在
+    is_effective_date: 不在指定的访问时间内
+    invalid_table_or_field: 无效的表名或列名
+    upload_empty: 上传文件不能为空
+    page_number_over: 页码超出范围
+    fail_to_convert_page_number: 转换失败，页码：
+    not_found_upload_config: 找不到上传设置
+    not_found_file: 找不到文件
+    can_not_find_datasource_mapping: 无法匹配到数据源%s
+    parent_can_not_be_equals_self: 父级不能选择自己
+    can_not_find_parent: 找不到父级
