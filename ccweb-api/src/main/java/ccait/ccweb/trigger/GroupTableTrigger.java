@@ -12,6 +12,7 @@ package ccait.ccweb.trigger;
 
 
 import ccait.ccweb.annotation.Trigger;
+import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.model.DownloadData;
@@ -57,17 +58,39 @@ public final class GroupTableTrigger implements ITrigger {
     }
 
     @Override
-    public void onInsert(List<Map<String, Object>> list, HttpServletRequest request) {
+    public void onInsert(List<Map<String, Object>> list, HttpServletRequest request) throws Exception {
         CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
+        for(Map<String, Object> data : list) {
+            if(data.containsKey("id") && data.containsKey("parentId")) {
+                if(data.get("id")!=null && data.get("parentId")!=null) {
+                    if(data.get("id").toString().equals(data.get("parentId").toString())) {
+                        throw new Exception(LangConfig.getInstance().get("parent_can_not_be_equals_self"));
+                    }
+                }
+                if(data.get("parentId")==null) {
+                    data.put("parentId", 0);
+                }
+            }
+        }
         wrapper.setPostParameter(list);
     }
 
     @Override
-    public void onUpdate(QueryInfo queryInfo, HttpServletRequest request) {
+    public void onUpdate(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
 
         Map<String, Object> data = queryInfo.getData();
         if(data.containsKey(groupIdField)) {
             data.remove(groupIdField);
+        }
+        if(data.containsKey("id") && data.containsKey("parentId")) {
+            if(data.get("id")!=null && data.get("parentId")!=null) {
+                if(data.get("id").toString().equals(data.get("parentId").toString())) {
+                    throw new Exception(LangConfig.getInstance().get("parent_can_not_be_equals_self"));
+                }
+            }
+            if(data.get("parentId")==null) {
+                data.put("parentId", 0);
+            }
         }
         CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
         String[] arr = request.getRequestURI().split("/");
