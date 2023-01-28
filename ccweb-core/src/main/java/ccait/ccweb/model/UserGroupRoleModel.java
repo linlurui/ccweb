@@ -52,6 +52,17 @@ public class UserGroupRoleModel extends Queryable<UserGroupRoleModel> {
     @Fieldname("${ccweb.table.reservedField.modifyBy:modifyBy}")
     private Integer modifyBy;
 
+    @Fieldname("${ccweb.table.reservedField.owner:owner}")
+    private Integer owner;
+
+    public Integer getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Integer owner) {
+        this.owner = owner;
+    }
+
     public Date getCreateOn() {
         return createOn;
     }
