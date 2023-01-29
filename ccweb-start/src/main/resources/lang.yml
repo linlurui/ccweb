@@ -49,6 +49,9 @@ en:
     can_not_find_datasource_mapping: can not find %s datasource mapping
     parent_can_not_be_equals_self: parent can not be equals self
     can_not_find_parent: can not find parent
+    duplicated_group_name: duplicated group name
+    duplicated_user_name: duplicated group name
+    duplicated_account: duplicated account
 cn:
     can_not_delete_self: 不能删除本账号
     admin_can_not_be_removed: 不能删除超级管理员
@@ -100,3 +103,6 @@ cn:
     can_not_find_datasource_mapping: 无法匹配到数据源%s
     parent_can_not_be_equals_self: 父级不能选择自己
     can_not_find_parent: 找不到父级
+    duplicated_group_name: 存在重复名称
+    duplicated_user_name: 存在重复用户名称
+    duplicated_account: 存在重复账号
