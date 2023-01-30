@@ -188,9 +188,10 @@ public class UserContext {
 
         List<PrivilegeModel> privilegeList = new ArrayList<PrivilegeModel>();
         if(roleIdList.size() > 0) {
-            String roleWhere = String.format("[roleId] in ('%s')", String.join("','", roleIdList));
+            String roleWhere = String.format("[" + ApplicationConfig.getInstance().get("${ccweb.table.reservedField.roleId}", "roleId") + "] in ('%s')", String.join("','", roleIdList));
             if(aclList.size() > 0) {
-                String groupsString = String.format("(groupId in ('%s') OR groupId IS NULL OR groupId='')", String.join("','",
+                String groupIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.groupId}", "groupId");
+                String groupsString = String.format("(" + groupIdField + " in ('%s') OR " + groupIdField + " IS NULL OR " + groupIdField + "='')", String.join("','",
                         groupIds.stream().filter(o -> o != null).map(a -> a.toString().replace("-", ""))
                                 .collect(Collectors.toList())));
                 privilegeList = privilege.where(roleWhere)
@@ -203,7 +204,8 @@ public class UserContext {
 
         else {
             if(aclList.size() > 0) {
-                String groupString = String.format("(groupId in ('%s') OR groupId IS NULL OR groupId='')", String.join("','",
+                String groupIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.groupId}", "groupId");
+                String groupString = String.format("(" + groupIdField + " in ('%s') OR " + groupIdField + " IS NULL OR " + groupIdField + "='')", String.join("','",
                         groupIds.stream().filter(o->o != null).map(a -> a.toString().replace("-", ""))
                                 .collect(Collectors.toList())));
 

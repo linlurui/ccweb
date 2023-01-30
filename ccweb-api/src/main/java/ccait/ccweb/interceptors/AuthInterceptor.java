@@ -76,6 +76,12 @@ public class AuthInterceptor extends AbstractPermissionInterceptor implements Ha
     @Value("${ccweb.auth.user.wechat.enable:false}")
     private boolean wechatEnable;
 
+    @Value("${ccweb.table.reservedField.roleId:roleId}")
+    private String roleIdField;
+
+    @Value("${ccweb.table.reservedField.aclId:aclId}")
+    private String aclIdField;
+
     private static final Logger log = LoggerFactory.getLogger( AuthInterceptor.class );
 
     private static final Map<String, UserModel> userCacheMap = new ConcurrentHashMap<>();
@@ -91,6 +97,8 @@ public class AuthInterceptor extends AbstractPermissionInterceptor implements Ha
         wechatEnable = ApplicationConfig.getInstance().get("${ccweb.auth.user.wechat.enable}", wechatEnable);
         aesPublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.publicKey}", aesPublicKey);
         admin = ApplicationConfig.getInstance().get("${ccweb.security.admin.username}", admin);
+        roleIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.roleId}", roleIdField);
+        aclIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.aclId}", aclIdField);
     }
 
     @Override
@@ -443,9 +451,9 @@ public class AuthInterceptor extends AbstractPermissionInterceptor implements Ha
 
         List<PrivilegeModel> privilegeList = new ArrayList<PrivilegeModel>();
         if(roleIdList.size() > 0) {
-            String roleWhere = String.format("[roleId] in ('%s')", String.join("','", roleIdList));
+            String roleWhere = String.format("[" + roleIdField + "] in ('%s')", String.join("','", roleIdList));
             if(aclList.size() > 0) {
-                String aclWhere = String.format("(aclId in ('%s') OR aclId IS NULL OR aclId='')", String.join("','",
+                String aclWhere = String.format("(" + aclIdField + " in ('%s') OR " + aclIdField + " IS NULL OR " + aclIdField + "='')", String.join("','",
                         aclIds.stream().filter(o -> o != null).map(a -> a.toString().replace("-", ""))
                                 .collect(Collectors.toList())));
                 privilegeList = privilege.where(roleWhere).and(privilegeWhere)
@@ -458,7 +466,7 @@ public class AuthInterceptor extends AbstractPermissionInterceptor implements Ha
 
         else {
             if(aclList.size() > 0) {
-                String aclWhere = String.format("(aclId in ('%s') OR aclId IS NULL OR aclId='')", String.join("','",
+                String aclWhere = String.format("(" + aclIdField + " in ('%s') OR " + aclIdField + " IS NULL OR " + aclIdField + "='')", String.join("','",
                         aclIds.stream().filter(o->o != null).map(a -> a.toString().replace("-", ""))
                                 .collect(Collectors.toList())));
 

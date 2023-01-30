@@ -6,6 +6,7 @@ import entity.query.annotation.Exclude;
 import entity.query.annotation.Fieldname;
 import entity.query.annotation.PrimaryKey;
 import entity.query.annotation.Tablename;
+import entity.query.core.ApplicationConfig;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Scope;
@@ -111,7 +112,7 @@ public class UserGroupRoleModel extends Queryable<UserGroupRoleModel> {
         group.setGroupId(this.groupId);
 
         try {
-            group = group.where("[groupId]=#{groupId}").first();
+            group = group.where("[" + ApplicationConfig.getInstance().get("${ccweb.table.reservedField.groupId}", "groupId") + "]=#{groupId}").first();
         } catch (SQLException e) {
             log.error(LOG_PRE_SUFFIX + e.getMessage(), e);
         }
@@ -135,7 +136,7 @@ public class UserGroupRoleModel extends Queryable<UserGroupRoleModel> {
         role.setRoleId(this.roleId);
 
         try {
-            role = role.where("[roleId]=#{roleId}").first();
+            role = role.where("[" + ApplicationConfig.getInstance().get("${ccweb.table.reservedField.roleId}", "roleId") + "]=#{roleId}").first();
         } catch (SQLException e) {
             log.error(LOG_PRE_SUFFIX + e.getMessage(), e);
         }
