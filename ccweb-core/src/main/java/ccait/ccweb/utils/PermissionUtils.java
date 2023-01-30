@@ -42,6 +42,7 @@ public class PermissionUtils {
     public static final Pattern importPattern = Pattern.compile("^/(api)(/[^/]+){1,2}/import$", Pattern.CASE_INSENSITIVE);
     public static final Pattern exportPattern = Pattern.compile("^/(api)(/[^/]+){1,2}/export", Pattern.CASE_INSENSITIVE);
     public static final Pattern updatePattern = Pattern.compile("^/(api)(/[^/]+){1,2}/update$", Pattern.CASE_INSENSITIVE);
+    public static final Pattern savePattern = Pattern.compile("^/(api)(/[^/]+)/save$", Pattern.CASE_INSENSITIVE);
     public static final Pattern deletePattern = Pattern.compile("^/(api)(/[^/]+){1,2}/delete$", Pattern.CASE_INSENSITIVE);
 
     public static boolean allowIp(HttpServletRequest request, String whiteListText, String blackListText) {

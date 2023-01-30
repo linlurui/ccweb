@@ -15,8 +15,10 @@ import ccait.ccweb.abstracts.AbstractPermissionInterceptor;
 import ccait.ccweb.annotation.AccessCtrl;
 import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.context.ApplicationContext;
+import ccait.ccweb.context.TriggerContext;
 import ccait.ccweb.context.UserContext;
 import ccait.ccweb.entites.QueryInfo;
+import ccait.ccweb.enums.EventType;
 import ccait.ccweb.enums.PrivilegeScope;
 import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.model.*;
@@ -364,6 +366,10 @@ public class AuthInterceptor extends AbstractPermissionInterceptor implements Ha
 
                 else if(PermissionUtils.updatePattern.matcher(request.getRequestURI()).find()) {
                     privilegeWhere = "canUpdate=1";
+                }
+
+                else if(PermissionUtils.savePattern.matcher(request.getRequestURI()).find()) {
+                    privilegeWhere = "(canUpdate=1 AND canAdd=1)";
                 }
 
                 else if(PermissionUtils.deletePattern.matcher(request.getRequestURI()).find()) {

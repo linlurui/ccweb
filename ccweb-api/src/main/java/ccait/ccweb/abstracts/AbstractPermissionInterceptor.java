@@ -122,6 +122,12 @@ public abstract class AbstractPermissionInterceptor {
                     break;
                 }
 
+                else if(PermissionUtils.savePattern.matcher(request.getRequestURI()).find()) {
+                    QueryInfo queryInfo = JsonUtils.parse(postString, QueryInfo.class);
+                    TriggerContext.exec(table, EventType.Save, queryInfo, request);
+                    break;
+                }
+
                 else if(PermissionUtils.deletePattern.matcher(request.getRequestURI()).find()) {
                     List idList = JsonUtils.parse(postString, List.class);
                     for(Object id : idList) {
