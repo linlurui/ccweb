@@ -132,6 +132,9 @@ public final class UserGroupRoleTableTrigger implements ITrigger {
         if(data.containsKey(userGroupRoleIdField)) {
             data.remove(userGroupRoleIdField);
         }
+        if(data.containsKey(userPathField)) {
+            data.remove(userPathField);
+        }
         CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
         String[] arr = request.getRequestURI().split("/");
         if("update".equals(arr[arr.length - 1].toLowerCase()) || "save".equals(arr[arr.length - 1].toLowerCase())) {
