@@ -195,6 +195,12 @@ public final class UserGroupRoleTableTrigger implements ITrigger {
                 list.add(map);
             }
 
+            list.forEach(item-> {
+                if(item.containsKey(userPathField)) {
+                    item.remove(userPathField);
+                }
+            });
+
             if(isMapResult) {
                 responseData.setData(list.get(0));
             }
