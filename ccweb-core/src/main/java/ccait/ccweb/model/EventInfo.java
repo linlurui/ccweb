@@ -12,6 +12,7 @@
 package ccait.ccweb.model;
 
 
+import entity.query.core.ApplicationConfig;
 import org.springframework.core.annotation.Order;
 
 import java.lang.reflect.Method;
@@ -107,7 +108,7 @@ public class EventInfo {
     }
 
     public String getTablename() {
-        return tablename;
+        return ApplicationConfig.getInstance().get(tablename, tablename);
     }
 
     public void setTablename(String tablename) {

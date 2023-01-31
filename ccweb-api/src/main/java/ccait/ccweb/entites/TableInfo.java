@@ -1,6 +1,7 @@
 package ccait.ccweb.entites;
 
 import ccait.ccweb.enums.PrivilegeScope;
+import entity.query.core.ApplicationConfig;
 import entity.query.enums.JoinMode;
 
 import java.lang.reflect.Field;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class TableInfo {
     public String getTablename() {
-        return tablename;
+        return ApplicationConfig.getInstance().get(tablename, tablename);
     }
 
     public void setTablename(String tablename) {
