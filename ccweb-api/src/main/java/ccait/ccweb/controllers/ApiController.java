@@ -14,6 +14,7 @@ package ccait.ccweb.controllers;
 
 import ccait.ccweb.annotation.AccessCtrl;
 import ccait.ccweb.entites.QueryInfo;
+import ccait.ccweb.entites.SaveDataInfo;
 import ccait.ccweb.model.ResponseData;
 import ccait.ccweb.model.*;
 import entity.query.ColumnInfo;
@@ -310,16 +311,35 @@ public class ApiController extends BaseController {
     @ResponseBody
     @AccessCtrl
     @RequestMapping( value = "{table}/save", method = RequestMethod.PUT  )
-    public ResponseData doSave(@PathVariable String table, @PathVariable String id, @RequestBody QueryInfo queryInfo) {
+    public ResponseData doSave(@PathVariable String table, @PathVariable String id, @RequestBody SaveDataInfo saveDataInfo) {
         try {
-            List list = super.query(table, queryInfo);
-            if(list.size()>0) {
-                Map<String, Object> info = JsonUtils.convert(list.get(0), Map.class);
-                return success(super.update(table, info.get("id").toString(), queryInfo.getData()));
+            if(saveDataInfo.getData()==null || saveDataInfo.getData().size()<1) {
+                return success();
             }
-            else {
-                return success(super.insert(table, queryInfo.getData()));
+
+            if(saveDataInfo.getQueryInfo() != null) {
+                saveDataInfo.getQueryInfo().setPageInfo(new PageInfo() {{
+                    setPageIndex(1);
+                    setPageSize(1);
+                }});
+                List list = super.query(table, queryInfo);
+                if(list.size()>0) {
+                    Map<String, Object> info = JsonUtils.convert(list.get(0), Map.class);
+                    return success(super.update(table, info.get("id").toString(), queryInfo.getData()));
+                }
             }
+
+            List<Integer> result = new ArrayList<>();
+            for(int i=0; i < saveDataInfo.getData().size(); i++) {
+                Map data = (Map)saveDataInfo.getData().get(i);
+                result.add((Integer) super.insert(table, data));
+            }
+
+            if(result.size() == 1) {
+                return success(result.get(0));
+            }
+
+            return success(result);
         }
 
         catch (Exception e) {

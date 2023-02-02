@@ -412,7 +412,10 @@ public class AuthInterceptor extends AbstractPermissionInterceptor implements Ha
                 if(StringUtils.isEmpty(attrs.get("id")) && arr[arr.length - 1].toLowerCase() != "update") {
 
                     if(request.getRequestURI().endsWith("/save")) {
-                        privilegeWhere = "canAdd=1 AND canUpdate=1";
+                        privilegeWhere = "(canAdd=1 AND canUpdate=1)";
+                    }
+                    else if(request.getRequestURI().endsWith("/update")) {
+                        privilegeWhere = "canUpdate=1";
                     }
                     else {
                         privilegeWhere = "canAdd=1";

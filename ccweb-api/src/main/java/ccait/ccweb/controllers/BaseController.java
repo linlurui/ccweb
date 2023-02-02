@@ -1204,7 +1204,7 @@ public abstract class BaseController extends AbstractBaseController {
     public Object insert(String table, Map<String, Object> postData) throws Exception {
         String result = insert(table, postData, null);
         if(Pattern.compile("^\\d+$").matcher(result).find()) {
-            Integer.parseInt(result);
+            return Integer.parseInt(result);
         }
 
         return result;

@@ -159,6 +159,10 @@ public abstract class AbstractPermissionInterceptor {
                             QueryInfo queryInfo2 = JsonUtils.parse(postString, QueryInfo.class);
                             TriggerContext.exec(table, EventType.Save, queryInfo2, request);
                         }
+                        else if(request.getRequestURI().endsWith("/update")) {
+                            QueryInfo queryInfo2 = JsonUtils.parse(postString, QueryInfo.class);
+                            TriggerContext.exec(table, EventType.Update, queryInfo2, request);
+                        }
                         else {
                             List<Map<String, Object>> params = JsonUtils.parse(postString, List.class);
                             TriggerContext.exec(table, EventType.Insert, params, request);
