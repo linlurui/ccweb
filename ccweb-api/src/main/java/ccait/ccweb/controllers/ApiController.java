@@ -234,12 +234,7 @@ public class ApiController extends BaseController {
     public ResponseData doInsertAndReturnId(@PathVariable String table, @PathVariable String field, @RequestBody List<Map<String, Object>> postData)
     {
         try {
-            List<String> result = new ArrayList<>();
-            for(int i=0; i < postData.size(); i++) {
-                Map data = (Map)postData.get(i);
-                result.add(super.insert(table, data, field));
-            }
-
+            List<Object> result = super.insert(table, postData, field);
             if(result.size() == 1) {
                 return success(result.get(0));
             }
@@ -315,7 +310,7 @@ public class ApiController extends BaseController {
     @RequestMapping( value = "{table}/save", method = RequestMethod.PUT  )
     public ResponseData doSave(@PathVariable String datasource, @PathVariable String table, @RequestBody SaveDataInfo saveDataInfo) {
         try {
-            if(saveDataInfo.getData()==null || saveDataInfo.getData().size()<1) {
+            if(saveDataInfo.getPostData()==null || saveDataInfo.getPostData().size()<1) {
                 return success();
             }
 
@@ -333,20 +328,21 @@ public class ApiController extends BaseController {
 
             ColumnInfo pkColumn = EntityContext.getPrimaryKey(datasource, table);
             String pk = (pkColumn==null? "": pkColumn.getColumnName());
+
+            Boolean isRemoveData = (saveDataInfo.getRemoveIdList()!=null && saveDataInfo.getRemoveIdList().size()>0);
+            if(isRemoveData && data.containsKey(pk) && StringUtils.isEmpty(data.get(pk).toString())) {
+                super.deleteByIdList(table, saveDataInfo.getRemoveIdList());
+            }
+
             List<Object> result = new ArrayList<>();
-            for(int i=0; i < saveDataInfo.getData().size(); i++) {
-                Map<String, Object> data = saveDataInfo.getData().get(i);
-                if(!saveDataInfo.getRemoveDataFirst() && data.containsKey(pk) && StringUtils.isEmpty(data.get(pk).toString())) {
+            for(int i = 0; i < saveDataInfo.getPostData().size(); i++) {
+                Map<String, Object> data = saveDataInfo.getPostData().get(i);
+                if(!isRemoveData && data.containsKey(pk) && StringUtils.isEmpty(data.get(pk).toString())) {
                     String id = data.get(pk).toString();
                     data.remove(pk);
                     result.add(super.update(table, id, data));
                 }
                 else {
-                    if(saveDataInfo.getRemoveDataFirst() && data.containsKey(pk) && StringUtils.isEmpty(data.get(pk).toString())) {
-                        String id = data.get(pk).toString();
-                        data.remove(pk);
-                        super.delete(table, id);
-                    }
                     result.add(super.insert(table, data));
                 }
             }

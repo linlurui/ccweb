@@ -19,16 +19,16 @@ import java.util.Map;
 public class SaveDataInfo implements Serializable {
     private QueryInfo queryInfo;
 
-    private List<Map<String, Object>> data;
+    private List<Map<String, Object>> postData;
 
-    private Boolean removeDataFirst;
+    private List<Object> removeIdList;
 
-    public Boolean getRemoveDataFirst() {
-        return removeDataFirst;
+    public List<Object> getRemoveIdList() {
+        return removeIdList;
     }
 
-    public void setRemoveDataFirst(Boolean removeDataFirst) {
-        this.removeDataFirst = removeDataFirst;
+    public void setRemoveIdList(List<Object> removeIdList) {
+        this.removeIdList = removeIdList;
     }
 
     public QueryInfo getQueryInfo() {
@@ -39,11 +39,11 @@ public class SaveDataInfo implements Serializable {
         this.queryInfo = queryInfo;
     }
 
-    public List<Map<String, Object>> getData() {
-        return data;
+    public List<Map<String, Object>> getPostData() {
+        return postData;
     }
 
-    public void setData(List<Map<String, Object>> data) {
-        this.data = data;
+    public void setPostData(List<Map<String, Object>> postData) {
+        this.postData = postData;
     }
 }

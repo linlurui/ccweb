@@ -1202,76 +1202,93 @@ public abstract class BaseController extends AbstractBaseController {
      * @throws Exception
      */
     public Object insert(String table, Map<String, Object> postData) throws Exception {
-        String result = insert(table, postData, null);
-        if(Pattern.compile("^\\d+$").matcher(result).find()) {
-            return Integer.parseInt(result);
+        List<Object> result = insert(table, new ArrayList<Map<String, Object>>() {{ add(postData); }}, null);
+        if(result.size() == 1) {
+            return success(result.get(0));
         }
 
-        return result;
+        return success(result);
     }
 
     /***
      * insert data
      * @param table
-     * @param postData
+     * @param data
      * @return
      * @throws Exception
      */
-    public String insert(String table, Map<String, Object> postData, String idField) throws Exception {
-        Object entity = EntityContext.getEntity(table, postData);
-        if(entity == null) {
-            throw new Exception(LangConfig.getInstance().get("can_not_find_entity"));
-        }
-
-        if(!checkDataPrivilege(table, postData)) {
-            throw new Exception(NO_PRIVILEGE_MESSAGE);
-        }
-
-        String json = JsonUtils.toJson(postData);
-
-        ensureJsonData(postData);
-
-        encrypt(postData);
-
-        fillData(postData, entity);
-
-        Queryable queryable = ((Queryable) entity);
-
-        ColumnInfo primary = null;
-        if(StringUtils.isEmpty(idField)) {
-            primary = EntityContext.getPrimaryKey(getCurrentDatasourceId(), table);
-            if (primary != null) {
-                if (!"int".equals(primary.getDataType()) && !"bigint".equals(primary.getType())) {
-                    idField = primary.getColumnName();
+    public List<Object> insert(String table, List<Map<String, Object>> data, String idField) throws Exception {
+        List<Object> result = new ArrayList<>();
+        DruidPooledConnection conn = null;
+        try {
+            for (Map<String, Object> postData : data) {
+                Object entity = EntityContext.getEntity(table, postData);
+                if (entity == null) {
+                    throw new Exception(LangConfig.getInstance().get("can_not_find_entity"));
                 }
+
+                if (!checkDataPrivilege(table, postData)) {
+                    throw new Exception(NO_PRIVILEGE_MESSAGE);
+                }
+
+                String json = JsonUtils.toJson(postData);
+
+                ensureJsonData(postData);
+
+                encrypt(postData);
+
+                fillData(postData, entity);
+
+                Queryable queryable = ((Queryable) entity);
+
+                if (conn == null) {
+                    conn = queryable.dataSource().getConnection();
+                    conn.setAutoCommit(false);
+                } else {
+                    queryable.setConnection(conn);
+                }
+
+                ColumnInfo primary = null;
+                if (StringUtils.isEmpty(idField)) {
+                    primary = EntityContext.getPrimaryKey(getCurrentDatasourceId(), table);
+                    if (primary != null) {
+                        if (!"int".equals(primary.getDataType()) && !"bigint".equals(primary.getType())) {
+                            idField = primary.getColumnName();
+                        }
+                    }
+                }
+
+                if (StringUtils.isEmpty(idField)) {
+                    Integer id = queryable.insert();
+
+                    if (id == null) {
+                        continue;
+                    }
+
+                    ApplicationContext.setGroupsUserIdValue(request, table, JsonUtils.parse(json, Map.class), getLoginUser(), id);
+                    result.add(id);
+                    continue;
+                }
+
+                queryable.insert();
+                boolean hasCreateOn = EntityContext.hasColumn(getCurrentDatasourceId(), EntityContext.getCurrentTable(), createOnField);
+                Object idValue = queryable.orderby(String.format("%s desc", (hasCreateOn ? createOnField : idField))).select(idField).first(String.class);
+
+                ApplicationContext.setGroupsUserIdValue(request, table, JsonUtils.parse(json, Map.class), getLoginUser(), idValue);
+                result.add(idValue);
+            }
+            conn.commit();
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            conn.rollback();
+        }
+        finally {
+            if(!conn.isClosed()) {
+                conn.close();
             }
         }
-
-        if(StringUtils.isEmpty(idField)) {
-            Integer id = queryable.insert();
-
-            if(id == null) {
-                return "0";
-            }
-
-            ApplicationContext.setGroupsUserIdValue(request, table, JsonUtils.parse(json, Map.class), getLoginUser(), id);
-
-            return id.toString();
-        }
-
-        DruidPooledConnection conn = queryable.dataSource().getConnection();
-        conn.setAutoCommit(false);
-        queryable.insert();
-        boolean hasCreateOn = EntityContext.hasColumn(getCurrentDatasourceId(), EntityContext.getCurrentTable(), createOnField);
-        Object idValue = queryable.orderby(String.format("%s desc", (hasCreateOn? createOnField: idField))).select(idField).first(String.class);
-        conn.commit();
-
-        ApplicationContext.setGroupsUserIdValue(request, table, JsonUtils.parse(json, Map.class), getLoginUser(), idValue);
-
-        queryable = null;
-        entity = null;
-
-        return idValue.toString();
+        return result;
     }
 
     protected void ensureJsonData(Map<String, Object> data) {
