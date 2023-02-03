@@ -21,6 +21,16 @@ public class SaveDataInfo implements Serializable {
 
     private List<Map<String, Object>> data;
 
+    private Boolean removeDataFirst;
+
+    public Boolean getRemoveDataFirst() {
+        return removeDataFirst;
+    }
+
+    public void setRemoveDataFirst(Boolean removeDataFirst) {
+        this.removeDataFirst = removeDataFirst;
+    }
+
     public QueryInfo getQueryInfo() {
         return queryInfo;
     }

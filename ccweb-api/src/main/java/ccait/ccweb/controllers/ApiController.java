@@ -13,6 +13,7 @@ package ccait.ccweb.controllers;
 
 
 import ccait.ccweb.annotation.AccessCtrl;
+import ccait.ccweb.context.EntityContext;
 import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.entites.SaveDataInfo;
 import ccait.ccweb.model.ResponseData;
@@ -312,7 +313,7 @@ public class ApiController extends BaseController {
     @ResponseBody
     @AccessCtrl
     @RequestMapping( value = "{table}/save", method = RequestMethod.PUT  )
-    public ResponseData doSave(@PathVariable String table, @RequestBody SaveDataInfo saveDataInfo) {
+    public ResponseData doSave(@PathVariable String datasource, @PathVariable String table, @RequestBody SaveDataInfo saveDataInfo) {
         try {
             if(saveDataInfo.getData()==null || saveDataInfo.getData().size()<1) {
                 return success();
@@ -330,15 +331,22 @@ public class ApiController extends BaseController {
                 }
             }
 
+            ColumnInfo pkColumn = EntityContext.getPrimaryKey(datasource, table);
+            String pk = (pkColumn==null? "": pkColumn.getColumnName());
             List<Object> result = new ArrayList<>();
             for(int i=0; i < saveDataInfo.getData().size(); i++) {
                 Map<String, Object> data = saveDataInfo.getData().get(i);
-                if(data.containsKey("id") && StringUtils.isEmpty(data.get("id").toString())) {
-                    String id = data.get("id").toString();
-                    data.remove("id");
+                if(!saveDataInfo.getRemoveDataFirst() && data.containsKey(pk) && StringUtils.isEmpty(data.get(pk).toString())) {
+                    String id = data.get(pk).toString();
+                    data.remove(pk);
                     result.add(super.update(table, id, data));
                 }
                 else {
+                    if(saveDataInfo.getRemoveDataFirst() && data.containsKey(pk) && StringUtils.isEmpty(data.get(pk).toString())) {
+                        String id = data.get(pk).toString();
+                        data.remove(pk);
+                        super.delete(table, id);
+                    }
                     result.add(super.insert(table, data));
                 }
             }
