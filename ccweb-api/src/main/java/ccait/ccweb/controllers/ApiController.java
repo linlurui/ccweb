@@ -19,6 +19,7 @@ import ccait.ccweb.model.ResponseData;
 import ccait.ccweb.model.*;
 import entity.query.ColumnInfo;
 import entity.tool.util.JsonUtils;
+import entity.tool.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -311,7 +312,7 @@ public class ApiController extends BaseController {
     @ResponseBody
     @AccessCtrl
     @RequestMapping( value = "{table}/save", method = RequestMethod.PUT  )
-    public ResponseData doSave(@PathVariable String table, @PathVariable String id, @RequestBody SaveDataInfo saveDataInfo) {
+    public ResponseData doSave(@PathVariable String table, @RequestBody SaveDataInfo saveDataInfo) {
         try {
             if(saveDataInfo.getData()==null || saveDataInfo.getData().size()<1) {
                 return success();
@@ -329,10 +330,17 @@ public class ApiController extends BaseController {
                 }
             }
 
-            List<Integer> result = new ArrayList<>();
+            List<Object> result = new ArrayList<>();
             for(int i=0; i < saveDataInfo.getData().size(); i++) {
-                Map data = (Map)saveDataInfo.getData().get(i);
-                result.add((Integer) super.insert(table, data));
+                Map<String, Object> data = saveDataInfo.getData().get(i);
+                if(data.containsKey("id") && StringUtils.isEmpty(data.get("id").toString())) {
+                    String id = data.get("id").toString();
+                    data.remove("id");
+                    result.add(super.update(table, id, data));
+                }
+                else {
+                    result.add(super.insert(table, data));
+                }
             }
 
             if(result.size() == 1) {
