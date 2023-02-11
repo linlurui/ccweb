@@ -4,6 +4,7 @@ import ccait.ccweb.annotation.AccessCtrl;
 import ccait.ccweb.context.ApplicationContext;
 import ccait.ccweb.context.TriggerContext;
 import ccait.ccweb.entites.QueryInfo;
+import ccait.ccweb.entites.SaveDataInfo;
 import ccait.ccweb.enums.EventType;
 import ccait.ccweb.enums.PrivilegeScope;
 import ccait.ccweb.filter.CCWebRequestWrapper;
@@ -156,8 +157,8 @@ public abstract class AbstractPermissionInterceptor {
                     if(Pattern.matches("^\\s*\\[[^\\[\\]]+\\]\\s*$", postString)) {
 
                         if(request.getRequestURI().endsWith("/save")) {
-                            QueryInfo queryInfo2 = JsonUtils.parse(postString, QueryInfo.class);
-                            TriggerContext.exec(table, EventType.Save, queryInfo2, request);
+                            SaveDataInfo saveDataInfo = JsonUtils.parse(postString, SaveDataInfo.class);
+                            TriggerContext.exec(table, EventType.Save, saveDataInfo, request);
                         }
                         else if(request.getRequestURI().endsWith("/update")) {
                             QueryInfo queryInfo2 = JsonUtils.parse(postString, QueryInfo.class);

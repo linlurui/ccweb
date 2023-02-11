@@ -89,6 +89,10 @@ public abstract class BaseController extends AbstractBaseController {
     @Value(value = "${ccweb.elasticSearch.cluster-name:}")
     protected String esClusterName;
 
+    @Value("${ccweb.table.reservedField.modifyBy:modifyBy}")
+    protected String modifyByField;
+
+
     public ResponseData<Object> RMessage;
 
     @Autowired
@@ -177,6 +181,9 @@ public abstract class BaseController extends AbstractBaseController {
     @Value("${ccweb.table.reservedField.createOn:createOn}")
     protected String createOnField;
 
+    @Value("${ccweb.table.reservedField.modifyOn:modifyOn}")
+    protected String modifyOnField;
+
     public BaseController() {
         RMessage = new ResponseData<Object>();
     }
@@ -204,10 +211,12 @@ public abstract class BaseController extends AbstractBaseController {
         appid = ApplicationConfig.getInstance().get("${ccweb.auth.user.wechat.appid}", appid);
         wechatEnable = ApplicationConfig.getInstance().get("${ccweb.auth.user.wechat.enable}", wechatEnable);
         createByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createBy}", createByField);
+        modifyByField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.modifyBy}", modifyByField);
         ownerField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.owner}", ownerField);
         jwtEnable = ApplicationConfig.getInstance().get("${ccweb.auth.user.jwt.enable}", jwtEnable);
         jwtMillis = ApplicationConfig.getInstance().get("${ccweb.auth.user.jwt.millis}", jwtMillis);
         createOnField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.createOn}", createOnField);
+        modifyOnField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.modifyOn}", modifyOnField);
     }
 
     protected boolean isFinish() {

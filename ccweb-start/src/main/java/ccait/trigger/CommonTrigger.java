@@ -7,6 +7,8 @@ import ccait.ccweb.annotation.Trigger;
 import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.context.ApplicationContext;
 import ccait.ccweb.entites.QueryInfo;
+import ccait.ccweb.entites.SaveDataInfo;
+import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.model.UserModel;
 import jdk.nashorn.internal.objects.annotations.Constructor;
 import org.apache.http.client.HttpResponseException;
@@ -71,7 +73,8 @@ public class CommonTrigger {
     }
 
     @OnSave
-    public void onSave(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
-        this.onUpdate(queryInfo, request);
+    public void onSave(SaveDataInfo saveDataInfo, HttpServletRequest request) throws Exception {
+        CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
+        wrapper.setPostParameter(saveDataInfo);
     }
 }

@@ -17,6 +17,8 @@ import ccait.ccweb.context.EntityContext;
 import ccait.ccweb.entites.PlatformInfo;
 import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.controllers.WebAgentController;
+import ccait.ccweb.entites.SaveDataInfo;
+import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.model.ResponseData;
 import ccait.ccweb.model.UserGroupRoleModel;
 import ccait.ccweb.model.UserModel;
@@ -98,8 +100,9 @@ public class AgentTrigger {
     }
 
     @OnSave
-    public void onSave(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
-        this.onUpdate(queryInfo, request);
+    public void onSave(SaveDataInfo saveDataInfo, HttpServletRequest request) throws Exception {
+        CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
+        wrapper.setPostParameter(saveDataInfo);
     }
 
     @OnInsert

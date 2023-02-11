@@ -13,6 +13,7 @@ package ccait.ccweb.controllers;
 
 
 import ccait.ccweb.annotation.AccessCtrl;
+import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.context.EntityContext;
 import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.entites.SaveDataInfo;
@@ -21,13 +22,12 @@ import ccait.ccweb.model.*;
 import entity.query.ColumnInfo;
 import entity.tool.util.JsonUtils;
 import entity.tool.util.StringUtils;
+import org.apache.http.client.HttpResponseException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static ccait.ccweb.utils.StaticVars.LOG_PRE_SUFFIX;
 
@@ -310,6 +310,11 @@ public class ApiController extends BaseController {
     @RequestMapping( value = "{table}/save", method = RequestMethod.PUT  )
     public ResponseData doSave(@PathVariable String datasource, @PathVariable String table, @RequestBody SaveDataInfo saveDataInfo) {
         try {
+            UserModel user = getLoginUser();
+            if(user == null) {
+                throw new HttpResponseException(HttpStatus.UNAUTHORIZED.value(), LangConfig.getInstance().get("login_please"));
+            }
+
             if(saveDataInfo.getPostData()==null || saveDataInfo.getPostData().size()<1) {
                 return success();
             }
@@ -340,9 +345,13 @@ public class ApiController extends BaseController {
                 if(!isRemoveData && data.containsKey(pk) && StringUtils.isEmpty(data.get(pk).toString())) {
                     String id = data.get(pk).toString();
                     data.remove(pk);
+                    data.put(modifyByField, user.getUserId());
+                    data.put(modifyOnField, new Date());
                     result.add(super.update(table, id, data));
                 }
                 else {
+                    data.put(createByField, user.getUserId());
+                    data.put(createOnField, new Date());
                     result.add(super.insert(table, data));
                 }
             }

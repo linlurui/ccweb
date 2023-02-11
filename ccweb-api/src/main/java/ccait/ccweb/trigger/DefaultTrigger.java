@@ -18,6 +18,7 @@ import ccait.ccweb.context.EntityContext;
 import ccait.ccweb.dynamic.DynamicClassBuilder;
 import ccait.ccweb.entites.ConditionInfo;
 import ccait.ccweb.entites.QueryInfo;
+import ccait.ccweb.entites.SaveDataInfo;
 import ccait.ccweb.enums.DefaultValueMode;
 import ccait.ccweb.enums.EncryptMode;
 import ccait.ccweb.filter.CCWebRequestWrapper;
@@ -205,8 +206,9 @@ public final class DefaultTrigger {
     }
 
     @OnSave
-    public void onSave(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
-        this.onUpdate(queryInfo, request);
+    public void onSave(SaveDataInfo saveDataInfo, HttpServletRequest request) throws Exception {
+        CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
+        wrapper.setPostParameter(saveDataInfo);
     }
 
     @OnUpdate

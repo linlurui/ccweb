@@ -14,6 +14,7 @@ package ccait.ccweb.trigger;
 import ccait.ccweb.annotation.*;
 import ccait.ccweb.controllers.BaseController;
 import ccait.ccweb.entites.QueryInfo;
+import ccait.ccweb.entites.SaveDataInfo;
 import ccait.ccweb.model.DownloadData;
 import ccait.ccweb.model.ResponseData;
 import entity.query.ColumnInfo;
@@ -48,13 +49,13 @@ public interface ITrigger {
 
     /***
      * 保存（新增或修改）
-     * @param queryInfo （提交的数据）
+     * @param saveDataInfo （提交的数据）
      * @param request （当前请求）
      * @throws Exception
      */
     @OnSave
     @Order(-55555)
-    void onSave(QueryInfo queryInfo, HttpServletRequest request) throws Exception;
+    void onSave(SaveDataInfo saveDataInfo, HttpServletRequest request) throws Exception;
 
     /***
      * 删除数据事件

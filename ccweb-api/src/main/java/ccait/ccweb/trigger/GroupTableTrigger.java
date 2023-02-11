@@ -11,9 +11,11 @@
 package ccait.ccweb.trigger;
 
 
+import ccait.ccweb.annotation.OnSave;
 import ccait.ccweb.annotation.Trigger;
 import ccait.ccweb.config.LangConfig;
 import ccait.ccweb.entites.QueryInfo;
+import ccait.ccweb.entites.SaveDataInfo;
 import ccait.ccweb.filter.CCWebRequestWrapper;
 import ccait.ccweb.model.DownloadData;
 import ccait.ccweb.model.ResponseData;
@@ -52,9 +54,10 @@ public final class GroupTableTrigger implements ITrigger {
         log.info("init trigger  =================================> " + this.getClass().getSimpleName());
     }
 
-    @Override
-    public void onSave(QueryInfo queryInfo, HttpServletRequest request) throws Exception {
-        this.onUpdate(queryInfo, request);
+    @OnSave
+    public void onSave(SaveDataInfo saveDataInfo, HttpServletRequest request) throws Exception {
+        CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
+        wrapper.setPostParameter(saveDataInfo);
     }
 
     @Override
