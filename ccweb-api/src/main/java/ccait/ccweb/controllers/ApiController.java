@@ -315,6 +315,11 @@ public class ApiController extends BaseController {
                 throw new HttpResponseException(HttpStatus.UNAUTHORIZED.value(), LangConfig.getInstance().get("login_please"));
             }
 
+            Boolean isRemoveData = (saveDataInfo.getRemoveIdList()!=null && saveDataInfo.getRemoveIdList().size()>0);
+            if(isRemoveData) {
+                super.deleteByIdList(table, saveDataInfo.getRemoveIdList());
+            }
+
             if(saveDataInfo.getPostData()==null || saveDataInfo.getPostData().size()<1) {
                 return success();
             }
@@ -333,11 +338,6 @@ public class ApiController extends BaseController {
 
             ColumnInfo pkColumn = EntityContext.getPrimaryKey(datasource, table);
             String pk = (pkColumn==null? "": pkColumn.getColumnName());
-
-            Boolean isRemoveData = (saveDataInfo.getRemoveIdList()!=null && saveDataInfo.getRemoveIdList().size()>0);
-            if(isRemoveData) {
-                super.deleteByIdList(table, saveDataInfo.getRemoveIdList());
-            }
 
             List<Object> result = new ArrayList<>();
             for(int i = 0; i < saveDataInfo.getPostData().size(); i++) {
