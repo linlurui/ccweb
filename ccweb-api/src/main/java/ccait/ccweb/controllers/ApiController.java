@@ -335,7 +335,7 @@ public class ApiController extends BaseController {
             String pk = (pkColumn==null? "": pkColumn.getColumnName());
 
             Boolean isRemoveData = (saveDataInfo.getRemoveIdList()!=null && saveDataInfo.getRemoveIdList().size()>0);
-            if(isRemoveData && data.containsKey(pk) && StringUtils.isEmpty(data.get(pk).toString())) {
+            if(isRemoveData) {
                 super.deleteByIdList(table, saveDataInfo.getRemoveIdList());
             }
 
