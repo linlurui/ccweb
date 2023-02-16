@@ -539,84 +539,98 @@ public class ApplicationContext implements ApplicationContextAware {
 
         col = new ColumnInfo();
         col.setColumnName("canAdd");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
         col.setColumnName("canDelete");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
         col.setColumnName("canUpdate");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
         col.setColumnName("canView");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
         col.setColumnName("canDownload");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
         col.setColumnName("canPreview");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
         col.setColumnName("canPlayVideo");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
         col.setColumnName("canUpload");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
         col.setColumnName("canExport");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
         col.setColumnName("canImport");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
         col.setColumnName("canDecrypt");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
         col.setColumnName("canList");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
         col.setColumnName("canQuery");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setType(Integer.class);
         columns.add(col);
 
         col = new ColumnInfo();
         col.setColumnName("scope");
+        col.setDefaultValue("0");
         col.setCanNotNull(true);
         col.setMaxLength(16);
         col.setType(Integer.class);
