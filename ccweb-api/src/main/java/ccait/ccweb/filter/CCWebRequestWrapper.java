@@ -140,7 +140,7 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
                 }
 
                 try {
-                    if (Pattern.matches("\\s*^\\[[^\\[\\]]+\\]$\\s*", postString)) {
+                    if (Pattern.matches("^\\s*\\[[\\w\\W]+\\]\\s*$", postString)) {
                         this.params = JsonUtils.parse(postString, List.class);
                     } else {
                         this.params = JsonUtils.parse(postString, Map.class);

@@ -113,6 +113,11 @@ public class UserGroupRoleModel extends Queryable<UserGroupRoleModel> {
 
         try {
             group = group.where("[" + ApplicationConfig.getInstance().get("${ccweb.table.reservedField.groupId}", "groupId") + "]=#{groupId}").first();
+            if(group==null) {
+                group = new GroupModel();
+                group.setGroupId(this.groupId);
+            }
+
         } catch (SQLException e) {
             log.error(LOG_PRE_SUFFIX + e.getMessage(), e);
         }
@@ -137,6 +142,10 @@ public class UserGroupRoleModel extends Queryable<UserGroupRoleModel> {
 
         try {
             role = role.where("[" + ApplicationConfig.getInstance().get("${ccweb.table.reservedField.roleId}", "roleId") + "]=#{roleId}").first();
+            if(role==null) {
+                role = new RoleModel();
+                role.setRoleId(this.roleId);
+            }
         } catch (SQLException e) {
             log.error(LOG_PRE_SUFFIX + e.getMessage(), e);
         }
