@@ -99,7 +99,7 @@ public final class DefaultTrigger {
     private String datasourceId;
 
     @PostConstruct
-    private void construct() {
+    private void init() {
         datasourceId = (String) ApplicationContext.getThreadLocalMap().get(CURRENT_DATASOURCE);
         aesPublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.publicKey}", aesPublicKey);
         encoding = ApplicationConfig.getInstance().get("${ccweb.encoding}", encoding);

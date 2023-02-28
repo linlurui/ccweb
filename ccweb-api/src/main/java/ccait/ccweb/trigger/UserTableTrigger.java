@@ -72,7 +72,7 @@ public final class UserTableTrigger implements ITrigger {
     private boolean isInsert = false;
 
     @PostConstruct
-    private void construct() {
+    private void init() {
         admin = ApplicationConfig.getInstance().get("${ccweb.security.admin.username}", admin);
         userIdField = ApplicationConfig.getInstance().get("${ccweb.table.reservedField.userId}", userIdField);
         md5PublicKey = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.MD5.publicKey}", md5PublicKey);
@@ -225,7 +225,7 @@ public final class UserTableTrigger implements ITrigger {
 
     @Override
     public void onResponse(HttpServletResponse response, HttpServletRequest request) throws IOException {
-
+        isInsert = false;
     }
 
     @Override
