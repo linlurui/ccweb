@@ -122,7 +122,7 @@ public class InitializationFilter implements WebFilter, Filter {
                     oHeaderMap.put(key, value);
                 }
 
-                log.info(LOG_PRE_SUFFIX + "Header：" + FastJsonUtils.convertObjectToJSON(oHeaderMap));
+                log.info(LOG_PRE_SUFFIX + "Header：" + JsonUtils.toJson(oHeaderMap));
 
                 String postString = requestWrapper.getRequestPostString();
                 if(!StringUtils.isEmpty(postString)) {

@@ -435,7 +435,7 @@ public final class DefaultTrigger {
             });
 
             CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
-            wrapper.setPostParameter(JsonUtils.convert(queryInfo, Map.class));
+            wrapper.setPostParameter(queryInfo);
         }
     }
 
@@ -451,7 +451,7 @@ public final class DefaultTrigger {
             });
 
             CCWebRequestWrapper wrapper = (CCWebRequestWrapper) request;
-            wrapper.setPostParameter(JsonUtils.convert(queryInfo, Map.class));
+            wrapper.setPostParameter(queryInfo);
         }
     }
 

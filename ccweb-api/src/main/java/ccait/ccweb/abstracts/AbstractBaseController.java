@@ -232,7 +232,7 @@ public abstract class AbstractBaseController {
             }
 
             else {
-                dataList.add(FastJsonUtils.convert(data, Map.class));
+                dataList.add(JsonUtils.convert(data, Map.class));
             }
 
             try {

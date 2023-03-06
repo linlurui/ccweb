@@ -52,7 +52,7 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
     {
         super(request);
         this.params = newParams;
-        this.postString = FastJsonUtils.toJson(newParams);
+        this.postString = JsonUtils.toJson(newParams);
         uploadFileMap = new HashMap<String, UploadFileInfo>();
         multipleUpload = ApplicationConfig.getInstance().get("${ccweb.upload.multiple}", true);
     }
@@ -237,7 +237,7 @@ public class CCWebRequestWrapper extends HttpServletRequestWrapper implements Mu
 
     public void setPostParameter(Object parameter) {
         this.params = parameter;
-        this.postString = FastJsonUtils.toJson(parameter);
+        this.postString = JsonUtils.toJson(parameter);
     }
 
     @Override

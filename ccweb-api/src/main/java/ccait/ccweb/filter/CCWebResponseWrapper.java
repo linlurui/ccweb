@@ -13,6 +13,7 @@ package ccait.ccweb.filter;
 
 
 import entity.tool.util.FastJsonUtils;
+import entity.tool.util.JsonUtils;
 import entity.tool.util.StringUtils;
 import org.bouncycastle.asn1.ocsp.ResponseData;
 import org.slf4j.LoggerFactory;
@@ -114,7 +115,7 @@ public class CCWebResponseWrapper extends HttpServletResponseWrapper {
         if(responseData == null) {
             return;
         }
-        getBuffer().write(FastJsonUtils.toJson(responseData).getBytes());
+        getBuffer().write(JsonUtils.toJson(responseData).getBytes());
     }
 
     //内部类，对ServletOutputStream进行包装，指定输出流的输出端
