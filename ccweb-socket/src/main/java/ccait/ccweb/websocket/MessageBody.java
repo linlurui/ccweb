@@ -37,6 +37,15 @@ public class MessageBody {
         this.sendMode = sendMode;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    private String title;
     private String message;
     private ReceiverInfo receiver;
     private SendMode sendMode;
