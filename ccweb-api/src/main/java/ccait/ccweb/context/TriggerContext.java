@@ -16,6 +16,7 @@ import ccait.ccweb.entites.QueryInfo;
 import ccait.ccweb.enums.EventType;
 import ccait.ccweb.model.EventInfo;
 import ccait.ccweb.trigger.ITrigger;
+import entity.tool.util.JsonUtils;
 import entity.tool.util.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -326,6 +327,8 @@ public final class TriggerContext {
                 }
                 method.invoke(instance, params, request);
             } catch(Exception e) {
+                log.error(String.format("method invoke error------> trigger: %s, params type: %s, params: %s", instance.getClass().getSimpleName(), params.toString(), JsonUtils.toJson(params)));
+                log.error("error message: " + e.getMessage());
                 throw e;
             }
         }

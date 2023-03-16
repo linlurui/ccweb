@@ -53,7 +53,7 @@ ccweb-start是ccweb的启动包，其中包含了springcloud的微服务组件�
 * ccweb-iot (mqtt消息传输功能包，内置一个定阅器和一个简单的服务)
 * ccweb-config (分布式配置中心，可将每个服务的配置存至统一的数据库进行管理)
 * ccweb-logs (一个基于kafka的分布式日志系统，如用作消息队列需要引用该项目做二次开发消费端)
-* ccweb-repo (数据仓库模式操作类，通在用于二次开发时简化数据库操作)
+* ccweb-repo (数据仓库模式操作类，用于二次开发时简化数据库操作)
 * ccweb-gateway（zuul网关）
 * ccweb-webagent（第三方平台接口转发功能包，可通过application.yml配置什么样的请求需要转发到第三方平台接口处理）
 

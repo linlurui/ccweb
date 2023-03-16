@@ -51,7 +51,7 @@ public class WebSocketServer {
     private static final AtomicInteger OnlineCount = new AtomicInteger(0);
     private final static Map<String, Session> sessionMap = new HashMap<>();
     private final static Map<String, UserModel> sessionUserMap = new HashMap<>();
-    
+
     private UserModel currentUser;
 
     @Value("${ccweb.security.encrypt.AES.publicKey:ccait}")
@@ -59,6 +59,9 @@ public class WebSocketServer {
 
     @Value("${ccweb.table.reservedField.groupId:groupId}")
     private String groupIdField;
+
+    @Value("${ccweb.table.reservedField.roleId:roleId}")
+    private String roleIdField;
 
     @Value("${ccweb.table.reservedField.userPath:userPath}")
     private String userPathField;
@@ -229,12 +232,14 @@ public class WebSocketServer {
     }
 
     private void sendToRole(ReceiverInfo receiver, String message) {
-
+        List<Integer> userIdList = getUserIdList(receiver);
+        List<Integer> finalUserIdList = userIdList;
         List<String> ids = sessionUserMap.entrySet().stream()
                 .filter(a -> {
-                    return a.getValue().getUserGroupRoleModels().stream()
-                            .filter(b -> b.getGroupId().toString().equals(receiver.getGroupId()) &&
-                                    b.getRoleId().toString().equals(receiver.getRoleId())).isParallel();
+                    if(finalUserIdList.contains(a.getValue().getUserId())) {
+                        return true;
+                    }
+                    return false;
                 }).map(c->c.getKey()).collect(Collectors.toList());
 
         List<Session> list = sessionMap.entrySet().stream()
@@ -247,39 +252,13 @@ public class WebSocketServer {
     }
 
     private void sendToGroup(ReceiverInfo receiver, String message) {
-
+        List<Integer> userIdList = getUserIdList(receiver);
+        List<Integer> finalUserIdList = userIdList;
         List<String> ids = sessionUserMap.entrySet().stream()
                 .filter(a -> {
-                    try {
-                        if(a.getValue().getUserGroupRoleModels() != null && a.getValue().getUserGroupRoleModels().stream()
-                                .filter(b -> b.getGroupId().toString().equals(receiver.getGroupId())).isParallel()) {
-                            return true;
-                        }
-                        UserGroupRoleModel userGroupModel = new UserGroupRoleModel();
-                        String aesFields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.fields}", "");
-                        List<String> aesFieldList = StringUtils.splitString2List(aesFields, ",");
-                        String groupIdString = receiver.getGroupId();
-                        if(aesFieldList.stream()
-                                .filter(b-> b.equalsIgnoreCase(String.format("%s.%s", userGroupRoleTable, groupIdField)) ||
-                                        b.equalsIgnoreCase(groupIdField)).isParallel()) {
-                            groupIdString = EncryptionUtil.decryptByAES(groupIdString, aesPublicKey);
-                        }
-
-                        userGroupModel.setGroupId(Integer.parseInt(groupIdString));
-                        List<Integer> userIdList = userGroupModel
-                                .where(groupIdField + "=#{groupId}")
-                                .groupby("")
-                                .select(userIdField)
-                                .query(Integer.class);
-
-                        if(userIdList.contains(a.getValue().getUserId())) {
-                            return true;
-                        }
-
-                    } catch (SQLException e) {
-                        log.error(e.getMessage(), e);
+                    if(finalUserIdList.contains(a.getValue().getUserId())) {
+                        return true;
                     }
-
                     return false;
                 }).map(c->c.getKey()).collect(Collectors.toList());
 
@@ -305,6 +284,52 @@ public class WebSocketServer {
         for (Session session : list) {
             sendMessage(session, message);
         }
+    }
+
+    public List<Integer> getUserIdList(ReceiverInfo receiver) {
+        UserGroupRoleModel userGroupModel = new UserGroupRoleModel();
+        String aesFields = ApplicationConfig.getInstance().get("${ccweb.security.encrypt.AES.fields}", "");
+        List<String> aesFieldList = StringUtils.splitString2List(aesFields, ",");
+        String groupIdString = receiver.getGroupId();
+        if(aesFieldList.stream()
+                .filter(b-> b.equalsIgnoreCase(String.format("%s.%s", userGroupRoleTable, groupIdField)) ||
+                        b.equalsIgnoreCase(groupIdField)).isParallel()) {
+            groupIdString = EncryptionUtil.decryptByAES(groupIdString, aesPublicKey);
+        }
+
+        userGroupModel.setGroupId(Integer.parseInt(groupIdString));
+        List<Integer> userIdList = null;
+
+        int roleId = 0;
+        if(StringUtils.isNotEmpty(receiver.getRoleId())) {
+            roleId = Integer.parseInt(receiver.getRoleId());
+        }
+
+        int groupId = 0;
+        if(StringUtils.isNotEmpty(receiver.getGroupId())) {
+            groupId = Integer.parseInt(receiver.getGroupId());
+        }
+
+        try {
+            if(roleId > 0 && groupId > 0) {
+                userIdList = userGroupModel
+                        .where(groupIdField + "=#{groupId}")
+                        .and(roleIdField + "=#{roleId}")
+                        .groupby("")
+                        .select(userIdField)
+                        .query(Integer.class);
+            }
+            else if(groupId > 0) {
+                userIdList = userGroupModel
+                        .where(groupIdField + "=#{groupId}")
+                        .groupby("")
+                        .select(userIdField)
+                        .query(Integer.class);
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
+        return userIdList;
     }
 
     /**
