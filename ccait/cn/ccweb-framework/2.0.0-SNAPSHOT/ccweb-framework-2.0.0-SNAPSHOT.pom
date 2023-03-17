@@ -24,6 +24,7 @@
         <module>ccweb-mail</module>
         <module>ccweb-jobs</module>
         <module>ccweb-plugin</module>
+        <module>ccweb-clients</module>
     </modules>
 
     <parent>
