@@ -44,7 +44,7 @@ public class WebsocketController {
      */
     @ResponseBody
     @AccessCtrl
-    @RequestMapping( value = "api/{datasource}/message/send", method = RequestMethod.POST )
+    @RequestMapping( value = "api/ws/message/send", method = RequestMethod.POST )
     public ResponseData sendMessage(@RequestBody MessageBody messageBody) {
 
         try {
