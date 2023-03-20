@@ -335,12 +335,12 @@ public class ApiController extends BaseController {
                     list.forEach(item-> {
                         try {
                             Map<String, Object> info = JsonUtils.convert(list.get(0), Map.class);
-                            if(queryInfo.getData() == null) {
-                                if(saveDataInfo.getPostData()!=null && saveDataInfo.getPostData().get(0).size()>0) {
-                                    queryInfo.setData(saveDataInfo.getPostData().get(0));
-                                }
+                            if(saveDataInfo.getPostData()!=null && saveDataInfo.getPostData().get(0).size()>0) {
+                                queryInfo.setData(saveDataInfo.getPostData().get(0));
                             }
-                            result.add(super.update(table, info.get("id").toString(), queryInfo.getData()));
+                            if(queryInfo.getData()!=null) {
+                                result.add(super.update(table, info.get("id").toString(), queryInfo.getData()));
+                            }
                         } catch (Exception e) {
                             getLogger().error(e.getMessage());
                         }
