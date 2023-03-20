@@ -331,8 +331,23 @@ public class ApiController extends BaseController {
                 }});
                 List list = super.query(table, queryInfo);
                 if(list.size()>0) {
-                    Map<String, Object> info = JsonUtils.convert(list.get(0), Map.class);
-                    return success(super.update(table, info.get("id").toString(), queryInfo.getData()));
+                    List<Integer> result = new ArrayList<>();
+                    list.forEach(item-> {
+                        try {
+                            Map<String, Object> info = JsonUtils.convert(list.get(0), Map.class);
+                            if(queryInfo.getData() == null) {
+                                if(saveDataInfo.getPostData()!=null && saveDataInfo.getPostData().get(0).size()>0) {
+                                    queryInfo.setData(saveDataInfo.getPostData().get(0));
+                                }
+                            }
+                            result.add(super.update(table, info.get("id").toString(), queryInfo.getData()));
+                        } catch (Exception e) {
+                            getLogger().error(e.getMessage());
+                        }
+                    });
+                    if(result.size()>0) {
+                        return success(result);
+                    }
                 }
             }
 
