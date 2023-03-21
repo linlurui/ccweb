@@ -1417,7 +1417,7 @@ public class ApplicationContext implements ApplicationContextAware {
 
     public static List<ColumnInfo> ensureTable(String datasource, String table, List<ColumnInfo> cloumns) throws Exception {
 
-        if(existTable(table)) {
+        if(existTable(datasource, table)) {
             return getColumns(datasource, table);
         }
 
