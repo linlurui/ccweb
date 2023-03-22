@@ -325,10 +325,6 @@ public class ApiController extends BaseController {
             }
 
             if(saveDataInfo.getQueryInfo() != null) {
-                saveDataInfo.getQueryInfo().setPageInfo(new PageInfo() {{
-                    setPageIndex(1);
-                    setPageSize(1);
-                }});
                 List list = super.query(table, saveDataInfo.getQueryInfo());
                 if(list.size()>0) {
                     List<Integer> result = new ArrayList<>();
