@@ -46,12 +46,12 @@ public class MessageBody {
     public void setTitle(String title) {
         this.title = title;
     }
-    public Integer getSender() {
-        return sender;
+    public Integer getSendBy() {
+        return sendBy;
     }
 
-    public void setSender(Integer sender) {
-        this.sender = sender;
+    public void setSendBy(Integer sendBy) {
+        this.sendBy = sendBy;
     }
 
     public Date getSendOn() {
@@ -65,6 +65,6 @@ public class MessageBody {
     private String message;
     private ReceiverInfo receiver;
     private SendMode sendMode;
-    private Integer sender;
+    private Integer sendBy;
     private Date sendOn;
 }

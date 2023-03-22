@@ -36,7 +36,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -363,7 +362,7 @@ public class WebSocketServer {
             message.setReceiver(null);
             message.setSendOn(new Date());
             if(sessionUserMap.containsKey(session.getId())) {
-                message.setSender(sessionUserMap.get(session.getId()).getUserId());
+                message.setSendBy(sessionUserMap.get(session.getId()).getUserId());
             }
 
             session.getBasicRemote().sendText(JsonUtils.toJson(message));
