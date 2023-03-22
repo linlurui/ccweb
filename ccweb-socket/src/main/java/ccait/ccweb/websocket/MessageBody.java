@@ -11,6 +11,8 @@
 package ccait.ccweb.websocket;
 
 
+import java.util.Date;
+
 public class MessageBody {
 
     public String getMessage() {
@@ -44,9 +46,25 @@ public class MessageBody {
     public void setTitle(String title) {
         this.title = title;
     }
+    public Integer getSender() {
+        return sender;
+    }
 
+    public void setSender(Integer sender) {
+        this.sender = sender;
+    }
+
+    public Date getSendOn() {
+        return sendOn;
+    }
+
+    public void setSendOn(Date sendOn) {
+        this.sendOn = sendOn;
+    }
     private String title;
     private String message;
     private ReceiverInfo receiver;
     private SendMode sendMode;
+    private Integer sender;
+    private Date sendOn;
 }

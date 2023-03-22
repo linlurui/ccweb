@@ -32,6 +32,7 @@ import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -179,33 +180,42 @@ public class WebSocketServer {
         try
         {
             if(!sessionMap.containsKey(((WsSession)session).getHttpSessionId())) {
-                sendMessage(session, LangConfig.getInstance().get("login_please"));
+                sendMessage(session, new MessageBody(){{
+                    setTitle("Error");
+                    setMessage(LangConfig.getInstance().get("login_please"));
+                }});
                 return;
             }
             if(StringUtils.isEmpty( text )) {
-                sendMessage(session, LangConfig.getInstance().get("message_can_not_be_empty"));
+                sendMessage(session, new MessageBody(){{
+                    setTitle("Error");
+                    setMessage(LangConfig.getInstance().get("message_can_not_be_empty"));
+                }});
                 return;
             }
 
             MessageBody body = JsonUtils.parse(text, MessageBody.class);
             if(StringUtils.isEmpty(body.getMessage())) {
-                sendMessage(session, LangConfig.getInstance().get("message_can_not_be_empty"));
+                sendMessage(session, new MessageBody(){{
+                    setTitle("Error");
+                    setMessage(LangConfig.getInstance().get("message_can_not_be_empty"));
+                }});
                 return;
             }
 
             if(body != null) {
                 switch (body.getSendMode()) {
                     case ALL:
-                        sendToAll(body.getMessage());
+                        sendToAll(body);
                         break;
                     case USER:
-                        sendToUser(body.getReceiver(), body.getMessage());
+                        sendToUser(body);
                         break;
                     case GROUP:
-                        sendToGroup(body.getReceiver(), body.getMessage());
+                        sendToGroup(body);
                         break;
                     case ROLE:
-                        sendToRole(body.getReceiver(), body.getMessage());
+                        sendToRole(body);
                         break;
                 }
                 return;
@@ -217,7 +227,10 @@ public class WebSocketServer {
         {
             log.error(LOG_PRE_SUFFIX_BY_SOCKET + String.format("接收消息发生错误：%s",e.getMessage()));
 
-            sendMessage(session, e.getMessage());
+            sendMessage(session, new MessageBody() {{
+                setTitle("Error");
+                setMessage(e.getMessage());
+            }});
         }
     }
 
@@ -231,8 +244,8 @@ public class WebSocketServer {
         log.error(LOG_PRE_SUFFIX_BY_SOCKET + String.format("发生错误：%s，Session ID： %s",error.getMessage(),session.getId()));
     }
 
-    private void sendToRole(ReceiverInfo receiver, String message) {
-        List<Integer> userIdList = getUserIdList(receiver);
+    private void sendToRole(MessageBody message) {
+        List<Integer> userIdList = getUserIdList(message.getReceiver());
         List<Integer> finalUserIdList = userIdList;
         List<String> ids = sessionUserMap.entrySet().stream()
                 .filter(a -> {
@@ -251,8 +264,8 @@ public class WebSocketServer {
         }
     }
 
-    private void sendToGroup(ReceiverInfo receiver, String message) {
-        List<Integer> userIdList = getUserIdList(receiver);
+    private void sendToGroup(MessageBody message) {
+        List<Integer> userIdList = getUserIdList(message.getReceiver());
         List<Integer> finalUserIdList = userIdList;
         List<String> ids = sessionUserMap.entrySet().stream()
                 .filter(a -> {
@@ -271,10 +284,10 @@ public class WebSocketServer {
         }
     }
 
-    private void sendToUser(ReceiverInfo receiver, String message) {
+    private void sendToUser(MessageBody message) {
 
         List<String> ids = sessionUserMap.entrySet().stream()
-                .filter(a->receiver.getUsernames().contains(a.getValue().getUsername()))
+                .filter(a->message.getReceiver().getUsernames().contains(a.getValue().getUsername()))
                 .map(b->b.getKey()).collect(Collectors.toList());
 
         List<Session> list = sessionMap.entrySet().stream()
@@ -337,7 +350,7 @@ public class WebSocketServer {
      * @param session
      * @param message
      */
-    public static void sendMessage(Session session, String message) {
+    public static void sendMessage(Session session, MessageBody message) {
         try {
             if(session == null) {
                 return;
@@ -347,9 +360,15 @@ public class WebSocketServer {
                 return;
             }
 
-            session.getBasicRemote().sendText(message);
+            message.setReceiver(null);
+            message.setSendOn(new Date());
+            if(sessionUserMap.containsKey(session.getId())) {
+                message.setSender(sessionUserMap.get(session.getId()).getUserId());
+            }
+
+            session.getBasicRemote().sendText(JsonUtils.toJson(message));
         } catch (Exception e) {
-            log.error(LOG_PRE_SUFFIX_BY_SOCKET + String.format("发送消息出错：%s, 消息内容：%s", e.getMessage(), message));
+            log.error(LOG_PRE_SUFFIX_BY_SOCKET + String.format("发送消息出错：%s, 消息标题%s, 消息内容：%s", e.getMessage(), message.getTitle(), message.getMessage()));
             e.printStackTrace();
         }
     }
@@ -359,7 +378,7 @@ public class WebSocketServer {
      * @param message
      * @throws IOException
      */
-    public static void sendToAll(String message) throws Exception {
+    public static void sendToAll(MessageBody message) throws Exception {
         for (Map.Entry<String, Session> session : sessionMap.entrySet()) {
             sendMessage(session.getValue(), message);
         }
@@ -371,7 +390,7 @@ public class WebSocketServer {
      * @param message
      * @throws IOException
      */
-    public static void sendMessage(String httpSessionId,String message) throws Exception {
+    public static void sendMessage(String httpSessionId, MessageBody message) throws Exception {
         Session session = sessionMap.get( httpSessionId );
         if(session!=null){
             sendMessage(session, message);
