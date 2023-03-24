@@ -1231,6 +1231,13 @@ public class ApplicationContext implements ApplicationContextAware {
         return result;
     }
 
+    public static void removeCacheTable(String datasource, String table) {
+        if(!allTablesMap.containsKey(datasource)) {
+            return;
+        }
+        allTablesMap.get(datasource).remove(table);
+    }
+
     public static void ensureTable(Map<String, Object> data) throws Exception {
         ensureTable(data, null, getCurrentDatasourceId(), getCurrentTable());
     }
