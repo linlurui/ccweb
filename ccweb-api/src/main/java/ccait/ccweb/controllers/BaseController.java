@@ -878,6 +878,8 @@ public abstract class BaseController extends AbstractBaseController {
      */
     public List query(String table, QueryInfo queryInfo, boolean byExport) throws Exception {
 
+        table = StringUtils.join("", StringUtils.splitString2List(table, "-"));
+
         Object entity = EntityContext.getEntity(table, queryInfo);
 
         if(entity == null) {
