@@ -222,7 +222,7 @@ public final class EntityContext {
         }
     }
 
-    private static Object getEntity(String tablename) {
+    public static Object getEntity(String tablename) {
         tablename = tablename.trim();
         org.springframework.context.ApplicationContext app = ApplicationContext.getInstance();
         EntityContext entityContext = (EntityContext) app.getAutowireCapableBeanFactory().getBean("entityContext");
