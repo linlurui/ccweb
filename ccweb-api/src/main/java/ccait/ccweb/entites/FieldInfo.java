@@ -24,4 +24,8 @@ public class FieldInfo extends GroupByInfo implements Serializable {
     public void setValue(Object value) {
         this.value = value;
     }
+
+    public Object getSourceValue() {
+        return value;
+    }
 }

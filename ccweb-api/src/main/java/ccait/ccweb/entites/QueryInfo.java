@@ -395,7 +395,7 @@ public class QueryInfo implements Serializable {
     private String ensureValue(ConditionInfo info, String fieldName, String value) {
 
         String fieldText = "#{" + fieldName + "}";
-        if(info.getValue().getClass().equals(JSONArray.class)) {
+        if(info.getSourceValue().getClass().equals(JSONArray.class)) {
             value = value.substring(1).substring(0, value.length() - 2);
             List<String> list = StringUtils.splitString2List(value, ",");
             for(int i=0; i<list.size(); i++) {
@@ -412,7 +412,7 @@ public class QueryInfo implements Serializable {
             }
         }
 
-        else {
+        else if(!(info.getSourceValue() instanceof Number)) {
             value = DBUtils.getStringValue(value);
         }
 
