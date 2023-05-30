@@ -16,7 +16,7 @@ public class LangConfig {
 
     private static final Logger log = LoggerFactory.getLogger(LangConfig.class);
 
-    private final static Map<String, String> configMap = new HashMap<String, String>();
+    private static Map<String, String> configMap = new HashMap<String, String>();
 
     private static Map<String, Object> map;
 
@@ -58,6 +58,16 @@ public class LangConfig {
 
             fillKeyValue("", map);
         }
+    }
+
+    public void init(Map<String, Object> map) {
+        LangConfig.map = new HashMap<>();
+        LangConfig.configMap = new HashMap<>();
+        fillKeyValue("", map);
+    }
+
+    public Map<String, Object> getMap() {
+        return LangConfig.map;
     }
 
     private InputStream getConfigStream() throws FileNotFoundException {
