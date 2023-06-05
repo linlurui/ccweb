@@ -149,7 +149,7 @@ public class PathVariableResolver implements HandlerMethodArgumentResolver {
 
     public Class getClassByType(Type type) {
         Class clazz;
-        if(type.getTypeName().indexOf("Map<") > 0) {
+        if(type.getTypeName().startsWith("java.util.Map<")) {
             clazz = Map.class;
         }
         else {

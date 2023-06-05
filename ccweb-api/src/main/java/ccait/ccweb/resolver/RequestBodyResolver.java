@@ -70,7 +70,7 @@ public class RequestBodyResolver implements HandlerMethodArgumentResolver {
                 return parameters;
             }
 
-            if (type.getTypeName().indexOf("List<") > 0) {
+            if (type.getTypeName().startsWith("java.util.List<")) {
                 List parametes = (List) requestWrapper.getParameters();
                 List result = new ArrayList();
                 for (int i = 0; i < parametes.size(); i++) {
@@ -114,7 +114,7 @@ public class RequestBodyResolver implements HandlerMethodArgumentResolver {
 
     public Class getClassByType(Type type) {
         Class clazz;
-        if(type.getTypeName().indexOf("Map<") > 0) {
+        if(type.getTypeName().startsWith("java.util.Map<")) {
             clazz = Map.class;
         }
         else {
