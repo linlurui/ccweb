@@ -30,7 +30,8 @@ public class LangConfig {
             return instance;
         }
         synchronized (configMap) {
-            return new LangConfig();
+            instance = new LangConfig();
+            return instance;
         }
     }
 
@@ -60,10 +61,11 @@ public class LangConfig {
         }
     }
 
-    public void init(Map<String, Object> map) {
-        LangConfig.map = new HashMap<>();
-        LangConfig.configMap = new HashMap<>();
-        fillKeyValue("", map);
+    public void init(Map<String, Object> config) {
+        configMap = new HashMap<>();
+        map = new HashMap<>();
+        map.putAll(config);
+        fillKeyValue("", config);
     }
 
     public Map<String, Object> getMap() {
