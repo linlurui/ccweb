@@ -264,6 +264,9 @@ public abstract class BaseController extends AbstractBaseController {
 
             if(postData.get(argname) != null) {
                 String valString = DBUtils.getSqlInjText(postData.get(argname).toString());
+                if(postData.get(argname) instanceof Map) {
+                    valString = JsonUtils.toJson(postData.get(argname));
+                }
                 value = cast(type, valString);
             }
 
