@@ -193,10 +193,8 @@ public class ApplicationConfigProcessor implements EnvironmentPostProcessor {
         ensureConfigTable(configTable);
         List<AppConfig> appConfigs = getAppConfigList(properties, applicationName);
         for (AppConfig appConfig : appConfigs) {
-            if (appConfig.getKey().startsWith("entity.datasource") ||
-                    "ccweb.account".equalsIgnoreCase(appConfig.getKey()) ||
-                    "ccweb.license".equalsIgnoreCase(appConfig.getKey())) {
-                continue;
+            if(appConfig.getValue().indexOf("×")>-1) {
+                appConfig.setValue(appConfig.getValue().replace("×", "*"));
             }
             properties.setProperty(appConfig.getKey(), appConfig.getValue());
             ApplicationConfig.getInstance().set(appConfig.getKey(), appConfig.getValue());
