@@ -439,7 +439,7 @@ public class ApiController extends BaseController {
         } catch (Exception e) {
             getLogger().error(LOG_PRE_SUFFIX + e, e);
 
-            return error(150, e);
+            return error(150, LangConfig.getInstance().get("username_or_password_is_invalid"));
         }
     }
 
