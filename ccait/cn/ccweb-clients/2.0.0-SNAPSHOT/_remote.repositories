@@ -1,4 +1,6 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Thu Nov 09 20:37:36 CST 2023
+#Tue Dec 05 18:08:16 CST 2023
 ccweb-clients-2.0.0-SNAPSHOT.pom>=
 ccweb-clients-2.0.0-SNAPSHOT.jar>=
+ccweb-clients-2.0.0-SNAPSHOT.jar>ccweb=
+ccweb-clients-2.0.0-SNAPSHOT.pom>ccweb=
