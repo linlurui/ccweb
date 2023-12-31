@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/ccweb-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ccweb-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ccweb-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ccweb-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ccweb-mail/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ccweb-office/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ccweb-repo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ccweb-socket/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ccweb-start/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ccweb-start/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

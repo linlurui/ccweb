@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ccweb-repo" />
+        <module name="ccweb-api" />
+        <module name="ccweb-mail" />
+        <module name="ccweb-socket" />
+        <module name="ccweb-core" />
+        <module name="ccweb-start" />
+        <module name="ccweb-office" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ccweb" target="1.8" />
+      <module name="ccweb-api" target="1.8" />
+      <module name="ccweb-core" target="1.8" />
+      <module name="ccweb-mail" target="1.8" />
+      <module name="ccweb-office" target="1.8" />
+      <module name="ccweb-repo" target="1.8" />
+      <module name="ccweb-socket" target="1.8" />
+      <module name="ccweb-start" target="1.8" />
+      <module name="ccweb-webagent" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ccweb-api" options="-parameters" />
+      <module name="ccweb-core" options="-parameters" />
+      <module name="ccweb-mail" options="-parameters" />
+      <module name="ccweb-office" options="-parameters" />
+      <module name="ccweb-repo" options="-parameters" />
+      <module name="ccweb-socket" options="-parameters" />
+      <module name="ccweb-start" options="-parameters" />
+      <module name="ccweb-webagent" options="-parameters" />
+    </option>
+  </component>
+</project>
