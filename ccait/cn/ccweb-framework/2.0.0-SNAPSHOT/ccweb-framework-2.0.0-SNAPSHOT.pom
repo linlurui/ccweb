@@ -44,6 +44,7 @@
         <logback-kafka-appender.version>0.2.0-RC1</logback-kafka-appender.version>
         <janino.version>3.0.8</janino.version>
     </properties>
+
     <repositories>
         <repository>
             <id>ali</id>
@@ -60,7 +61,20 @@
         </repository>
         <repository>
             <id>ccweb</id>
-            <url>https://gitee.com/ccait/ccweb/raw/release</url>
+            <url>https://gitee.com/ccait/ccweb2/raw/release</url>
+            <releases>
+                <updatePolicy>always</updatePolicy>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+                <enabled>true</enabled>
+                <checksumPolicy>ignore</checksumPolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>entity-orm</id>
+            <url>https://gitee.com/ccait/entityqueryable/raw/1.0</url>
             <releases>
                 <updatePolicy>always</updatePolicy>
                 <enabled>true</enabled>
@@ -72,6 +86,7 @@
             </snapshots>
         </repository>
     </repositories>
+
 
 
     <distributionManagement>

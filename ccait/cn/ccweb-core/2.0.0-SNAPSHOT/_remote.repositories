@@ -1,4 +1,6 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Sat Jan 06 15:22:52 CST 2024
+#Mon Mar 11 18:27:59 CST 2024
 ccweb-core-2.0.0-SNAPSHOT.jar>=
+ccweb-core-2.0.0-SNAPSHOT.pom>ccweb=
 ccweb-core-2.0.0-SNAPSHOT.pom>=
+ccweb-core-2.0.0-SNAPSHOT.jar>ccweb=

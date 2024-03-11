@@ -1,4 +1,6 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Sat Jan 06 15:24:31 CST 2024
+#Mon Mar 11 18:31:57 CST 2024
 ccweb-auth-2.0.0-SNAPSHOT.jar>=
 ccweb-auth-2.0.0-SNAPSHOT.pom>=
+ccweb-auth-2.0.0-SNAPSHOT.pom>ccweb=
+ccweb-auth-2.0.0-SNAPSHOT.jar>ccweb=
