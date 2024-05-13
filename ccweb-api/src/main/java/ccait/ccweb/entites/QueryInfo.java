@@ -232,7 +232,7 @@ public class QueryInfo implements Serializable {
             }
 
             String field = info.getField();
-            if(!Pattern.matches("^\\w[A-Za-z0-9_]*$", field)) {
+            if(!Pattern.matches("^(\\w|[\\u4e00-\\u9fa5])[\\u4e00-\\u9fa5A-Za-z0-9_]*$", field)) {
                 continue;
             }
 
@@ -286,7 +286,7 @@ public class QueryInfo implements Serializable {
             }
 
             String field = info.getField();
-            if(!Pattern.matches("^\\w[A-Za-z0-9_]*$", field)) {
+            if(!Pattern.matches("^(\\w|[\\u4e00-\\u9fa5])[\\u4e00-\\u9fa5A-Za-z0-9_]*$", field)) {
                 continue;
             }
 
