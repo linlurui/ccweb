@@ -2,23 +2,23 @@
 <metadata modelVersion="1.1.0">
   <groupId>ccait.cn</groupId>
   <artifactId>ccweb-socket</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
   <versioning>
+    <lastUpdated>20240513111254</lastUpdated>
     <snapshot>
       <localCopy>true</localCopy>
     </snapshot>
-    <lastUpdated>20240327093954</lastUpdated>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
         <value>1.0.0-SNAPSHOT</value>
-        <updated>20240327093954</updated>
+        <updated>20240513111254</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
         <value>1.0.0-SNAPSHOT</value>
-        <updated>20240327093954</updated>
+        <updated>20240513111254</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
+  <version>1.0.0-SNAPSHOT</version>
 </metadata>
